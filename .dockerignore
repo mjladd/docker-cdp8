@@ -1,0 +1,35 @@
+# Git
+.git
+.gitignore
+
+# Build artifacts
+*.o
+*.os
+*.so
+**/*.a
+build/
+build*/
+NewRelease/
+bin/
+*.exe
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+cmake_uninstall.cmake
+CTestTestfile.cmake
+CPackConfig.cmake
+CPackSourceConfig.cmake
+Custom.cmake
+Makefile
+Makefile.*
+
+# Editor/OS files
+*~
+.DS_Store
+*.xcodeproj
+
+# Audio test files
+*.wav
+*.ana
