@@ -42,6 +42,32 @@ What's needed?
 
 ## Building CDP8
 
+### Devcontainer Workflow (VS Code)
+
+If you're using the provided devcontainer (recommended for development):
+
+1. Open the folder in a container: Command Palette → "Dev Containers: Reopen in Container".
+2. Configure and build inside the container:
+
+```bash
+mkdir -p build
+cd build
+cmake ..
+make -j$(nproc)
+```
+
+3. Binaries output to `NewRelease/` and are automatically on `PATH` in the devcontainer, so you can run tools from anywhere:
+
+```bash
+sndinfo props /workspaces/docker-cdp8/test_sine.wav
+synth wave 1 /workspaces/docker-cdp8/test_sine.wav 44100 1 2 440
+```
+
+Notes:
+- The devcontainer adds `/workspaces/<repo>/NewRelease` to `PATH` by default.
+- Use the VS Code integrated terminal (zsh) inside the container.
+- Audio I/O programs use PortAudio; development headers and runtime libs are preinstalled in the devcontainer.
+
 ### Quick Start with Docker (Recommended)
 
 The easiest way to build and run CDP8 is with Docker:
