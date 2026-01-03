@@ -488,25 +488,8 @@ static int psf_wordsize(psf_stype type)
 }
 
 
-#ifdef _MSC_VER
-#  if(_MSC_VER <= 1200)
-/* fast convergent rounding */
-__inline int psf_round(double fval)
-{
-    int result;
-    _asm{
-        fld fval
-        fistp   result
-        mov eax,result
-    }
-    return result;
-}
 
-#  else
-/* slow convergent rounding ! */
-/* TODO: implement IEEE round-to-even */
-int psf_round(double val);
-# endif 
+/* Portable convergent rounding function */
 int psf_round(double val)
 {
     long k;
@@ -515,7 +498,6 @@ int psf_round(double val)
         k = -k;
     return (int) k;
 }
-#endif
 
 #ifndef WIN32
 int stricmp(const char *a, const char *b)

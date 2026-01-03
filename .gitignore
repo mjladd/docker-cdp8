@@ -19,6 +19,21 @@ NewRelease
 
 *.wav
 *.ana
+# Additional audio formats (keep generated audio untracked)
+*.aif
+*.aiff
+*.aifc
+*.flac
+*.mp3
+*.ogg
+*.opus
+*.m4a
+*.aac
+*.wv
+*.w64
+*.snd
+*.au
+*.caf
 
 #Generated files if running in-source CMake build
 build*/

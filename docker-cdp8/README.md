@@ -73,3 +73,18 @@ The final image is approximately 141MB.
 - `Dockerfile` - Multi-stage Docker build configuration
 - `build.sh` - Convenience script to build the image
 - `fix-linux-compat.sh` - Script that patches source for Linux/GCC compatibility
+
+## Troubleshooting
+
+- **Bind mount error (source path does not exist):** Run `docker` from a host shell, not inside a dev container. Ensure you are in a real directory and use `$(pwd -P)` to avoid symlinks. Example: `docker run --rm -v $(pwd -P):/workspace cdp8 sndinfo /workspace/file.wav`.
+- **"/workspace" not found inside container:** Mount your working directory: `-v $(pwd):/workspace`. Commands referencing `/workspace/...` require this mount.
+- **Docker not available:** If `./build.sh` reports Docker missing, build natively:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y build-essential cmake libasound2-dev libjack-jackd2-dev pkg-config
+mkdir -p build && cd build && cmake .. && make -j$(nproc)
+ls ../NewRelease   # binaries
+```
+
+- **Permissions issues on Linux:** If mounting yields permission errors, try adding `:Z` or `:rw` options depending on your Docker setup, or run from a directory with appropriate permissions.

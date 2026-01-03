@@ -44,6 +44,10 @@
 #include <string.h>
 #include <srates.h>
 
+#ifndef WIN32
+typedef long long __int64;
+#endif
+
 #define SIGNAL_TO_LEFT  (0)
 #define SIGNAL_TO_RIGHT (1)
 #define ROOT2       (1.4142136)

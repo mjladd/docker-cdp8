@@ -13,6 +13,15 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CDP8_ROOT="$(dirname "$SCRIPT_DIR")"
 TAG="${1:-cdp8}"
 
+if ! command -v docker >/dev/null 2>&1; then
+	echo "Error: Docker CLI not found. Please install Docker and ensure the daemon is running."
+	echo ""
+	echo "Optional: build natively without Docker:"
+	echo "  sudo apt-get install -y build-essential cmake libasound2-dev libjack-jackd2-dev pkg-config"
+	echo "  mkdir -p build && cd build && cmake .. && make -j\$(nproc)"
+	exit 1
+fi
+
 echo "Building CDP8 Docker image..."
 echo "  Source: $CDP8_ROOT"
 echo "  Tag: $TAG"
