@@ -7,7 +7,7 @@
   "remoteUser": "vscode",
   "workspaceFolder": "/workspaces/${containerWorkspaceFolderBasename}",
   "containerEnv": {
-    "PATH": "/workspaces/docker-cdp8/NewRelease:${containerEnv:PATH}"
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
   },
   "customizations": {
     "vscode": {

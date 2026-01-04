@@ -34,3 +34,10 @@ RUN if [ ! -d "/home/${USER}/.oh-my-zsh" ]; then \
  && sudo -u ${USER} -H sh -c "grep -q 'zsh-syntax-highlighting.zsh' ~/.zshrc || echo 'source /home/${USER}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' >> ~/.zshrc"
 
 WORKDIR /workspaces
+
+# Provide /workspace as a convenience path inside the devcontainer
+RUN ln -s /workspaces/docker-cdp8 /workspace || true
+
+# Ensure CDP8 binaries are on PATH for all shells
+RUN printf 'export PATH="/workspaces/docker-cdp8/NewRelease:$PATH"\n' | tee /etc/profile.d/cdp8_path.sh >/dev/null \
+    && printf 'export PATH="/workspaces/docker-cdp8/NewRelease:$PATH"\n' >> /etc/zsh/zshenv || true
