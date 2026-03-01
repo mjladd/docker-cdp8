@@ -5,7 +5,8 @@
     "context": ".."
   },
   "remoteUser": "vscode",
-  "workspaceFolder": "/workspaces/${containerWorkspaceFolderBasename}",
+  "workspaceFolder": "/workspaces/docker-cdp8",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/docker-cdp8,type=bind",
   "containerEnv": {
     "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
   },
@@ -17,7 +18,8 @@
       ],
       "settings": {
         "terminal.integrated.defaultProfile.linux": "zsh",
-        "terminal.integrated.shellIntegration.enabled": true
+        "terminal.integrated.shellIntegration.enabled": true,
+        "terminal.integrated.cwd": "/workspaces/docker-cdp8"
       }
     }
   }
