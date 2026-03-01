@@ -22,7 +22,7 @@ To get the effect we want, i.e., a mixture of these overlaps that comes across a
 SL: `EXTEND->back to back`
 SSh: `Soundfile->EXTEND/SEGMENT->Back to Back`
 
-This program joins a backwards to a forwards version of bellaedt.wav. The join was set to occur at time 2.2 seconds with a (larger than usual) 50 ms splice. Now we have [bellaedtbotob.wav](../sounds/bellaedtbotob.wav). By the way, BAKTOBAK was used extensively in Trevor Wishat's fantastic piece *Imago* to create powerful climactic moments.
+This program joins a backwards to a forwards version of bellaedt.wav. The join was set to occur at time 2.2 seconds with a (larger than usual) 50 ms splice. Now we have [bellaedtbtob.wav](../sounds/bellaedtbtob.wav). By the way, BAKTOBAK was used extensively in Trevor Wishat's fantastic piece *Imago* to create powerful climactic moments.
 
 ## Making the Strong Tone {#STRONGTONE}
 

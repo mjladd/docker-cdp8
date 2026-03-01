@@ -2,7 +2,7 @@
 
 *by Dr Archer Endrich*
 
-*These are used all the time. It is assumed that you will be using one of the GUIs and will call up the process being discussed. Otherwise, enter the program name (given in CAPS) on the command line to call up its usage. [Accompanying Worksheet: [BasicSoundfileEditing.txt](data/BasicSoundfileEditing.txt)]*
+*These are used all the time. It is assumed that you will be using one of the GUIs and will call up the process being discussed. Otherwise, enter the program name (given in CAPS) on the command line to call up its usage.*
 
 | [**DIRSF**](#DIRSF) – Display the soundfiles in a Directory | | |
 |---|---|---|

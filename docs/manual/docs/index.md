@@ -3,13 +3,11 @@
 
 *by Dr Archer Endrich*
 
-[Quick Overview](data/A%20Learning%20Manual%20for%20CDP-CONTENTS.rtf)
-
 SOUND DESIGN: From this: [source sound](../sounds/count.wav) to this: [vocoding: spectral envelope mixed with that of a tractor](../sounds/trcdtvoccnt.wav) or to this: [sound tuned to an A-minor chord](../sounds/counttuneAminbl70.wav)
 
 I have written this *Learning Manual for CDP* as a way to summarise what I have found to be common and important issues when running the CDP software. There are many sound examples to help illustrate the text. I hope it will also help others to handle the software more quickly and easily, and to become more musically productive. Initial drafts of some of this material were written for my students at Plymouth University and benefited from their feedback. These notes have been extensively revised and expanded, and are set out here as separate documents.
 
-This document outlines the Contents of the *Learning Manual* and links to all the supplementary files, presenting information in relatively bite-size chunks. I have also provided a more concise [rtf](data/A%20Learning%20Manual%20for%20CDP-CONTENTS.rtf) version for easy reference.
+This document outlines the Contents of the *Learning Manual* and links to all the supplementary files, presenting information in relatively bite-size chunks.
 
 ---
 
@@ -41,25 +39,24 @@ Throughout this Manual, 'SL' is used for the *Sound Loom* GUI and 'SSh' for the 
 
 ## TOPIC 1: How to Start Designing Sounds with CDP
 
-**PRACTICAL WORK** – Worksheet: [Topic1-Worksheet.txt](data/Topic1-Worksheet.txt)
+**PRACTICAL WORK** – Worksheet: [Topic1-Worksheet.txt](../data/Topic1-Worksheet.txt)
 
 - [Doc1-1: Listening1-Manipulating Sounds](listening1-manipulating-sounds.md) – listening to a few basic changes made to a sound
-- [Doc1-2: SLguide-Basic.pdf](data/SLguide-Basic.pdf) – handling the 3 main panels of *Sound Loom* with a practical exercise in the Time and Spectral domains
-- [Doc1-3: Basic Soundfile Editing](basic-soundfile-editing.md) – practical exercises to carry out the basic soundfile editing operations; with [the accompanying worksheet](data/Topic1-Worksheet.txt); uses MAXSAMP (get maximum amplitude), GAIN (increase or decrease amplitude), CUT (excise and save), DOVETAIL (smoothing envelope edges), and SFLEN (get length)
+- [Doc1-2: Basic Soundfile Editing](basic-soundfile-editing.md) – practical exercises to carry out the basic soundfile editing operations; with [the accompanying worksheet](../data/Topic1-Worksheet.txt); uses MAXSAMP (get maximum amplitude), GAIN (increase or decrease amplitude), CUT (excise and save), DOVETAIL (smoothing envelope edges), and SFLEN (get length)
 
 **FURTHER STUDY**
 
-- [Doc1-4: About Sound Design](about-sound-design.md) – context, texture and randomisation, time-varying
-- [Doc1-5: About Composing with Sounds](about-composing-with-sounds.md) – recognising sources, designing supplementary files, music and 'passage', purpose, time-patterns
-- [Doc1-6: The CDP Software](the-cdp-software.md) – about CDP, working environment, main sequence of actions
-- [Doc1-7: Suggestions for Composition Projects](suggestions-for-composition-projects.md) – some processes and ideas that may evoke a musical response
-- [Doc1-8: CDP Primary Reference Materials](cdp-primary-reference-materials.md) – the primary set of reference materials for using the CDP sound design software (Tutorial materials are listed in a separate file)
+- [Doc1-3: About Sound Design](about-sound-design.md) – context, texture and randomisation, time-varying
+- [Doc1-4: About Composing with Sounds](about-composing-with-sounds.md) – recognising sources, designing supplementary files, music and 'passage', purpose, time-patterns
+- [Doc1-5: The CDP Software](the-cdp-software.md) – about CDP, working environment, main sequence of actions
+- [Doc1-6: Suggestions for Composition Projects](suggestions-for-composition-projects.md) – some processes and ideas that may evoke a musical response
+- [Doc1-7: CDP Primary Reference Materials](cdp-primary-reference-materials.md) – the primary set of reference materials for using the CDP sound design software (Tutorial materials are listed in a separate file)
 
 ---
 
 ## Topic 2: How to Make Basic Modifications to Sounds
 
-**PRACTICAL WORK** Worksheet: [Topic2-Worksheet.txt](data/Topic2-Worksheet.txt)
+**PRACTICAL WORK** Worksheet: [Topic2-Worksheet.txt](../data/Topic2-Worksheet.txt)
 
 - [Doc2-1: Listening2-Surfaces](listening2-surfaces.md) – processes that churn up and roughen a sound
 - [Doc2-2: Basic Modifications and Transformations](basic-modifications-and-transformations.md) – frequent but modest changes to a sound: transpose, glissando, filter, reverb/echo, pan, loop, reverse, trace, ring modulate, time stretch, vibrato/tremolo
@@ -92,7 +89,7 @@ Throughout this Manual, 'SL' is used for the *Sound Loom* GUI and 'SSh' for the 
 
 ## Topic 4: How to Mingle Sounds with CDP
 
-**PRACTICAL WORK** Worksheet: [Topic4-Worksheet.txt](data/Topic4-Worksheet.txt)
+**PRACTICAL WORK** Worksheet: [Topic4-Worksheet.txt](../data/Topic4-Worksheet.txt)
 
 - [Doc4-1: Listening4-Mods and Minglings](listening4-mods-and-minglings.md) – four sets of transformations of vocal material
 - [Doc4-2: Mingling Involving Envelopes](mingling-involving-envelopes.md) – one of the longer articles, it's all about envelopes, with an emphasis on using the envelopes of two different sounds
@@ -108,7 +105,7 @@ Throughout this Manual, 'SL' is used for the *Sound Loom* GUI and 'SSh' for the 
 
 ## Topic 5: Assembling Sounds with the TEXTURE Set
 
-**PRACTICAL WORK** Worksheet: [Topic5-Worksheet.txt](data/Topic5-Worksheet.txt)
+**PRACTICAL WORK** Worksheet: [Topic5-Worksheet.txt](../data/Topic5-Worksheet.txt)
 
 - [Doc5-1: Listening5-Textures](listening5-textures.md) – a selection of musical textures created in various ways
 - [Doc5-2: How to Create Strong Tones](how-to-create-strong-tones.md) – using the Texture Set to create rich, full tones; a texture of tones; how to go from single tones to a melody melodic sequence
@@ -119,7 +116,6 @@ Throughout this Manual, 'SL' is used for the *Sound Loom* GUI and 'SSh' for the 
 **FURTHER STUDY**
 
 - [Doc5-6: Getting a Grip on Packing and Skiptime](getting-a-grip-on-packing-and-skiptime.md) – a detailed study of how these parameters work, with sound examples complete with musical notation so that you can easily follow what happens
-- [Doc5-7: ALM Durations as Numbers.pdf](data/ALM%20Durations%20as%20Numbers.pdf) – How to create durations and rhythmic sequences via numerical data, with an example fully written out in numbers and musical notation
 - To Do: Complete a short original composition with the CDP software, ca 1 min
 - To Do: Document your work on the above composition:
   - source of inspiration

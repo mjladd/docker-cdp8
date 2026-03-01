@@ -50,7 +50,7 @@ TEXTURE TIMED Mode 5, with note data file *ndftimed.txt*:
 1.5 1 0 0 0	;starts at 1.5 sec. but skiptime determines 'how long'
 ```
 
-If thinking about durations in numbers like this is a problem, please see [*Duration as Number.pdf*](data/Duration as Number.pdf)
+If thinking about durations in numbers is difficult, consider that musical notation represents time values as fractions (quarter note = 1/4, whole note = 1/1, etc.) which can be converted to actual time durations when you specify a tempo.
 
 RESULTS (listen and tap the beats):
 Any overlaps with this program mainly result from a sound that 'rings on' longer than the *skiptime*, which can't go below zero. The duration of the source marimba sound is 1.0 sec. but mostly dies away within half a second.
@@ -142,7 +142,7 @@ TEXTURE POSTORNATE Mode 5, with note data file *ndfp_ornate2.txt*:
 5.50 1 67 84 0.5
 ```
 
-RESULTS: (See [*Skiptime468.pdf*](data/Skiptime468.pdf) to see musical notation for the beginnings of Examples 2, 3, 4 and 5.)
+RESULTS:
 
 1. [marp_ornateskiptime_1.wav](../sounds/marp_ornateskiptime_1.wav)
    *skiptime* = 0.1: The motif comes in again at time 2 seconds as defined by the nodal substructure. However, the timegap being only 0.1 seconds, the motif for the first node then begins again a 10th of a second later. Because the duration of a semiquaver at crotchet = 60 is 0.25 seconds, the effect is a double-stroke on each pitch.

@@ -28,7 +28,7 @@ Durations and rhythms need to be expressed in text form in the CDP system. While
 
 It is generally easier to enter durations with these numbers based on multiples and subdivisions of 1 and then alter the actual speed with a *tempo* parameter when available. In the Texture Set, the tempo parameter is called *mult* because it applies a multiplier. Studying the above list will help to think durations as numbers. The numbers can then be used for durations in supplementary files for CDP, such as *packing*, *duration* and *note data files*.
 
-The process of turning a list of durations into a list of ascending times is complicated by the fact that the times need to start at zero. To illustrate this, I have prepared [Durations as Numbers.pdf](data/ALM Durations as Numbers.pdf). For example, the first bar of the notated example begins with two minims. At crotchet = 60, this will be 2 for the first minim and 2 for the second minim. As accumulating times, this becomes:
+The process of turning a list of durations into a list of ascending times is complicated by the fact that the times need to start at zero. For example, if the first bar of a notated example begins with two minims at crotchet = 60, this will be 2 for the first minim and 2 for the second minim. As accumulating times, this becomes:
 
 ```
 time duration
