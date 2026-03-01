@@ -1,0 +1,129 @@
+rem txwsbats.txt - complete text for batch files for Texture 
+rem	Workshop Examples
+
+echo on
+
+rem to do all, print for reference, then edit out carriage returns 
+rem [CR] to run (suggest to a block find & replace with a space) -- 
+rem OR run each one separately
+
+rem TEXTURE SIMPLE EXAMPLES 1-5-9-13: RUN txwssimp.bat
+
+rem texture simple mode inf.. outf ndf.txt outdur pk scatter 
+rem tgrid snd-snd gain-gain dur-dur pch-pch [-a] [-p] [-s] [-w]
+
+rem Example 1
+texture simple 5 marimba txws1test txws1nd.txt 10 0.5 0.15  [CR]
+0  1 1  40 80  0.5 0.7  60 60  -p0.5 -s1
+
+rem Example 5
+texture simple 5 marimba txws5test txws5nd.txt 13 txws5pk.brk 0.06 [CR]
+0  1 1  64 84  0.5 1.0  60 72  -p0.5 -s1
+
+rem Example 9
+texture simple 3 marimba txws9test txws9nd.txt 13 txws5pk.brk 0.06 [CR]
+0 1 1  64 84  0.5 1.0  60 72  -a0.8 -p0.5 -s1
+
+rem Example 13
+texture simple 5 marimba txws13test txws13nd.txt 13 txws13pk.brk 0.06 [CR]
+0 1 1  40 80  0.5 1.0  txws13pl.brk txws13ph.brk  -a0.8 -p0.5 -s1
+
+
+rem TEXTURE TIMED EXAMPLES 2-6-10-14:  RUN txwstimd.bat
+
+rem texture timed mode inf.. outf ndf.txt outdur skiptime 
+rem snd-snd gain-gain dur-dur pch-pich [-a] [-p] [-s] [-w]
+
+rem Example 2
+texture timed 5 marimba txws2test txws2nd.txt 12  1.25  [CR]
+1 1  40 80  0.5 1.0  60 60  -ptxws2ps.brk -s1
+
+rem Example 6
+texture timed 5 marimba txws6test txws2nd.txt 12  1.25  [CR]
+1 1  40 80  0.5 1.0  60 72  -ptxws2ps.brk -s1
+
+rem Example 10
+texture timed 3 marimba txws10test txws10nd.txt 12  1.25  [CR]
+1 1  40 80  0.5 1.0  60 70  -ptxws2ps.brk -s1
+
+rem Example 14
+texture timed 4 marimba txws14test txws14nd.txt 14  0.1  [CR]
+1 1  40 80  0.5 1.0  txws14pl.brk txws14ph.brk  -p0.5 -s1
+
+
+rem TEXTURE MOTIFS EXAMPLES 3-7-11-15:  RUN txwsmotf.bat
+
+rem texture prgname Mode inf.. outf ndf.txt outdur pk scatter 
+rem tgrid snd-snd gain-gain pch-pch  phgrid gpspace gpsprange 
+rem amprise contour  mult-mult [-a] [-p] [-s] [-w]
+
+rem Example 3
+texture motifs 5 marimba txws3test txws3nd.txt 12 2.0 0  0 1 1 [CR]
+40 80  60 60  0 0 1 0 0  0.5 0.5  -p0.5 -s1
+
+rem Example 7
+texture motifs 5 marimba txws7test txws7nd.txt 12 0.25 0  0 1 1 [CR]
+56 84  57 64  0 0 1 0 0  0.5 0.5  -a0.8 -p0.5 -s1
+
+rem Example 11
+texture motifsin 3 marimba txws11test txws11nd.txt 12 0.25 0  0 1 1 [CR]
+60 84  58 75  0 0 1 0 0  0.5 0.5  -a0.8 -p0.5 -s1
+
+rem Example 15
+texture motifsin 4 marimba txws15test txws15nd.txt 12 txws15pk.brk 0  [CR]
+0 1 1  72 85  60 65  0 0 1 0 0  0.8 1.2  -a0.8 -p0.5 -s1
+
+
+rem TEXTURE TMOTIFS EXAMPLES 4-8-12-16:  txwstmot.bat
+
+rem texture tmotifs Mode inf.. outf ndf.txt outdur skiptime 
+rem snd-snd gain-gain pch-pch  phgrid gpspace gpsprange 
+rem amprise contour  mult-mult [-a] [-p] [-s] [-w]
+
+rem Example 4
+texture tmotifs 5 marimba txws4test txws4nd.txt 13  1.0  1 1 [CR]
+64 84  60 60  0 0 1 0 0  1 1  -p0.5 -s1
+
+rem Example 8
+texture tmotifs 5 gtrcdt txws8test txws8nd.txt 12  1.0  1 1 [CR]
+60 84  55 72  0 0 1 0 0  0.5 0.5  -a0.8 -p0.5 -s1
+
+rem Example 12
+texture tmotifsin 3 gtrcdt marimba txws12test txws12nd.txt 12  0.5 [CR]
+1 1  64 84  55 79  0 0 1 0 0  0.7 0.7  -a0.7 -p0.5 -s1
+
+rem Example 16
+texture tmotifsin 4 gtrcdt marimba txws16test txws16nd.txt 20  0.33 [CR]
+1 1  64 84  55 79  0 0 1 0 0  0.7 0.7 -a0.7  -p0.5 -s1
+
+
+rem TEXTURE DECOR & ORNATE EXAMPLES 17-18-19-20:  txws1720.bat
+
+rem POSTDECOR
+rem texture prgname Mode inf.. outf ndf.txt outdur skiptime 
+rem snd-snd gain-gain dur-dur phgrid gpspace gpsprange amprise contour 
+rem gppack-gppack gprange-gprange centring [-a] [-p] [-s] [-w]
+
+rem Example 17
+texture postdecor 4 marimba txws17test txws17nd.txt 25  1.5  1 1 [CR]
+54 84  0.5 1.0  0 4 1 0 0  3 8 30 80 1 4  1  -a0.9 -p0.5 -s1
+
+
+rem POSTORNATE
+rem texture prgname Mode inf.. outf ndf.txt outdur skiptime 
+rem tgrid snd-snd gain-gain dur-dur  phgrid gpspace gpsprange 
+rem amprise contour  mult-mult  [-a] [-p] [-s] [-w]
+
+rem Example 18
+texture postornate 5 gtrcdt marimba txws18test txws18nd.txt 30  4.98 [CR]
+1 2  66 80  0.3 2.1  0 1 1 25 5  0.83 0.83  -a0.9 -p0.5 -s1
+
+rem Example 19
+texture postornate 3 gtrcdt marimba txws19test txws19nd.txt 30  4.98 [CR]
+1 2  66 80  0.3 2.1  0 1 1 25 5  0.83 0.83  -a0.9 -p0.5 -s1
+
+rem Example 20
+texture postornate 3 marimba txws20test txws20nd.txt 24  2.0  1 1 [CR]
+76 80  0.3 1.0  0 1 1 25 5  txws20ml.brk txws20mh.brk  -a0.9 -p0.5 -s1
+
+echo off

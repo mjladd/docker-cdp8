@@ -1,0 +1,22 @@
+Topic2-Worksheet.txt  [TOPIC 2 Worksheet]
+
+1. Starting Point: Listening 2 - Surfaces
+The procedures illistrated involve breaking up the sound in various ways such that the normal flow of the sound is disturbed.  The examples include the use of wavecycle distortion, looping, chunk-scrambling and granulation.  These transformations create a disjointed sonic flow which can be thought of as roughening the audible surface.
+
+This Worksheet will suggest just a few things to try among the several described in the main text just to get hands-on with some  fairly straightforward processes.
+
+2. A simple place to start is simply to reverse a sound.  This is done with MODIFY RADICAL Mode 1.  Try it, using any sound.  The result can often distance it to a surprising degree from its source.
+
+3. Another useful process is producing large-space echo effects with STADIUM ECHO.  Try applying the parameters shown in the text to capm.wav:  0.7 for rolloff and 10 for count.  All parameters are in fact optional, and just infile outfile produces a similar result.
+
+4. It is useful to observe how wavecycle distortion affects a sound.  Wavecyles are the sections of sound that occur between zero crossings, and unless the sound is a sine wave, these zero crossings are irregularly placed.  Playing with them therefore will distort the original sound.  The DISTORT programs are easy to use as they don't have many parameters.  DISTORT MULTIPLY for example has one main parameter (the multiplier) and an optional 'smoothing' parameter.  Try DISTORT MULTIPLY infile outfile 2 on a any sound.
+
+5. The EXTEND Group has lots of ways to segment a sound.  EXTEND LOOP is fun to play with to create pulsations which will slowly change as the loop moves through the input soundfile.  EXTEND SCRAMBLE cuts out chunks of varying lengths) which can joined end-to-end in the output soundfile or rearranged.  Try EXTEND SCRAMBLE 2 infile outfile 0.25 (seglen) 3 (scatter) 24 (outlen - e.g. 3 times the length of your chosen outfile;  I tried it with capm.wav which is 8.185 sec).  Bear in mind the chaining of processes.  You can loop a sound, then scramble the result, then distort that result, etc. to create a sound with an increasing amount of grunge.
+
+6. Filtering includes many different processes.  A couple of my favourites are FILTER BANK.  Mode 3 is for a subharmonic filter.  Try applying Q 50, gain 5, low frequency 120, high frequency 600 to capm.wav.  A way to colour a sound harmonically is to apply 'equal interval' filtering.  FILTER BANK Mode 4 will do this.  Apply the following parameters to capm.wav:  75 (Q) 4 (gain) 100 (low frequency) 600 (high frequency) 3 (semitone interval).  Then do it again using an interval of 6 semitones and note how the sound is re-coloured with the augmented fourth.
+
+7. One more in this group:  HILITE TRACE.  This is a spectral program that removes all but the specified number of (loudest) partials.  See what happens to capm.wav (analysed to capm.ana) when only 2 partials are retained.  Try other numbers of (loudest) partials;  try with a different input sound.
+
+8. Moving on to time-varying effects, an easily audible time-varying process is panning.  The Learning Manual illustrates swinging from full left (-1) to right (1).  Pick an input sound and design a much more active pan motion, changing left and right target points in the horizontal field and varying the time allowed.  A short time will result in a rapid swing, and a long time will allow it to drift across.
+
+If you are using the command line you need to create the panfile with a (plain) text editor, such as Wordpad (PC) or TextEdit (MAC).  The important thing is that the output file is plain text, not a file with hidden control characters in it.  If using a GUI, you could import this file into the GUI, or write it using the facilities provided in the GUI.  Sometimes it is useful to sketch out a graph of times and values.

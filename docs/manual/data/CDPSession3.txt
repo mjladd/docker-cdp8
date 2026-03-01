@@ -1,0 +1,202 @@
+CDPSession3.txt - Worksheet for CDP Sound Design 2020 Session 3
+
+(was) txmotifstrials.txt - texture motifs trials: A RHYTHMIC PLAYGROUND
+  adjust outfile, ndf file, packing and multlo-hi to explore
+
+Source sounds to CHOSEN FILES: spr1.wav & ballcg.wav for ndfs A through 4
+  Add marimba.wav & horn.wav for ndfmotifs5.txt
+NDF files to Workspace: ndfmotifsA.txt, ..B.txt, ..1.txt, ..2.txt, ..3.txt, ..4.txt ..5.txt & ..6.txt
+
+NB: The command line usage and Reference Documentation refers to 'packing' as the "(average) time between motif onsets" -- i.e., the time gap between the start times of iterations of the motif.
+
+On the Sound Loom parameters page this is called "skiptime between motif onsets".  This (confusingly) is not the same as 'skiptime' in other texture programs, which is the time between time-templates, beginning on the last note-event of the template.
+
+'Packing' is the correct term as it deals with note event onset times.
+
+These batch files are shown mainly so that there is a reference to the 
+list of parameters in TEXTURE MOTIFS.  They also show how CDP can be run from the command line.
+
+*****
+BATCH FILES EXAMPLES - .sh for Mac, .bat for PC
+*****
+#!/bin/bash
+
+echo txmotifs.sh  - TEXTURE MOTIFS trials MAC - Run from Terminal
+
+echo txmotifstrials.txt - texture motifs trials: A RHYTHMIC PLAYGROUND
+echo   adjust outfile, ndf file, packing and multlo-hi to explore
+
+echo txmotifs.sh - TEXTURE MOTIFS trials
+
+del motifsA.wav
+
+echo texture motifs mode infile(s) outfile ndffile outdur packing 
+echo   scatter  tgrid (0)  sndfirst sndlast  mingain maxgain 
+echo   minpitch maxpitch  phgrid (0) grouppspace (1) grouprange (0) 
+echo   amprise (0) contour (0)  multlo multhi 
+echo   attenuation position spread -w (use whole sound)
+
+echo Replace marimba.wav with horndt.wav for a very different effect.
+echo   Probably reduce attenuation to 0.7.
+
+texture motifs 5 ballcg.wav marimba.wav motifsA.wav ndfmotifsA.txt 12 1 0 0 1 2 70 110 60 60 0 1 0 0 0 1 1 -a0.9 -p0.5 -s1 -w
+
+pvplay -i motifsA.wav
+
+*****
+
+rem txmotifs.bat - TEXTURE MOTIFS trials PC  - Run from Cmd.exe
+
+rem txmotifstrials.txt - texture motifs trials: A RHYTHMIC PLAYGROUND
+rem   adjust outfile, ndf file, packing and multlo-hi to explore
+
+echo on
+del motifsA.wav
+
+rem texture motifs mode infile(s) outfile ndffile outdur packing 
+rem   scatter  tgrid (0)  sndfirst sndlast  mingain maxgain 
+rem   minpitch maxpitch  phgrid (0) grouppspace (1) grouprange (0) 
+rem   amprise (0) contour (0)  multlo multhi 
+rem   attenuation position spread -w (use whole sound)
+
+rem Replace marimba.wav with horndt.wav for a very different effect. 
+rem   Probably reduce attenuation to 0.7.
+
+texture motifs 5 ballcg.wav marimba.wav motifsA.wav ndfmotifsA.txt 12 1 0 0 1 2 70 110 60 60 0 1 0 0 0 1 1 -a0.9 -p0.5 -s1 -w
+
+pvplay -i motifsA.wav
+echo off
+
+**************
+
+ndfmotifsA.txt    packing 1 => even quavers, either ball or marimba
+60 60             packing 2 => motifs separated by 1 sec silence
+#2                packing 0.5 => overlaps at the half-beat
+0.0 1 60 100 0.8  packing 1 and multilo-hi 0.25 => fast motifs with 
+0.5 1 62  70 0.8    silence inbetween
+
+ndfmotifsB.txt
+60 60             packing 1 => even triplets, either ball or marimba
+#3                packing 0.33 => two-note chords with even triplets, 
+0.00 1 60 100 0.8    mixtures of sounds, slowly loses sync
+0.34 1 58 85 0.8
+0.67 1 55 70 0.8
+
+ndfmotifs1.txt
+60 60             packing 1 => even beats, either quavers or triplets
+#2                packing 1, multlo-hi 0.5 => faster motifs with
+0.0 1 60 100 0.8     pauses between, each motif either ball or mar
+0.5 1 62  70 0.8  packing 0.5, multlo-hi 1 => mixtures of quavers 
+#3                   and triplets overlapped by 0.5
+0.00 1 60 100 0.8
+0.34 1 58  85 0.8
+0.67 1 55  70 0.8
+
+ndfmotifs2.txt
+60 60             packing 1 => other motifs mix with the longer 1st
+#6                packing 1, multlo-hi 0.5 => faster motifs with 
+0.0 1 55 100 0.8     pauses between, each motif either ball or mar 
+0.5 1 57  70 0.8  packing 0.5 => nice overlaps
+1.0 1 57 100 0.8  packing 0.25 => becomes a bit 'unkempt'
+1.5 1 60  70 0.8
+2.0 1 60 100 0.8
+2.5 1 62  70 0.8
+#3
+0.0  1 60 100 0.8
+0.34 1 58 85 0.8
+0.67 1 55 70 0.8
+#2
+0.0 1 55 100 0.8
+1.0 1 62 100 0.8
+
+ndfmotifs3.txt
+60 60             packing 1, multlo-hi 0.5 => fast motifs with 
+#6                   pauses between
+0.0 1 55 100 0.8  packing 2, multlo-hi 0.25 => very fast motifs 
+0.2 1 57  70 0.8     separated by silence
+0.4 1 57 100 0.8  packing 0.1, multlo-hi 0.5 => nicely wild
+0.6 1 60  70 0.8
+0.8 1 60 100 0.8
+0.9 1 62  70 0.8
+#3
+0.0  1 60 100 0.8
+0.34 1 58  85 0.8
+0.67 1 55  70 0.8
+#2
+0.0 1 55 100 0.8
+1.0 1 62 100 0.8
+
+ndfmotifs4.txt
+60 60             pitchlo-hi both 60, packing 0.5, multlo-hi 0.5
+#4                   => repeated-note mixed rhythmic figures all
+0.00 1 60 100 0.8       on the same pitch
+0.25 1 60 100 0.8 pitchlo-hi 57 64, packing 0.5, multlo-hi 0.5
+0.50 1 60 100 0.8    => repeated-note motifs starting on pitches 
+0.75 1 60 100 0.8       randomly chosen from the 57 to 64 range
+#3
+0.00 1 60 100 0.8
+0.34 1 60 100 0.8
+0.67 1 60 100 0.8
+
+ndfmotifs5.txt (a more elaborate example, outdur: 20 seconds)
+60 60 60         3 input soundfiles: snd1st 1 - sndlast 3
+#11              11 note events
+0.0 1 60 110 0.8 pitchlo-hi both 60, packing 1, multlo-hi 1, atten 0.8
+0.5 1 62  80 0.8
+1.0 1 63  90 0.8 note harmonies when note 60 starts after 1 sec when 
+1.5 1 65 100 0.8   note 63 is playing:  60 & 63 is a minor 3rd
+2.0 1 67 110 0.8
+2.5 1 65  90 0.8 change multlo to 0.5 (multhi is still 1.0):
+3.0 1 67  90 1.0   rhythms start to mix & muddle (variety of tempi)
+3.75 1 65 85 0.8
+4.0 1 63  80 0.8 scatter 0.05 makes it more 'human'
+4.25 1 62 75 0.8 
+4.5 1 60  70 0.8 multlo-hi both 0.5 - starts to liven up
+
+ndfmotifs6.txt (applying a harmonic set + a flute sound)
+60 60 60          (stoneflg.wav spr1.wav marimba.wav)
+#2               motif iterations will all start on 60 or 63
+0 1 60 0 0       (but will then play out with all their pitches)
+0 1 63 0 0         NB: pitchlo 60 & pitchhi63 to accommodate the HS)
+#11
+0.0 1 60 110 0.8  outdur 20, packing 1, vel 80-100, pitch 60-63
+0.5 1 62  80 0.8
+1.0 1 63  90 0.8
+1.5 1 65 100 0.8
+2.0 1 67 110 0.8
+2.5 1 65  90 0.8
+3.0 1 67  90 1.0
+3.75 1 65 85 0.8 multlo-hi both 1
+4.0 1 63  80 0.8
+4.25 1 62 75 0.8 atten 0.9
+4.5 1 60  70 0.8 use whole sound ticked
+
+
+NOTES (Comments on pitch relate to Mode 5 'neutral' only):
+1) The packing duration starts at the beginning of a motif.  Overlaps can be achieved by making motifs different lengths as well as setting the packing to be less than the duration of a motif.
+
+2) Note how 'even' durations (e.g. packing for a triplet figure begins at 0.34 or 0.33) result in chordal effects
+
+3) Packing longer than a motif will produce pauses, which will be 
+exaggerated if multlo-hi is a faster tempo.  (NB: mult is a multiplier: mult > 1 slows the tempo because it makes the duration longer, mult < 1 increases the tempo because it shortens the duration).
+
+4) If more than one input sound, the sound is chosen at random for each motif iteration, but plays all of the notes in that motif.  But what is playing which motif is obscured by the fact that the sounds keep changing.
+
+5) Each motif is started on a pitch taken at random from the pitch range and, in Mode 5 ('neutral') then plays its pitches accurately as defined in the motif, but beginning on (transposed to) that start pitch.
+
+6) The pitch range on command line vs. pitch range of motifs.  There are various ways to play with this:
+  a) Pitchlo-hi on the command line is the same pitch:  all notifs 
+     will begin on this pitch, but play their defined motif pitches 
+     from that starting point
+  b) If pitchlo-hi on the command line covers a range of pitches, 
+     each motif will begin on one of these pitches chosen randomly, but then play its motif accurately from that starting point.
+  c) As in ndfmotif4.txt, all motifs are on the same pitch, thus 
+     producing repeated notes.  These can be repetitions all on the 
+     same note (case 'a') or repetitions on various pitch starting points (case 'b').
+
+7) Note that multilo-hi controls tempo: 1 is same as ndf), 2 is twice as 
+     slow, and 0.5 is twice as fast -- it's a multiplier of duration
+     
+8) If a harmonic field or set is used (TEXTURE MOTIFSIN), pitchlo-hi on the command line needs to be set to the pitch range of the field or set to accommodate all the possible starting points defined by that field or set -- otherwise they will omitted.  The pitches of each motif are forced onto the pitches of the defined field or set, causing serendipitous pitch repetitions or warpings of the motif.
+
+9) TEXTURE MOTIFS is more flexible than TEXTURE TIMED:  it has fully  defined motifs which can be used in various ways as described above, it has the 'packing' parameter which allows much more overlapping than the 'skiptime' parameter, and it has the multlo-hi tempo control.  TEXTURE POSTORNATE uses skiptime, but it has a nodal substructure mechanism ('line') that can be used to control overlaps, even to the point of creating canonic melodic lines.

@@ -1,0 +1,91 @@
+Topic5-Worksheet.txt    [TOPIC 5 Worksheet]
+
+Starting point:  Listening 5 - Textures
+
+Topic 5 - Worksheet for How to assemble sounds with the TEXTURE set of Programs.  
+
+In Further Study for Topic 4 we looked over the key components of the Texture Set.  The aim was to start to get a feel for what is possible with these programs.  We now delve deeper into the operation of the Texture Set programs.  Further Study for Topic 5 includes an important paper on Packing and Skiptime, and another illustrating how to work with numbers as durations.  This Worksheet references using the SoundLoom GUI.  In the Soundshaper GUI, read ' load' or 'open' instead of 'grab', and use the drop-down menus to open the parameter page.
+ 
+1. The first excercise is to build a strong, clear and rich tone using TEXTURE SIMPLE.  The input sound is bellaebtob.wav, make ndf67.txt (just the number 67 in it), outdur about 12 sec., packing 0.1, scatter 0.05, tgrid 0, sounds 1 and 1, mingain maxgain e.g. 80 and 90, mindur and maxdur 1 and 2 (these values are ignored because 'use whole sound' will be ticked), minpitch maxpitch both 67, attentuation 0.9 or less because there is a lot of overlap, and tick 'use whole sound'.  The output is a fuller, richer tone with just a little surface fluctuation.  If you run it again changing just the pitch values to 66.9 and 67.1, there will be a slight beat pattern as well.
+ 
+2. Having created the strong tone bellaebtob.wav, it can now be used to create a melody.  GRAB the file artoffugutetunetx.txt and use on Workspace (where it can stay) and the soundfile bellaebtob.wav.  Then put bellaebtob.wav into CHOSEN FILES and use the PROCESS:  Sound Loom RHYTHM->sequencer, Soundshaper EDIT/MIX->Sequence-sampler.  Load artoffuguetunetx.txt and RUN.
+ 
+3. The same melody can be created a different way, by using TEXTURE SIMPLE Mode 5 ('neutral').  The note data file to have on the Workspace is ndf62.txt (or quickly make it -- just the number 62 in it), outdur 18, packing 2, scatter 0.05, tgrid 0, sounds 1 and 1, mingain maxgain 80 and 90, mindur maxdur 1 and 2 (will be ignored because 'use whole sound' will be ticked), minpitch and maxpitch are both artoffuguetunetx.txt, attenuation 0.9 and tick 'use whole sound'.  There is more opportunity here to create legato effects by making the packing parameter slightly less than the duration of the notes.
+ 
+4. Something else to explore is creating harmonic textures with the Texture Set.  Again use bellaebtob.wav as the input.  The first trial uses TEXTURE SIMPLE Mode 3 ('Harmonic Set') with the note data file ndf62hs.txt (the pitches are D-F-A-B-D', a D-minor chord with added 6th):
+
+62
+#5
+0 1 62 0 0
+0 1 65 0 0
+0 1 69 0 0
+0 1 71 0 0
+0 1 74 0 0
+
+
+Outdur is 30 seconds, packing is 1.5, scatter maybe 0.1, tgrid 0, sounds 1 and 1, mingain maxgain 70 80 or so, mindur maxdur 1 and 2 (will be ignored), minpitch 62 and maxpitch 74 to accommodate all the pitches in the harmonic set, attenuation 0.85, tick 'use whole sound'.  In the resulting sound, the pitches specified in the harmonic set are chosen at random and played at 1.5 +/- scatter time intervals.  The packing parameter is the salient parameter to contol the density of the overlaps -- or create gaps if it is longer than the sound source.  A small value for packing, such as 0.1, will create many closely packed iterations of the input soundfile, creating a vibrant chordal entity.
+ 
+5. A sound can be tuned in other ways.  Besides Filtering, the  spectral program PITCH TUNE is effective in tuning a sound to a specified harmony.  Its companion, TUNEVARY, can do this in a time-varying manner, a most useful tool.  Note that the input file, in this case springc1g.wav, has to be converted to an analysis file because spectral processes require analysis files as inputs.
+
+The (MIDI) pitches to which to tune the sound are given in the text file tunecmin.tun -- NB use 'tunings as midi'.  Load this and RUN.  A major chord can be made simply by changing the E-flats to E-naturals (51 to 52, 63 to 64), possibly saving this as a separate file tunecmaj.tun.  This process works best with 'noisy' inputs so there are plenty of frequencies to make use of, snapping them to the specified pitches.
+ 
+6. Moving on to rhythmic effects, TEXTURE TIMED Mode 5 makes use of a rhythm template, repeating the input sound at each time-point. Try this with ballc.wav as the source and rhythtempl.txt as the note data file.
+
+60
+#11
+0.0	1  0  0  0   ;quintuplet
+0.2	1  0  0  0
+0.4	1  0  0  0
+0.6	1  0  0  0
+0.8	1  0  0  0
+1.0	1  0  0  0   ;1 1/2 beats
+2.5	1  0  0  0
+3.0	1  0  0  0   ;quaver triplet
+3.34	1  0  0  0
+3.67	1  0  0  0
+4.0	1  0  0  0   ;start of last rhythm event
+
+There is no packing parameter because the timings are set in the note data file.  But there is a skiptime ('pause between line repeats') to specify when the rhythm should start again.  Skiptime is the time between the start of the last rhythm event in the rhythm template and when the pattern should start again.  See the Further Study document 'Getting a Grip on Packing and Skiptime.html'.  In this trial, make outdur about 15 sec., minpitch and maxpitch 60, attenuation 0.8, and tick 'use whole sound'.  Use skiptime 1 and 2 and see if your output soundfiles match those of the examples.
+ 
+7. More complex rhythmic results can be achieved with TEXTURE TMOTIFS/IN on a Harmonic Set (Mode 3).  See if you can do this one on your own, using tmotifsinhf.txt 
+
+60
+#5                      (5 start times for the motif)
+0.0 1 55  0 0  
+2.0 1 55  0 0
+3.0 1 55  0 0 
+5.0 1 55  0 0 
+6.0 1 55  0 0 
+#6                      (the harmonic field)
+0 1 55 0 0
+0 1 58 0 0
+0 1 62 0 0
+0 1 66 0 0
+0 1 67 0 0
+0 1 70 0 0
+#11                     (a 'fully defined' motif)
+0.0   1  55  96  0.5    (duration > next start time for legato)
+0.2   1  57  80  0.5
+0.4   1  58  82  0.5
+0.6   1  57  84  0.5
+0.8   1  55  86  0.5
+1.0   1  62  90  0.5
+2.5   1  63  76  0.5
+3.0   1  66  80  0.5
+3.34  1  67  78  0.5
+3.67  1  66  76  0.5
+4.0   1  70  82  0.5
+
+as the note data file and ballc.wav as the source sound.  Try it again with bellaebtob.wav as the source sound -- tick 'use whole sound' with both sources.  What can you alter to change the results?
+ 
+8. Now let's make a straightforward multi-event texture with TEXTURE SIMPLE Mode 5.  The examples in the main text are more complex, but a simpler one provides a good place to start.  The packing parameter for event density is crucial and the pitch range parameters provide many shaping oportunities.  Shaping a pitch range in a time-varying way can create sonic analogues of visual shapes.
+
+All the parameter values in order are:
+  
+texture simple mode infile outfile outdur, packing, scatter, tgrid, 1stsound lastsound, mingain maxgain, mindur maxdur, minpitch maxpitch, attentuation, position, spread and -w (which means 'use whole sound').
+
+If using batch files, it can be useful to put a parameter list inside the batch file as a handy reminder.   Explore the different results that are produced by a narrow pitch range, e.g. 7 semitones and by a much wider pitch range, such as the two octaves from MPV 48 to MPV 72.
+ 
+We have been using the whole sound in these examples (-w ticked).  When ticked, the mindur maxdur parameters are ignored.  When not ticked, they are active.  This means that each note event will be a duration randomly selected between the given low and high duration limits.  Study what happens when the duration range is less than or greater than the duration of the input sound.
+ 
+This is just a taster of what can be done with the TEXTURE Set.  For more ideas, see Tutorial Workshop 2 on Texture.

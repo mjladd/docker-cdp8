@@ -1,0 +1,8 @@
+; NB:  have to have the same number of filters in each line
+; Transitions between chords rapid, but not instant
+
+0.00  36 -3dB 43 -3dB 48 -3dB 52 -3dB 55 -3dB 60 -3dB 67 -3dB 72 -3dB 76 -3dB
+2.50 36 -3dB 43 -3dB 48 -3dB 52 -3dB 55 -3dB 60 -3dB 67 -3dB 72 -3dB 76 -3dB
+3.00  54 -3dB 54 -3dB 54 -3dB 61 -3dB 61 -3dB 66 -3dB 66 -3dB  70 -3dB 70 -3dB 
+4.50  54 -3dB 54 -3dB 54 -3dB 61 -3dB 61 -3dB 66 -3dB 66 -3dB  70 -3dB 70 -3dB
+5.00  40 -3dB 43 -3dB 47 -3dB 52 -3dB 55 -3dB 59 -3dB 67 -3dB 71 -3dB 76 -3dB

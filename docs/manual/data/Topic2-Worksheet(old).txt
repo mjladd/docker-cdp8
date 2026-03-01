@@ -1,0 +1,40 @@
+Topic2-Worksheet(old).txt  [TOPIC 2 Worksheet]
+
+1. Starting Point: Listening 2
+....
+
+MIXING NOW BELONGS TO TOPIC 3 (what is in the respective documents may be sufficient ...
+
+Here is an outline of our 2nd session on Topic 2 - 'How to assemble sounds in CDP'.  If you actually do these exercises, you should be in good shape for Topics 3 & 4.
+
+1) Mixing practical exercise to create mixfile described on p.7 of the Course Notes.  All the sounds used should be in the CourseNotes2019 folder.  (Note the Concepts and Planning obervations on p.6)
+ Sound Loom:
+ - place all 4 sounds to be mixed into CHOSEN FILES (in any order)
+ - PROCESS: MIX -> create mixfile -> superimposed.  Run & Save.
+ - Remove the soundsfiles from CHOSEN FILES
+ - Put the mixfile just made into CHOSEN FILES
+ - PROCESS: MIX -> mix from mixfile
+ - click on 'Edit Mix' and put in the start times, levels and pans as in the Course Notes
+ - Click on 'Edited Version'
+ - Run the mix, play and save the soundfile
+ 
+ Soundshaper:
+ - Edit/Mix -> Mixfile -> Create/Edit Mix (off-grid)
+ - Add a soundfile - repeat for the other 3 sounds
+ - Highlight a soundfile and click on 'Add to List' (goes to central panel)
+ - Highlight/select the soundfile in the central panel and then edit the mix parameters as in the Course Notes either with the grey slider boxes or click on each parameter in turn.
+ - Close and repeat to edit the mix parameters for the other 3 sounds.
+ - Go to 'File' (top left corner) and select 'Save Mixfile As'
+ - Click on MIX (top right corner)
+ - Play and save the soundfile
+ 
+ Have a look at and play the the mix examples on pp 8 & 9
+ Note the option quickly to test out a mix with 'Merge two soundfiles' (p.9)
+   Try this out by putting two soundfiles (with the same number of channels, I think) into CHOSEN FILES etc.  To do this in Soundshaper, Laurence, you need to read the section 'About two Inputs' first.
+
+
+REFERENCE TO THIS DOESN'T BELONG HERE AND MAY BE REDUNDANT
+ 2) We briefly looked over the key components of the Texture Set to start to get a feel for what is possible with these programs.  Later on the long section on Packing and Skiptime start to illustrate these possibilities.  It is worth studying and listening to the examples (try counting the beats musically, starting with 1 rather than 0), but we did not do this during this session.  I will probably begin the Topic 3 session with this material.
+
+
+

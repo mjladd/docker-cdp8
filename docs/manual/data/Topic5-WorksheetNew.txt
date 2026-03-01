@@ -1,0 +1,29 @@
+Topic5-WorksheetNew.txt
+
+THE FOLLOWING BELONGS TO TOPIC 5
+ 3) Practical exercise to enhance a tone (p. 10) using TEXTURE SIMPLE.  The input sound is bellaebtob.wav, make ndf67.txt (just the number 67 in it), outdur about 12 sec., packing 0.1, scatter 0.05, tgrid 0, sounds 1 and 1, mingain maxgain e.g. 80 and 90, mindur and maxdur 1 and 2 (these values are ignored because 'use whole sound' will be ticked), minpitch maxpitch both 67, attentuation 0.9 or less because there is a lot of overlap, and tick 'use whole sound'.  The output is a fuller, richer tone with just a little surface fluctuation.  If you run it again changing just the pitch values to 66.9 and 67.1, there will be a slight beat pattern as well.
+ 
+ 4) Practical exercise to create a melody with bellaebtob.wav (p.11).  GRAB the file goldbergtx.txt and use on Workspace (where it can stay) and the soundfile bellaebtob.wav.  Then put bellaebtob.wav into CHOSEN FILES and PROCESS:  Sound Loom RHYTHM->sequencer, Soundshaper EDIT/MIX->Sequence-sampler.  Load goldberg.txt and RUN.
+ 
+ 5) Practical exercise to do the same thing with TEXTURE SIMPLE Mode 5 ('neutral') (pp. 10-11).  The note data file to have on the Workspace is ndf62.txt (or quickly make it -- just the number 62 in it), outdur 18, packing 2, scatter 0.05, tgrid 0, sounds 1 and 1, mingain maxgain 80 and 90, mindur maxdur 1 and 2 (will be ignored), minpitch and maxpitch both goldbergtx.txt, attenuation 0.9 and tick 'use whole sound'.
+ 
+ 6a) Practical exercise to tune a sound (pp. 11-12), again with bellaebtob.wav as the input.  The first of these uses TEXTURE SIMPLE Mode 3 ('Harmonic Set') using the note data file ndf62hs.txt -- I may have omitted this from the Course Notes folder, so I am attaching it now.  Outdur is 30 seconds, packing is 1.5, scatter maybe 0.1, tgrid 0, sounds 1 and 1, mingain maxgain 70 80 or so, mindur maxdur 1 and 2 (will be ignored), minpitch 62 and maxpitch 74 to accommodate all the pitches in the harmonic set, attenuation 0.85, tick 'use whole sound'.  The pitches in the harmonic set are chosen at random and played at 1.5 +/- scatter time intervals.
+ 
+ 6b) Practical exercise to tune a sound in the spectral domain using the SL and SSh processes shown at the bottom of p.11.  Note that the input file springc1g.wav has to be convered to an analysis file because the spectral processes require analysis files as inputs.  The (MIDI) pitches to which to tune the sound are given in the text file tunecmin.tun -- NB use 'tunings as midi'.  Load this and RUN.  Rachel and I re-entered the Process and tried to edit this file to change the E-flats to E-naturals (51 to 52. 63 to 64) but we found that the 'Edited Version' button was no longer available and we had to abandon this.  (I just tried this on my PC and it worked ... will investigate).
+ 
+ 7) Practical exercise with TEXTURE TIMED Mode 5 (p.13).  Use ballc.wav as the source and rhythtempl.txt as the note data file.  There is no packing parameter because the timings are in the note data file.  But there is a skiptime ('pause between line repeats') to specify when the rhythm should start again.  Note the text on page 13 about this and try both 1 second and 2 seconds and see if you can duplicate the results.  Outdur about 15, minpitch and maxpitch 60, attenuation 0.8, tick 'use whole sound'.  See if your output soundfiles match those of the examples.
+ 
+ 8) Practical exercise for more complex rhythmic results with TEXTURE TMOTIFS/IN on a Harmonic Set (Mode 3) - p.14.  See if you can do this one on your own, using tmotifsinhf.txt as the note data file and ballc.wav as the source sound.  Try it again with bellaebtob.wav as the source sound -- tick 'use whole sound' with both sources.
+ 
+ 9) Finally, practical exercise to make a straightforward multi-event texture with TEXTURE SIMPLE Mode 5.  This illustrates the packing parameter.  All the parameter values are given on p.5, in order:  outdur, packing, scatter, tgrid, 1stsound lastsound, mingain maxgain, mindur maxdur, minpitch maxpitch, attentuation, position, spread and -w means 'use whole sound'.  Note the 2 octave pitch range (48 to 72) and what this does to the output.
+ 
+ We ended with a listen to clip2.wav (p.20).  Note '2. durations specified' which is what happens when 'use whole sound' is NOT ticked:  the mindur maxdur parameters are NOT ignored.
+ 
+ 
+ I hope this helps -- see you next time.  Do try to look after your health so that you don't miss too much.  After you leave University you will find that it's not so easy to find the time to do these things.
+ 
+ If you have a good go at the above and want to check over anything, please send me an email and we can arrange some time together.
+ 
+ All the best,
+ Archer
+ 

@@ -1,0 +1,6 @@
+; NB:  have to have the same number of filters in each line
+0.00  60 -3dB 67 -3dB 72 -3dB 76 -3dB
+2.75  60 -3dB 67 -3dB 72 -3dB 76 -3dB
+3.00  61 -3dB 66 -3dB 66 -3dB 70 -3dB 
+4.75  61 -3dB 66 -3dB 66 -3dB 70 -3dB
+5.00  64 -3dB 68 -3dB 71 -3dB 76 -3dB

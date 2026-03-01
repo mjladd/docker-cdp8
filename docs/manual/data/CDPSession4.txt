@@ -1,0 +1,103 @@
+CDPSession4.txt - Worksheet for CDP Sound Design 2020 Session 4 04 Dec 2019
+
+General topic:  'Mingling' Sounds
+
+Source sounds needed:  spr1.wav, count.wav, marimba.wav, stoneflg.wav
+
+
+			A - In the TIME DOMAIN
+
+1) PREPARE a sound with TIMESTRETCH and LOOP (Save all these files)
+1a)  PVOC ANAL 1 spr1.wav spr1.ana
+1b)  STRETCH TIME spr1.ana => spr1x3.ana 3
+1c)  PVOC SYNTH spr1x3.ana spr1x3.wav
+1d)  EXTEND LOOP spr1x3.wav (looplen: 60ms, advance_step: 30ms, splice: 25ms )
+     => spr1x3loop.wav (Note the attack portion;  it's too long, so:)
+1e)  REVERSE spr1x3loop.wav spr1x3loopR.wav (-> loud part at end)
+1f)  ENVEL DOVETAIL spr1x3loopR.wav spr1x3loopRdt.wav 0 0.5 0 0 (tidy end)
+
+2) MINGLING WITH AMPLITUDE ENVELOPE
+2a) CROSSOVER:  Crossfade from 1st soundfile to 2nd
+     SUBMIX CROSSFADE 1 count.wav spr1x3loopRdt.wav counttospr.wav 
+     stagger 0, crossfade start 0, crossfade end 16.13 (end of file 2)
+
+2b) TRANSFER: count.wav's envelope onto spr1x3loopRdt.wav 
+     ENVEL REPLACE 1 spr1x3loopRdt.wav count.wav spr1replacecnt.wav 10
+     PVOC ANAL 1 spr1replacecnt.wav spr1replacecnt.ana (Save to use later)
+     
+
+			B - In the SPECTRAL DOMAIN
+			
+1) PREPARE analysis files: start with spr1.wav and count.wav (Save)
+     PVOC ANAL 1 spr1x3loopRdt.wav => spr1x3loopRdt.ana 
+     PVOC ANAL 1 count.wav => count.ana
+
+2) REPLACE SPECTRAL ENVELOPE OF 1ST FILE WITH THAT OF 2ND (timbre!)
+   (2nd sound's envelope gradually onto the 1st sound, so put the first 
+    sound into CHOSEN FILES first)
+   (interp is degree of replacement Range: 0 to 1)
+     COMBINE CROSS count.ana spr1x3loopRdt.ana cntcrossspr.ana 0.98
+
+3) VOCODING (Impose spectral envelope of 2nd sound onto the 1st sound)
+
+     (Spring envelope onto voice's: voice speaks with sound of the spring, 
+      so count is first in CHOSEN FILES and spring is second)
+3a)  FORMANTS VOCODE count.ana spr1x3loopRdt.ana sprcnt1f.ana -f10
+3b)  FORMANTS VOCODE count.ana spr1x3loopRdt.ana sprcnt1p.ana -p6
+
+     (Count envelope onto spring's: spring speaks with sound of the count, 
+      so reverse the order of the files in CHOSEN FILES: 1st spring then 
+      count)
+3c)  FORMANTS VOCODE spr1x3loopRdt.ana count.ana cntspr1f.ana -f15
+3d)  FORMANTS VOCODE spr1x3loopRdt.ana count.ana cntspr1p.ana -p6 -g0.8
+     (May need to re-do with -g0.8 if overloads)
+ 
+4) INTERLEAVE TWO ANALYSIS FILES
+     COMBINE INTERLEAVE count.ana spr1x3loopRdt.ana cntinterlspr.ana 3
+     COMBINE INTERLEAVE spr1x3loopRdt.ana count.ana sprinterlcnt.ana 3
+   
+5) MAX WINDOW RETAINED
+     COMBINE MAX count.ana spr1x3loopRdt.ana cntsprmax.ana
+
+6) BRIDGE (transition between two analysis windows, time 0.1 in first 
+     sound and time 7.5 in the second sound)
+6a)  (In Mode 1, the transition is the result of direct interpolation)
+     MORPH BRIDGE 1 spr1x3loopRdt.ana count.ana sprbridgecntm1.ana -f0.1 
+     -g7.5
+6b) (In mode 2, the transition follows the minimum amplitudes)
+    (amp & frq start: 0; amp & frq end: 1; begin at time 0.1 end at time 7.5)
+     MORPH BRIDGE 2 spr1x3loopRdt.ana count.ana sprbridgecntm2.ana -f0.1 -g7.5
+     (There are other modes to explore)
+
+7) GLIDE (transition between two single time-specified analysis windows - 
+     note the duration parameter (in seconds)!)
+     (SPEC GRAB in Sound Loom is Process > SIMPLE > grab window)
+7a)  SPEC GRAB spr1x3loopRdt.ana grabspr.ana 9.1 
+     SPEC GRAB count.ana grabcnt.ana 0.3
+     MORPH GLIDE grabspr.ana grabcnt.ana sprtocnt.ana 30
+     
+8) MORPH between sounds
+8a) Preparations (done earlier):
+    1. NB: using reversed spring sound so is stronger at the end 
+    (spr1x3loopRdt.ana made earlier)
+    2. Impose the amplitude envelope of the count onto that of the spring and 
+    convert to an analysis file (done in 2b above: spr1replacecnt.ana)
+    
+8b) Direct morph without a middle step (start & end amp & frq times the same, 
+    exponents are 1 for no curve)
+    MORPH MORPH 1 count.ana spr1x3loopRdt.ana cntmorphtospr1.ana 0.5 8.0 0.5 8.0 1 1
+    
+8c) Morph using spring enveloped with count's amplitude envelope:
+    MORPH MORPH 1 count.ana spr1replacecnt.ana cntmorphtospr2.ana 0.5 8.0 0.5 8.0 1 1
+    Note:  this works better but we hear the enveloping right to the end.
+    
+8d) Thus the logic of morphing in 3 stages as in the Course Notes:
+    1) morph count to enveloped spring = m1
+       MORPH MORPH 1 count.ana spr1replacecnt.ana m1.ana 0.5 8.0 0.5 8.0 1 1
+    2) morph enveloped spring to reversed not-enveloped spring = m2
+       MORPH MORPH 1 spr1replacecnt.ana spr1x3loopRdt.ana m2.ana 0.5 8.0 0.5 8.0 1 1
+    3) morph from count to morph of enveloped spring to reversed 
+       not-enveloped spring: m1 to m2 = m3
+       MORPH MORPH 1 m1.ana m2.ana m3.ana 0.5 10.0 0.5 10.0 1 1
+       
+    Adjusting timings and amp frq weightings can improve the result.  There will be other ways to develop a middle step to get a sound with features from both 'end' sounds.

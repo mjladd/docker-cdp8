@@ -1,0 +1,14 @@
+	;COMMENTS - FREEZES CREATE A LENGTHEN-SHORTEN SYMMETRY
+ 0.0	;start normally
+a0.5	;freeze until 0.75, i.e., for 0.25 sec.
+ 0.75	;unfreeze, now normal playback until 1.0
+a1.0	;freeze until 1.5, i.e., for 0.5 sec.
+ 1.5	;unfreeze, now normal playback until 2.0
+a2.0	;freeze until 3.0, i.e., for 1.0 sec.
+ 3.0	;unfreeze -- would be normal playback. BUT:
+b4.0	;freeze at 4.0 but start it at 3.0, i.e., for 1.0 sec.
+ 5.0	;unfreeze -- would be normal playback, BUT
+b5.5	;freeze at 5.5, but start at 5.0, i.e., for 0.5 sec.
+ 6.0	;unfreeze -- would be normal playback, BUT:
+b6.25	;freeze at 6.25, but start at 6.0, i.e., for 0.25 sec.
+ 6.6	;unfreeze, end of file

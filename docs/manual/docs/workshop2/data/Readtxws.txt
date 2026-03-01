@@ -1,0 +1,186 @@
+Readtxws.txt
+Original file: 28 June 2002
+
+			Readme for CDP Texture Workshop
+
+Revised 14 November 2005 to separate out:
+	Run on PC 				Run on Mac
+	Explore on PC			Explore on Mac
+
+New Directory Structure on the CD-ROM
+\Txws-PC			main folder with the Workshop to RUN on PC
+				  click on TXWS-PC.htm
+	\Bat-TxWkshop-PC  backup copies of original batch files 
+	\SLpatches		patches to be loaded into _cdpatch
+	\ExploreTx-PC	zip .exe to extract to C:\txws, 
+				  containing the exploratory materials
+  *.brk			breakpoint files used by the Workshop
+  *.htm			HTML files used by the Workshop
+  *.txt			textfiles used by the Workshop (mostly NDF)
+  *.wav			soundfiles used by the workshop
+
+\Txws-Mac			main folder with the Workshop to RUN on MAC
+				  click on TXWS-MAC.htm
+	/Bat-TxWkshop-MAC	backup copies of original batch files
+	/SLpatches		patches to be loaded into _cdpatch
+	/ExploreTx-MAC	.tar.gz to place in any directory, 
+				  containing the exploratory materials
+  *.brk			breakpoint files used by the Workshop
+  *.htm			HTML files used by the Workshop
+  *.txt			text files used by the Workshop (mostly NDF)
+  *.aiff			soundfiles used by the workshop
+
+The Texture Workshop materials have been devised and prepared by 
+CDP Coordinator, Archer Endrich.
+
+The CDP TEXTURE Program Set has been written by composer-programmer, 
+Trevor Wishart.  You can see his website at:
+
+http://www.trevorwishart.co.uk
+
+
+RUNNING THE WORKSHOP TO STUDY THE MATERIALS AND LISTENING TO THE 
+SOUNDFILE EXAMPLES PROVIDED  (PC or MAC)
+
+You can Run the Workshop HTML and Play the example soundfiles directly 
+from the CD-ROM.
+	On PC, open the folder Txws-PC and double-click on TXWS-PC.htm.
+	On Mac, open the folder Txws-MAC and double-click on TXWS-MAC.htm.
+
+Alternatively you can copy the files in the Txws-PC or Txws-MAC folders 
+(as appropriate) to your hard disk and run the Workshop from there, as 
+above.  Just to run the Workshop as it stands, you can copy files 
+to any directory on any drive.   You can place the folder on any drive.
+
+Note that the files will probably be Read-only after this operation, 
+but that is fine when just accessing the HTML files and playing the 
+soundfiles.
+
+
+EXPLORING THE WORKSHOP:  CREATING YOUR OWN VARIANTS OF THE EXAMPLES
+
+EXPLORING ON PC
+
+To avoid Read-only problems, the files you need for this are stored in 
+txwsexplorePC.zip.  You will find this file in the folder ExploreTx-PC.  
+On PC, it is essential to extract it to C:\txws so that the paths in 
+the Soundshaper Presets will work.  When you extract, accept C:\txws as 
+the destination;  it will be created in the extraction process.  In general, 
+it is recommended to keep this exploratory work separate from Txws-PC.
+
+You will now find that C:\txws contains:
+  3 source .wav files (as used in the Workshop) -- you can use your own, 
+	of course (editing the batch files accordingly if you use them.)
+  Several .bat files - these currently create the soundfile examples 
+	as in the Workshop.  You can edit the batch files to ring changes 
+	on the results.  The batch files are run from the Command Line.
+  Txws.dat - the Preset files for Soundshaper.  In the FILE menu of 
+	Soundshaper, click on Load Global Presets.  Txws.dat should be 
+	the only .dat listed, as it is picking it up from the current 
+	directory (C:\Txws).  NB - First create a 'Personal' configuration 
+	file (OPTIONS/SETTINGS etc.) to set SOUNDFILES OUT and USER FILES 
+	to C:\txws.  Open this settings file (OPTIONS/SETTINGS - File menu 
+	in top left corner) each time you want to explore the Texture 
+	examples.  There is a longer discussion of this procedure below.
+  All .brk and .txt (NDF) files used in the examples -- also can be edited.
+
+To Explore using Sound Loom, load the contents of \SLpatches into 
+_cdpatch (the Sound Loom system directory containing patches).  Then 
+the Workshop presets (called 'patches' in Sound Loom) will be available.  
+It won't matter what your current directory is when you go to load them.
+
+If by any chance you are 'denied access' to a file, it may have its Read-Only 
+PROPERTY ticked.  Go to PROPERTIES with the right mouse button and deselect 
+Read-Only (unticked).  Ideally, this should not be necessary with distribution 
+via self-extracting zip file.
+
+
+EXPLORING ON APPLE MAC
+
+To avoid Read-only problems, the files you need for this are stored in 
+txwsexploreMAC.tar.gz.  On the Mac, you can copy to any directory.
+
+
+On the Apple Mac, extract the files in txwsexploreMAC.tar.gz to any 
+directory.  Also copy the contents of the folder SLpatches to _cdpatch 
+(the Sound Loom system directory containing patches).
+
+If by any chance you are 'denied access' to a file, it may have its Read-Only 
+PROPERTY in place.  Change the file setting to 'rw'.
+
+
+MORE DETAILED DISCUSSION OF THE  INFORMATION 
+
+TXWS-PC or TXWS-MAC.HTM IS THE MAIN DOCUMENT.  Double-click on it to access 
+the background information, text for the worked examples, and the 
+various soundfile play lists.
+
+SOUNDSHAPER
+Txws.dat is the Presets data file for use with SoundShaper.  
+The best way to handle this is to leave txws.dat inside \txws and 
+LOAD it from there.
+
+  I find it useful to create a 'Personal' configuration file for 
+  each project.  To do this, you go to OPTIONS-SETTINGS, alter the 
+  paths for Soundfiles AND User files to access c:\Txws.
+
+  If there is a problem in running the presets, check that the path 
+  in the parameter dialogue window to the note data and breakpoint 
+  files says what it should.  All these files are in c:\Txws but it is 
+  possible that the earlier part of the path may not be appropriately 
+  altered (from my computer setup to yours).  It should be OK if the 
+  Workshop is successfully located in C:\Txws\.
+
+NB: you need to take note of which program is being used, e.g., 
+(Texture) SIMPLE, as you can access the presets only after entering 
+that specific program.  Also double-check that the correct Mode is selected 
+after you load the Preset.  It isn't always set by the Preset.
+
+SOUND LOOM
+The same examples have been realised as Patches for Sound Loom.  These files 
+are in the SLpatches folder.  In order to use them in Sound Loom, you need 
+to copy them to _cdpatch in your Sound Loom directory.  Then select the 
+directory where you've placed the ExploreTx files (possibly C:\txws) as the working directory, LIST its contents and GRAB all the .brk and .txt files 
+to the Workspace, along with the input soundfiles marimba.wav/.aiff and gtrcdt.wav/.aiff (or your own source soundfile).
+
+Also, in Sound Loom take note of the Mode used by the example.  When you 
+select a PROCESS, you will need to select its mode as well before going to 
+the Parameter dialogue box.  The patches should be listed, ready for LOADing 
+and use.  These patches will be there and will load even if you are in the 
+wrong mode for the example, so double-check that the mode is correct before 
+running the example (with e.g., the alterations suggested in the Practical 
+Work section).
+
+To alter the examples, you need TEXTURE.EXE from the CDP Music System 
+installed on your computer.  Then you can use SoundShaper Presets, the 
+Sound Loom Patches or, in DOS, the supplied .bat files.  This will be 
+in place in your bin or _cdprogs folder along with the other CDP 
+executables.  This is why it is not supplied with the Texture Workshop.  
+Another reason is that the key to making the most of the Texture Set is 
+tailoring the input sound to create a specific result when assembled 
+into a texture.  The CDP Sound Transformation programs are therefore 
+needed to bring the Texture software to life when creating sonic 
+textures.
+
+There may be occasions when the Texture Workshop can be explored on-site, 
+so that the information can be tailored to the requirements of participants, 
+particularly in setting up the environment, connecting with their overall 
+musical outlook, and in focusing on the specific pieces of information 
+needed to work with TEXTURE successfully.  The whole point would be to guide 
+participants through the enormous amount of detailed information involved 
+with the TEXTURE Set.
+
+Please contact Archer Endrich about making a booking for a Workshop.  My 
+time is limited and distance is an issue, but some bookings may be possible.
+
+Have fun!
+
+
+Archer
+
+Archer Endrich
+12 Goodwood Way
+Cepen Park South
+Chippenham, Wiltshire
+SN14 0SY
+archer@trans4um.demon.co.uk

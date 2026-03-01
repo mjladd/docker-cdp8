@@ -1,0 +1,14 @@
+ 0.0	;these comments are invalid in the actual file
+a0.5	;freeze forward
+ 1.0	;unfreeze
+a1.2	;freeze forward (very short)
+ 1.5	;unfreeze
+a1.75	;freeze forward (short, adjacent freezes)
+a2.0	;freeze forward
+a2.25	;freeze forward
+ 2.5	;unfreeze
+b3.0	;freeze sound at 3.0 but start playing it at 2.5
+a3.5	;freeze forward (long: held for 2 sec.)
+ 5.5	;unfreeze
+a5.6	;freeze forward
+ 6.6	;unfreeze, end of file

@@ -1,0 +1,220 @@
+Topic4-Worksheet.txt  [TOPIC 4 Worksheet]
+
+Starting point:  Listening 4 - this gives an overview of 'Modifications and Minglings'
+
+Topic 4 - Mingling Sounds:  The Worksheet focuses on envelope transfer and spectral mingling - this time including worked examples and sounds produced
+
+The overall topic is about transferring selected aural properties of one sound onto another.  It is a very important and exciting area to explore, both to create new sounds and to extend material in an organic way.  It is such an important topic that this Worksheet includes worked examples of a selection of these processes, with the sonic output of these examples placed in the \Sounds directory (only the final wav files are saved).
+
+After looking through the Worksheet and listening to the examples, you might then realise the same examples -- via command line or GUI as you choose.  If any parameters are unclear, you can check what they are in the Reference Documentation. '=>' is sometimes used to indicate which is the outfile of a process -- it is not part of the command line!
+
+You will need to create new output filenames when you realise these examples yourself -- compare yours with my originals and see if you get the same result.  Then play with the parameters a bit, and finally, you can get closer to your own compositional goals by  exploring the processes with sounds of your own choosing.
+
+It is helpful to be clear about the meaning of 'amplitude envelope' and 'spectral envelope', so I suggest that you research these definitions.  You will find explanations in the CDP Documentation:  Charts->Technical Glossary, and there will also be discussions of these topics on the Net.
+
+
+WAV SOURCE SOUNDS USED (all 44.1 sample rate and mono -- the spectral programs require mono inputs as analysis files;  NB:  Soundshaper will automatically convert a stereo infile to mono):
+
+count.wav [8.066 sec], cracklgd.wav [8.270 sec.] (amplitude reduced more in cracklgdmore.wav [8.255 sec.] and made extended to 30 seconds in crkl30sec.wav), chimescgx3.wav [8.270 sec.], bendy.wav [3.8 sec.] (developed into bendymerge3g.wav [7.8 sec.]),  ssb.wav [10 sec.] (also extended to ssb30secBm.wav), sftbellm.wav [6.872 sec.]
+
+
+1. Simple crossover in the Time Domain:  SUBMIX CROSSFADE
+
+SUBMIX CROSSFADE 1 ssb.wav cracklgd.wav => ssb2crkl.wav -s1.5 (skip:  start 2nd sound 1.5 sec after start of 1st sound) -b2.0 (start crossfade a little after 2nd sound comes in) -e6.0 (end of crossfade, leaving time for the 2nd sound to be heard on its own)
+
+Result - pvplay \Sounds\ssb2crkl.wav:  the fade in and out is as good as it can be, but it remains an unconvincing transition.  Perhaps the sounds are just too different.
+
+
+2. Amplitude envelope transfer:  ENVEL REPLACE
+
+The envelope of the 2nd input file is imposed on the 1st.
+
+ENVEL REPLACE 1 cracklgd.wav count.wav => cntenvel2crkl.wav 20 (windowsize)
+
+Result - pvplay \Sounds\cntenvel2crkl.wav:  sound of the crackling with the envelope of the voice, but no sound of the voice -- sounds like footsteps on gravel!
+
+
+3. Impose (spectral) binary window-loudness envelope on a soundfile
+
+REPITCH ANALENV cracklgdmore.ana => crklenv.evl (the binary envelope file)
+ENVEL IMPOSE 2 (use binary) ssb.wav crklenv.evl => ssbBYcrklenv.wav
+
+Result - pvplay \Sounds\ssbBYcrklenv.wav: sustained tone with a broken surface that comes from the jagged amplitude shape of the crackling (changing amplitude levels of the analysis windows).
+
+
+4. Spectral envelope transfer:  SPECROSS PARTIALS (listed in the COMBINE Group, but an independent Release 7 program).  This program is designed for pitched sounds, so let's use ssb.wav and a soft bell sound, sftbellm.wav.  There are quite a few parameters, so a description of each is given in parentheses after the parameter value.
+
+SPECROSS PARTIALS ssb.ana sftbellm.ana => ssbspcrosssftbell.ana 6 (tuning semitone range) 5 (minwin) 80 (signois in dB) 6 (peaks which must be harmonics) 50 (lofrq) 2000 (hifrq) 0.1 (threshold) 1 (level) 0.8 (interp).  Interp is an important parameter.  A higher value emphasises and applies more of the harmonics of infile2 to infile1;  a lower value, because it emphasises these harmonics less, leaves more of the normal sound of infile2 in place.  Therefore it is a key parameter to explore when balancing the two spectra.
+
+Result - pvplay \Sounds\ssbspcrosssftbell.wav:  the harmonic spectra of the softbell are emphasised, lending its rich tone to the output, plus some mottling as the two spectra interact.
+
+
+5. Replace spectral amplitudes:  COMBINE CROSS  It is interesting to compare this spectral transfer with the Vocoding examples below.
+
+The -i flag is the amount of interpolation of the window.  With -i1 the result was wispy scratchings;  with -i0.5 the result was an ssb tone plus wispy scratchings 'on top'.  These results were not retained.
+
+The example developed here is designed to show the workings of the 
+-i flag more clearly by using longer infiles and a time-varying interpolation file (interp parameter).  The first step is to make ssb.wav longer with TEXTURE SIMPLE:
+
+TEXTURE SIMPLE 5 ssb.wav => ssb30secB.wav ndf50.txt 30 (outdur) 5  (packing) 0.2 (scatter) 0 (tgrid) 1 1 (sounds) 49.5 50.5 (slight pitch differences when source is iterated) 7 9 (durations, ignored because -w flag invoked) 70 80 (MIDI velocity range) -a0.9 (attenuation) -p0.5 (position) -s0 (spread) -w (-w flag means to use the whole of the input file).  
+
+The stereo output is changed to mono because the spectral processes demand a mono input:
+
+HOUSEKEEP CHANS 4 ssb30secB.wav => ssb30secBm.wav) and this result converted to an analysis file in the usual way: (PVOC ANAL 1 ssb30secBm.wav => ssb30secBm.ana).
+
+The crackling sound also had to be lengthened because the COMBINE CROSS process finishes at the end of the shortest input file, so it would have ended too soon.  This was done by joining together 4 cracklgdmore.wavs (which is 8.24 sec long):
+
+SFEDIT JOIN cracklgdmore.wav cracklgdmore.wav cracklgdmore.wav cracklgdmore.wav => crkl30sec.wav
+
+The time-varying interpolation file is 'cc30sectv.txt':
+ 0.00  0.0
+10.00  0.0  ;no interpolation for the first 10sec
+10.01  1.0  ;then leap to full interpolation
+15.00  1.0  ;keep full interpolation for 5 sec
+20.00  0.0  ;gradually reduce the amount of interpolation to nil
+30.00  1.0  ;over 10 seconds bring back to full interpolation
+
+Thus:
+COMBINE CROSS ssb30secBm.ana crkl30sec.ana => ssbcrosscrkl30sec.ana -icc30sectv.txt -- and convert the output to a soundfile.
+
+Result - pvplay \Sounds\ssbcrosscrkl30sec.wav:  we can hear the imposition of the crackling changing as per the time-varying interpolation file.
+
+
+6. Pitch trace extraction used to transpose another sound:  REPITCH GETPITCH => REPITCH COMBINE & REPITCH TRANSPOSE.
+
+Here we take a very jagged pitch trace (from cracklgd.ana) and impose it on a much smoother sound (ssb.ana).
+
+The program can be run very simply with just infile.ana (get the pitch trace) outdummy.ana (playable file of the pitch trace - use pvplay if on the command line) and outfile.frq (Mode 1:  binary file containing the pitch trace frequencies).  All the other parameters are optional ways to tweak the output.
+
+The pitch movements of crackl.wav are so extreme, that I had to reduce the gain by 0.4 to avoid overload/artefacts:  became cracklgdmore.wav => .ana
+
+Thus the various steps are:
+REPITCH GETPITCH 1 cracklgdmore.ana => crklptrace.ana ('dummy' playable file) crklptrace.frq (output file of frequencies)
+REPITCH GETPITCH 1 ssb.ana => ssbptrace.ana ssbptrace.frq
+REPITCH COMBINE 1 crklptrace.frq ssbptrace.frq => ssbcrkl.trn (the frequencies are combined and formed into a transposition file)
+Then, finally:
+REPITCH TRANSPOSE 4 ssb.ana ssbcrkl.trn => ssbBYcrkl.ana (Mode 4 uses the .trn transposition file)
+PVOC SYNTH	ssbBYcrkl.ana ssbBYcrkl.wav
+
+Result - pvplay \Sounds\ssbBYcrkl.wav:  the ssb sound whizzes around on a glissandoing trajectory.  Tutorial Workshop 3 ('Transposition & Shifting') covers this sort of thing in more detail.
+
+
+7. Vocoding:  FORMANTS VOCODE - impose formants (resonant frequencies) extracted from 2nd sound onto 1st sound
+
+Sources:  ssb.wav/.ana count.wav/.ana and crackl.wav/.ana and bendy.wav, developed in 7a, Step 2.
+
+7a step 1. Analyse the 1st 3 wav sources to create analysis files, using PVOC ANAL 1
+
+7a steps 2. Develop bendy.wav a bit to make it longer and more interesting
+  2a. MODIFY RADICAL 1 bendy.wav => ydenb.wav (reverses the sound)
+  2b. SUBMIX MERGE bendy.wav ydenb.wav => bendymerge.wav -s1.5 (quick mix:  bring in the reversed sound afer 1.5 sec.) and then:
+      SUBMIX MERGE bendymerge.wav bendy.wav => bendymerge3.wav -s4.0 (bring in bendy.wav at the 4th second)
+  2c. The result is too quiet, so apply gain:  
+      MODIFY LOUDNESS 1 bendymerge3.wav => bendymerge3g.wav
+  2d. Analyse this:  PVOC ANAL 1 to create bendymerge3g.ana
+
+7a step 3. Impose the formants of bendymerge3g.ana onto ssb.ana:
+  FORMANTS VOCODE ssb.ana bendymerge3g.ana => ssbbendymerge3gvoc.ana -f5 (very tight frequency channel groups) -l100 (low freq) -h12000 (very high freq) -g2 (a bit of gain) and PVOC SYNTH the result back to make the soundfile:  ssbbendymerge3gvoc.wav
+
+Result - pvlay \Sounds\ssbbendymerge3gvoc.wav:  a low tone is just barely audible amidst a high, thin and rather raw sheen.  These sounds seem to be a little too different in pitch level to achieve a good result.
+
+7b. Let's try again using count.wav and cracklgd.wav.  (The original crackl.wav had very loud high frequencies, and when resynthesising after the vocoding, amplitude overflow warnings were issued.  MODIFY LOUDNESS 1 crackl.wav => cracklgd.wav 0.8 succeeded in elimininating the overflows.)
+
+FORMANTS VOCODE count.ana cracklgd.ana => cntcrklvoc.ana -f5 -l100 -h12000 -g1.3
+
+Result - pvplay \Sounds\cntcrklvoc.wav:  the voice has become very high and thin, quite raw, as its timbre is replaced by that of the crackles.
+
+7c. Reversing the order of the input files produces a very different result:
+
+FORMANTS VOCODE cracklgd.ana count.ana => crklcntvoc.ana -f5 -l100 -h10000 -g0.54 (very sensitive to overflows)
+
+Result - pvplay \Sounds\crklcntvoc.wav:  the voice is nicely present, but beautifully crackly.
+
+
+8. Morph similar sounds (play with amp & frq start-end times).  Elsewhere, I have used fairly different sounds in order to bring out the possible role of an intermediate stage.  Here I am using relatively similar sounds, which is the more usual scenario.  The general idea is to achieve a sense of the first sound appearing to gradually *turn into* the second sound: 'morphing'.  
+
+Available processes:  MORPH MORPH to morph similar sounds.  There is also NEWMORPH NEWMORPH to morph dissimilar spectra and NEWMORPH NEWMORPH2 to morph frequencies of spectral peaks (a more 'harmonic' type of morph).
+
+I have grouped all 4 examples given here into one file for easy comparison:  The sounds are also provided separately.  The file with the four morphs is appropriately named fourmorphs.wav  Here is a summary of the four morphs in fourmorphs.wav.  The sounds are separated by 3 seconds of silence:
+
+pvplay \Sounds\fourmorphs.wav - you will hear:
+
+8a. morph between similar unchanged sounds with MORPH MORPH (=> crkltochimes.wav)
+
+8b. morph between the same similar (but tweaked) sounds with MORPH MORPH (=> crkltochimestvcdt.wav) - the input sounds are time-stretched in a time-varying way to try to make the morph more seamless
+
+8c. morph between dissimilar spectra with NEWMORPH NEWMORPH.  However, here I use the same (similar) sources so as to see what different effect this process has on these sounds;  this will give  clues regarding which sounds might be more effective (=> crkltochimesnewmorph.wav)
+
+8s. morph frequencies of spectral peaks with NEWMORPH NEWMORPH2 (=> chimepeakstocrkl.wav)
+
+
+More detail on the worked examples:
+
+Re morph 8a.  MORPH MORPH has 6 parameters to tweak.  I played with all of them for some time.  I found that as I tried things I kept moving the start of the second sound closer to the start of the first sound (the 'stagger' parameter) so that more time would be spent on the morph transition.  All times are set with reference to infile1.  An aural morph tends to need more time than a visual morph -- the ears are harder to fool.
+
+These are the parameter settings:  amplitude start-end: 2.1 7.9, frequency start-end: 2.6 7.9,  amp-exponent: 1.8, frq-exponent: 1.3, stagger (optional): 0.9 (morph start times have to be later than stagger (or the 2nd soundfile won't have come in yet!).  Mode 1 is for a linear morph.  The exponent:  1 = linear, <1 = fast to slow, >1 = slow to fast.  Thus:
+
+morph morph 1 cracklgd.ana chimesgx3.ana => crkltochimes.ana 2.1 7.9  2.6 7.9  1.8 1.3  -s0.9  -- and synthesised to wav
+pvplay \Sounds\crkltochimes.wav
+Result:  the morphing seems reasonable
+
+
+Re morph 7b.  MORPH MORPH with tweaked infiles.  The tweaking is an attempt to increase the sense of 'gradually turn into' and to disguise the appearance of sound 2 and disappearance of sound 1.  TIME STRETCH was used to make infile1 (cracklgd.ana) go from normal to stretched to disguise the end (=> crklgdtstrtv.ana), and to make infile2 (chimescgx3.ana) go from stretched to normal to disguise the beginning (=> chimescgx3tstrtv.ana):
+
+strcrkltv.txt  strchimestv.txt
+0.0  1.0     0.0  3.0
+7.0  3.0     7.0  1.0
+8.1  3.0     8.1  1.0
+
+Thus:
+morph morph 1 crklgdtstrtv.ana chimesgx3tstrtv.ana => crkltochimestv.ana 2.1 7.9  2.6 7.9 -s0.9  -- and synthesised to wav.  The stretching made the portion after the morph too long, so it was cut to 10 seconds and dovetailed to form crkltochimestvcdt.wav ('tvcdt' is my filename shorthand for 'time-varied cut dovetail' -- I prefer filenames that reveal the processes used whenever possible.)
+
+pvplay \Sounds\crkltochimestvcdt.wav
+Result:  there is a little more sonic blurring, but whether it's actually an improvement on the 1st version is a close call.  What do you think?
+
+
+Re morph 8c.  NEWMORPH NEWMORPH with the original (untweaked) source files.  The parameters are almost the same.  There is only start-end and only one exponent parameter; there is also a peaks parameter (number of peaks to use, Range 1 to 16).  Stagger comes at the beginning and without the -s flag.  Thus:
+
+newmorph newmorph 1 cracklgd.ana chimesgx3.ana =>  crkltochimesnewmorph.ana  0.9  2.1 7.9  1.3  8 -- and synthesised to wav
+
+pvplay \Sounds\crkltochimesnewmorph.wav
+Result:  the morph seems to perform a rather fetching upward gliss into the chimes.
+
+
+Re morph 8d.  NEWMORPH NEWMORPH2 again with the original sources, but I ended up reversing their order:  making the chimes first by using it in Mode 1 to create the peaks file (chimepeaks.txt).  Then when NEWMORPH2 Mode 2 is run, the data in this peaks file is applied to the infile, in this case, cracklgd.ana.  Thus:
+
+newmorph newmorph2 1 chimesgx3.ana => chimepeaks.txt  8  (8 peaks out of a possible 16)
+newmorph newmorph2 cracklgd.ana => chimepeakstocrkl.ana (the outfile) chimepeaks.txt (the peaks file) 2.1 7.9  1.3  8  (there is no stagger parameter) -- and synthesised to wav
+
+pvplay \Sounds\chimepeakstocrkl.wav
+Result:  you can really hear the crackling becoming more tuned.  This leads me to want to try out NEWMORPH2 with some more normally pitched sounds, e.g. made with TEXTURE (tones snapped to a harmonic grid) or via PITCH TUNE / PITCH TUNEVARY (tones snapped to MIDI pitch values).
+
+
+COMPLETE PLAYLIST OF (final) EXAMPLES FOR THIS WORKSHEET IN \Sounds
+1. ssb2crkl.wav - simple crossfade
+2. cntenvel2crkl.wav - envelope transfer in time domain
+3. ssbBYcrklenv.wav - impose spectral binary window-loudness envelope
+4. ssbspcrosssftbell.wav - spectral envelope transfer
+5. ssbcrosscrkl30sec.wav - replace spectral amplitudes 
+6. ssbBYcrkl.wav - pitch trace extraction used to transpose another sound
+7a. ssbbendymerge3gvoc.wav - vocoding:  impose formants of 2nd sound onto 1st (with one of the infiles tweaked a bit)
+7b. cntcrklvoc.wav - trying a vocal and a crackling sound
+7c. crklcntvoc.wav - first the crackling then the vocal sound
+8a. crkltochimes.wav - morph similar unchanged sounds
+8b. crkltochimestvcdt.wav - exploring some time-stretching tweaks
+8c. crkltochimesnewmorph.wav - trying out NEWMORPH NEWMORPH
+8d. chimepeakstocrkl.wav - trying out NEWMORPH NEWMORPH2
+
+SUPPLEMENTARY FILES MADE FOR/BY VARIOUS PROCESSES (see above text;  these are also in \Sounds so you can use them)
+crklenv.evl
+crklptrace.frq
+ssbptrace.frq
+cc05to1.txt
+cc30sectv.txt
+chimepeaks.txt
+crklpeaks.txt
+ndf50.txt
+strchimestv.txt
+strcrkltv.txt
+ssbcrkl.trn
+

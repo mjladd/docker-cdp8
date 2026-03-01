@@ -1,0 +1,16 @@
+		CDP GRAINMILL DATA FILE
+
+Input file = E:\AEsndwork\flex.wav
+Infile Duration = 6.6000 secs
+Outfile = flexOUT.wav
+Working Directory = e:\AEsndwork
+
+TIMESTRETCH:	4.0000
+DENSITY:	flexdens.brk
+GRAINSIZE:	flexgsize.brk
+PITCH:		flexpchlo.brk		flexpchhi.brk
+LOUDNESS:		-30.1728 dB		0.0000 dB
+SPACE:		0.0000		1.0000
+SCATTER		0.7500
+WANDER:		0.5000
+DURATION:	25.9720 secs

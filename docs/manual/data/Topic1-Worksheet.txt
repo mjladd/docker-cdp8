@@ -1,0 +1,38 @@
+Topic1-Worksheet.txt  [TOPIC 1 Worksheet]
+
+1. Starting Point: Listening 1
+Note that breakpoint files are being used.  Check out Document 1-6: The CDP Software.html, the section about 'Working Environment' where it discusses how to create text/breakpoint files using a text editor or with the facilities within one of the GUIs.  If a breakpoint file is used, it is loaded (or named on the command line) instead of a value for the transposition parameter.
+
+Then, using the same source (capm.wav in \Sounds), create transpositions [MODIFY SPEED] different from those in 'Listening 1', sometimes using just one value, sometimes a breakpoint file of your own design.  Compare the results with \Sounds\Listening1.wav.
+
+[The following relate to Basic Sound Editing.html] 
+
+2. DIRSF - Open a soundfile in a GUI, find the soundfile information buttons and check out the various types of information 'properties') available.
+ - If the command line is set up, cd to your current directory and enter 'dirsf'.  You can also use 'wildcards' such as dirsf *.wav, dirsf *.ana, or to see a single soundfile, enter its name including the soundfile extension, such as dirsf clashm.wav.  To see text files, use the computer's system command 'dir', such as dir *.txt).
+
+3. MAXSAMP - Use the buttons in a GUI to display the maximum sample level of a soundfile.  Commandline: enter sndinfo maxsamp filename.wav (do include the extension in the name, because there could be an anlysis file named with the same root, such as filename.ana).
+
+4. GAIN - Having checked the level (maxsamp) of a soundfile, use a GUI or the command line to raise and to lower the level.  Use MAXSAMP again to check what the resulting level is after doing this.  If a sample is shown to be at level 1.0, it has probably clipped -- and if at time 0.0 don't play it (!) because the whole soundfile might actually be well over one, unless it's just a click at the beginning, and it could damage your speakers.  If safe, listen to the results.
+
+5. CUT - Cut out and keep, saving and naming a separate soundfile, one of the numbers spoken in 'count.wav'.
+
+6. DOVETAIL - Count.wav (8.066 sec) is long enough to try out some longer fades.  Apply a 2 second linear fade at the beginning and a 3 second linear fade at the end.  Do it again with exponential fades and listen to the difference.
+
+ - In the GUIs you can do the second exponential run right away because temporary soundfiles are created until you actually Save one.  On the command line, you will need either to delete the previous soundfile or provide a new name, because CDP does not (normally) overwrite existing soundfiles.
+
+ - Note that this leaves 3.066 seconds unchanged in the middle of the sound.  This illustrates that care needs to be take with shorter sounds:  it is possible to eliminate too much signal, and if the sum of the fades is greater than the length of the soundfile, the process will fail with an error message.
+
+ - Try to get such a message to display.
+
+7. LEN - Using an GUI info button or the command line, find out how long \Sounds\trcdtvoccnt.wav is.
+
+8. COPYSFX - Make a copy of a soundfile in Soundshaper and/or via the command line.  For your information, have a good look at the COPYSFX Usage in the Reference Manual or on the command line.
+
+9. SLguide-Basic.pdf - go through the TIME DOMAIN and SPECTRAL DOMAIN exercises on your own, using a different soundfile as the source and changing the parameter values.  Try to get inventive so that the result starts to show promise.
+
+10. Read through the FURTHER STUDY documents for Topic 1
+
+
+
+
+
