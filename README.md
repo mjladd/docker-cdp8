@@ -1,5 +1,7 @@
 # CDP System Software, Release 8
 
+NOTE: this is only for use of CDP command-line tooling, no GUI's.
+
 ## Full release as of 24 October 2023
 
 ### Copyright (c) 2022 Composers Desktop Project
