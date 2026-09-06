@@ -3,7 +3,7 @@ resolver = "2"
 # Crates are added here as Phase 1 (see docs/migration/PLAN.md) creates
 # them under crates/: cdp-sf, cdp-data, cdp-params, cdp-dsp,
 # cdp-spectral, cdp-core, cdp-programs, cdp-cli.
-members = []
+members = ["crates/cdp-sf"]
 
 [workspace.package]
 version = "0.1.0"
