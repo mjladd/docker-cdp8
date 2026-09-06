@@ -333,8 +333,14 @@ at a wider tolerance must say why in its `notes`.
 
 ## 6. Conventions for agents
 
-- Rust 2024 edition, `#![forbid(unsafe_code)]` in every crate except a
-  clearly justified SIMD kernel in `cdp-dsp`.
+- Rust 2024 edition. The workspace `Cargo.toml` sets `unsafe_code = "deny"`
+  under `[workspace.lints.rust]`. Every crate opts in with
+  `[lints]` / `workspace = true`. Use deny, not forbid. Deny still allows
+  one documented, reviewed exception: a justified SIMD kernel in
+  `cdp-dsp`. That kernel needs a local `#[allow(unsafe_code)]` to
+  compile.
+- Start every new Rust source file with the header in
+  `templates/rust-file-header.txt`.
 - `u64` or `usize` for sample and frame counts. Never `i32`.
 - Process audio in `f32` frames and accumulate in `f64` where the C code uses
   `double`.

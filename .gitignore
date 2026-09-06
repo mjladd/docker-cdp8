@@ -39,3 +39,7 @@ Custom.cmake
 #cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 # used by clangd lsp
 compile_commands.json
+
+# Rust workspace build artifacts (see Cargo.toml at the repository root)
+/target/
+**/target/

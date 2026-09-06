@@ -1,0 +1,19 @@
+[workspace]
+resolver = "2"
+# Crates are added here as Phase 1 (see docs/migration/PLAN.md) creates
+# them under crates/: cdp-sf, cdp-data, cdp-params, cdp-dsp,
+# cdp-spectral, cdp-core, cdp-programs, cdp-cli.
+members = []
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "LGPL-2.1-or-later"
+repository = "https://github.com/mjladd/docker-cdp8"
+
+[workspace.lints.rust]
+# "deny", not "forbid": every crate opts in via [lints] workspace = true,
+# and PLAN.md section 6 allows one documented exception (a justified SIMD
+# kernel in cdp-dsp), which needs a local #[allow(unsafe_code)] to compile.
+# "forbid" would make that exception impossible.
+unsafe_code = "deny"
