@@ -27,15 +27,21 @@
 //! parts of `legacy/dev/cdp2k` (`readdata.c`, `tklib1.c`, `tklib3.c`).
 //!
 //! Current scope (see `docs/migration/STATUS.md` for the live list):
-//! breakpoint files (time/value pairs) -- parsing, range validation,
-//! and evaluation, including the same number tokenizer every CDP
-//! text format shares. Mix files, texture note-data files, tuning
-//! files, and plain number lists are not implemented yet.
+//! breakpoint files (time/value pairs) and mix files (one line per
+//! sound-file event in a `submix mix` mix) -- parsing and range
+//! validation, plus breakpoint evaluation, sharing the same number
+//! tokenizer every CDP text format is built on. Texture note-data
+//! files, tuning files, and plain number lists are not implemented
+//! yet.
 
 pub mod breakpoint;
 pub mod error;
+pub mod mix;
 pub mod tokenizer;
 
-pub use breakpoint::{BreakpointTable, MIN_DB_ON_16_BIT, db_to_gain, db_to_gain_allowing_boost};
+pub use breakpoint::{
+    BreakpointTable, MAX_DB_ON_16_BIT, MIN_DB_ON_16_BIT, db_to_gain, db_to_gain_allowing_boost,
+};
 pub use error::{DataError, Result};
+pub use mix::{MixEvent, MixFile};
 pub use tokenizer::{FLTERR, flteq, next_float, parse_line_floats};

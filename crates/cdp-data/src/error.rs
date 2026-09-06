@@ -69,6 +69,69 @@ pub enum DataError {
 
     #[error("empty breakpoint table")]
     EmptyTable,
+
+    /// legacy: `store_wordlist`'s `fopen` failure in
+    /// `legacy/dev/cdp2k/readfiles.c`, shared by every word-list
+    /// format (mix files now, texture/tuning files in a later
+    /// slice) -- distinct wording from [`DataError::CannotOpen`],
+    /// which is breakpoint-file specific.
+    #[error("Failed to open file {path} for input.")]
+    CannotOpenDataFile { path: String, source: io::Error },
+
+    /// legacy: `get_mixdata_in_line` in
+    /// `legacy/dev/submix/setupmix.c` -- a mix-file line must have 4,
+    /// 5 or 7 words (see [`crate::mix`]).
+    #[error("Illegal line length: get_mixdata_in_line()")]
+    IllegalMixLineLength,
+
+    /// legacy: `get_mixdata_in_line`, the `sscanf` call for the time
+    /// and chans fields.
+    #[error("Error scanning data: get_mixdata_in_line()")]
+    CannotScanMixTimeOrChans,
+
+    #[error("Error1 scanning (chan1) level: line {line}")]
+    LeftLevelNotDb { line: usize },
+    #[error("Error2 scanning (chan1) level: line {line}")]
+    LeftLevelUnparseable { line: usize },
+    #[error("Error3 scanning (chan1) level: line {line}")]
+    LeftLevelNegative { line: usize },
+    #[error("Error1 scanning (chan1) pan: line {line}")]
+    LeftPanUnparseable { line: usize },
+    #[error("Error2 scanning (chan1) pan: line {line}")]
+    LeftPanOutOfRange { line: usize },
+    #[error("Error1 scanning chan2 level: line {line}")]
+    RightLevelNotDb { line: usize },
+    #[error("Error2 scanning chan2 level: line {line}")]
+    RightLevelUnparseable { line: usize },
+    #[error("Error3 scanning chan2 level: line {line}")]
+    RightLevelNegative { line: usize },
+    #[error("Error1 scanning chan2 pan: line {line}")]
+    RightPanUnparseable { line: usize },
+    #[error("Error2 scanning chan2 pan: line {line}")]
+    RightPanOutOfRange { line: usize },
+
+    /// legacy: `finalise_and_check_mixdata_in_line` in
+    /// `setupmix.c` -- a 5-word line's `chans` must be `1`, and a
+    /// 7-word line's `chans` must be `2`.
+    #[error("Error parsing data: finalise_and_check_mixdata_in_line()")]
+    MixChansLineLengthMismatch,
+
+    /// Not a legacy message: `finalise_and_check_mixdata_in_line`
+    /// has no `default` arm for a 4-word line whose `chans` is
+    /// neither `1` nor `2`, so the real C code leaves the pan and
+    /// right-channel level fields uninitialised rather than
+    /// reporting an error. See `docs/migration/LEGACY-BUGS.md`.
+    #[error(
+        "mix line {line}: a 4-word line's chans must be 1 or 2, found {chans} (legacy leaves pan and right-channel level undefined for any other value)"
+    )]
+    MinLineChansMustBeMonoOrStereo { line: usize, chans: i32 },
+
+    /// legacy: the `filecnt==0` half of `set_up_mix`'s "No mixfile
+    /// line is active..." check in `setupmix.c`, which also covers a
+    /// mixfile with no data lines at all once no `MIX_START`/
+    /// `MIX_END` windowing is applied (see [`crate::mix`]).
+    #[error("No mixfile line is active within the time limits specified.")]
+    NoMixData,
 }
 
 pub type Result<T> = std::result::Result<T, DataError>;
