@@ -28,7 +28,7 @@ D5 to D8, D10 and D11 remain defaults.
 | D7 | File formats | Read and write every format the C code handles: WAVE, WAVE_EXTENSIBLE, AIFF, AIFC, PVOC-EX, and the CDP derived files with the `sfif` property block, `PEAK` and `cue ` chunks. Existing files from the C tools and from the GUIs stay usable. | WP-1.1 |
 | D8 | Audio playback and recording | Not in version 1 (upstream already removed them from the default build). A later WP can add `cdp play` with the `cpal` crate. | Phase 6 |
 | D9 | Upstream relationship | Sync the fork with upstream `ComposersDesktop/CDP8` HEAD (28bc42c or newer) before any other work, keep the C tree in the repository as the reference implementation, and stop patching it. | WP-0.1 |
-| D10 | Platforms | Linux x86_64 and aarch64, macOS arm64, Windows x86_64. Container image for Linux. | WP-0.3, WP-6.2 |
+| D10 | Platforms | Linux x86_64 and aarch64, macOS arm64. Container image for Linux. Windows is out of scope. The project owner decided against it on 2026-09-06. The CI Windows job had failed, but only on a PowerShell/bash shell mismatch in the workflow, not a real Rust or CDP incompatibility. | WP-0.3, WP-6.2 |
 | D11 | License | LGPL 2.1 or later for the Rust code, because it is a translation of LGPL code. | WP-0.1 |
 
 ## 2. Target architecture
@@ -164,8 +164,8 @@ Done when: `spec/usage/` has one file per program and sub-command and
 
 WP-0.3 Continuous integration.
 Steps: GitHub Actions workflow with `cargo fmt --check`, `clippy`, `test` on
-Linux, macOS and Windows, plus a Linux job that builds the legacy image and
-runs the golden suite. Cache the legacy image.
+Linux and macOS (see D10: Windows is out of scope), plus a Linux job that
+builds the legacy image and runs the golden suite. Cache the legacy image.
 Done when: the workflow is green on an empty workspace.
 
 ### Phase 1: Foundation crates (parallel after Phase 0)
