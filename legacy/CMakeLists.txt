@@ -218,7 +218,6 @@ include_directories(./dev/include)
 
 #RWD for PVOCEX support
 include_directories(./dev/newinclude)
-include_directories(include)
 #if(WIN32)
     include_directories(${PORTAUDIO_INCLUDE_DIRECTORY})
 #endif(WIN32)
@@ -283,7 +282,7 @@ endif()
 #include (InstallRequiredSystemLibraries)
 
 set (CPACK_PACKAGE_NAME "cdp")
-set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE")
 set (CPACK_PACKAGE_VERSION "8.0.1")
 set (CPACK_PACKAGE_VERSION_MAJOR "8")
 set (CPACK_PACKAGE_VERSION_MINOR "0")

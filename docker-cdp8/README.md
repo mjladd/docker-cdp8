@@ -50,15 +50,6 @@ The Docker image includes:
 - PortAudio v19.7 (built with ALSA and JACK support)
 - All 220+ CDP8 command-line tools
 
-## Linux Compatibility Fixes
-
-The `fix-linux-compat.sh` script applies the following fixes during build:
-
-1. **psf_round()** - Makes this function available on all platforms (originally wrapped in MSVC-only preprocessor conditionals)
-2. **__int64 typedef** - Adds a typedef for the `__int64` type on non-Windows platforms
-
-These fixes are required because the CDP8 codebase was primarily developed for Windows/MSVC.
-
 ## Build Stages
 
 The Dockerfile uses a multi-stage build:
@@ -72,7 +63,6 @@ The final image is approximately 141MB.
 
 - `Dockerfile` - Multi-stage Docker build configuration
 - `build.sh` - Convenience script to build the image
-- `fix-linux-compat.sh` - Script that patches source for Linux/GCC compatibility
 
 ## Troubleshooting
 
@@ -83,8 +73,8 @@ The final image is approximately 141MB.
 ```bash
 sudo apt-get update
 sudo apt-get install -y build-essential cmake libasound2-dev libjack-jackd2-dev pkg-config
-mkdir -p build && cd build && cmake .. && make -j$(nproc)
-ls ../NewRelease   # binaries
+mkdir -p build && cd build && cmake ../legacy && make -j$(nproc)
+ls ../legacy/NewRelease   # binaries
 ```
 
 - **Permissions issues on Linux:** If mounting yields permission errors, try adding `:Z` or `:rw` options depending on your Docker setup, or run from a directory with appropriate permissions.

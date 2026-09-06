@@ -53,11 +53,11 @@ If you're using the provided devcontainer (recommended for development):
 ```bash
 mkdir -p build
 cd build
-cmake ..
+cmake ../legacy
 make -j$(nproc)
 ```
 
-1. Binaries output to `NewRelease/` and are automatically on `PATH` in the devcontainer, so you can run tools from anywhere:
+1. Binaries output to `legacy/NewRelease/` and are automatically on `PATH` in the devcontainer, so you can run tools from anywhere:
 
 ```bash
 sndinfo props /workspaces/docker-cdp8/test_sine.wav
@@ -66,7 +66,7 @@ synth wave 1 /workspaces/docker-cdp8/test_sine.wav 44100 1 2 440
 
 Notes:
 
-* The devcontainer adds `/workspaces/<repo>/NewRelease` to `PATH` by default.
+* The devcontainer adds `/workspaces/<repo>/legacy/NewRelease` to `PATH` by default.
 * Use the VS Code integrated terminal (zsh) inside the container.
 * Audio I/O programs use PortAudio; development headers and runtime libs are preinstalled in the devcontainer.
 
@@ -87,7 +87,7 @@ docker run --rm -v $(pwd):/workspace cdp8 sndinfo props /workspace/myfile.wav
 
 ### Native Build
 
-For native builds on macOS, Linux, or Windows, see [building.txt](building.txt) for full details.
+For native builds on macOS, Linux, or Windows, see [legacy/building.txt](legacy/building.txt) for full details.
 
 **Prerequisites:**
 
@@ -98,21 +98,21 @@ For native builds on macOS, Linux, or Windows, see [building.txt](building.txt) 
 **Build steps:**
 
 ```bash
-# 1. Build and install PortAudio first (see dev/externals/pa*build.txt for details)
+# 1. Build and install PortAudio first (see legacy/dev/externals/pa*build.txt for details)
 
 # 2. Create build directory
 mkdir build && cd build
 
 # 3. Generate makefiles
-cmake ..                          # macOS/Linux/MSVC
-cmake -G "MinGW Makefiles" ..     # Windows MinGW
+cmake ../legacy                          # macOS/Linux/MSVC
+cmake -G "MinGW Makefiles" ../legacy     # Windows MinGW
 
 # 4. Build
 make                              # macOS/Linux
 mingw32-make                      # Windows MinGW
 ```
 
-Compiled binaries are written to the `NewRelease/` directory.
+Compiled binaries are written to the `legacy/NewRelease/` directory.
 
 ---
 
@@ -124,7 +124,7 @@ Once built, test the installation by generating a simple audio file:
 # Using Docker:
 docker run --rm -v $(pwd):/workspace cdp8 synth wave 1 /workspace/test_sine.wav 44100 1 2 440
 
-# Native (from NewRelease directory):
+# Native (from legacy/NewRelease directory):
 ./synth wave 1 test_sine.wav 44100 1 2 440
 ```
 
