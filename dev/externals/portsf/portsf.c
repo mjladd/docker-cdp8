@@ -90,7 +90,8 @@ int stricmp(const char *a, const char *b);
 int strnicmp(const char *a, const char *b, const int length);
 #endif
 
-#ifdef linux
+//#ifdef linux
+#ifdef __GLIBC__
 #define POS64(x) (x.__pos)
 #else
 #define POS64(x) (x)
@@ -489,13 +490,15 @@ static int psf_wordsize(psf_stype type)
 
 
 
-/* Portable convergent rounding function */
 int psf_round(double val)
 {
     long k;
+#if 0
     k = (long)(fabs(val)+0.5);
     if(val < 0.0)
         k = -k;
+#endif
+    k = lround(val);
     return (int) k;
 }
 
