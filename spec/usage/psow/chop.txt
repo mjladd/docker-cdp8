@@ -1,0 +1,20 @@
+USAGE:
+psow chop infile outfile pitch-brkpnt-data time-grain-pairs
+
+Chop sound into sections between specified grain(chunks)
+
+PITCH-BRKPNT-DATA  a breakpoint file with time and frq information.
+                   File may contain zeros (indicating moments of no-signal)
+                   but NOT pitch-zeros (indicating moments of no-pitch).
+                   It must contain SOME significant frequency information.
+TIME-GRAIN-PAIRS   File contains pairs of values: time   graincnt.
+                   'Time' is time of grain where file is cut.
+                   File is always cut at start-of-grain boundary.
+                   Next segment begins AFTER the specified grainchunk.
+                   'Graincnt' is no. of grains in chunk, at specified time,
+                   before the next cut-section starts.
+
+This process might be used in conjunction with 'psow grab' or 'interp',
+Grabbing a grain at a particular time in the sound, extending it,
+then reinserting it into the original sound by using the chopped components.
+

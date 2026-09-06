@@ -1,0 +1,44 @@
+USAGE:
+envspeak envspeak 1,5,6 infile outfile wsize splice offset repet rand
+envspeak envspeak 2     infile outfile wsize splice offset
+envspeak envspeak 3-4   infile outfile wsize splice offset attencnt dbatten
+envspeak envspeak 7     infile outfile wsize splice offset div rand which [-z]
+envspeak envspeak 8-9   infile outfile wsize splice offset repet rand ratio
+envspeak envspeak 10    infile outfile wsize splice
+envspeak envspeak 11    infile outfile wsize splice seed
+envspeak envspeak 12    infile outfile wsize splice Nwise
+envspeak envspeak 13-24 AS ABOVE BUT replace "wsize" by "cutsfile"
+envspeak envspeak 25    infile outfile timesfile
+        Uses data in "timesfile" to remove silent gaps at indicated times.
+
+Process speech "syllables".
+
+Mode 1:    Repeat each syllables, "repet" times.
+Mode 2:    Reverse-repeat each syllable.
+Modes 3/4: (3) Attenuate N in N+1 syllabs    (4) Attenuate all except.
+Modes 5/6: (5) Repeat each syllab N times, shrinking from end  (6)  from start.
+Mode 7:    Divide each syllable into N parts, and repeat one of these N times.
+Mode 8:    For each syllab, Repeat, shortening each repetition, lopping-off end.
+Mode 9:    ditto, lopping-off start.
+Mode 10:   Extract all syllables.
+Mode 11:   Randomly reorder syllables.
+Mode 12:   Reverse order syllabs N-wise (e.g.for N=3 abc|def|ghi -> cba|fed|ihj).
+
+WSIZE     Size of envelope-search window in mS (default 50).
+CUTSFILE  List of times (apart from 0 & end) where infile cut to create syllables.
+SPLICE    Splice length in mS (default 15) 
+OFFSET    Number of initial peaks to output unchanged.
+REPET     Number of repetitions of each syllable (Range 2 upwards).
+ATTENCNT  Groupsize (N) of syllabs ...(Mode 3) to attenuate (4) to NOT attenuate.
+          N means N in N+1 : so "1" means 1 in 2, "3" means 3 in 4 etc 
+DBATTEN   Reduce attenuated segments by ATTEN dB: Modes 3-4. (Range -96 to < 0)
+DIV       Keep 1/DIVth part of syllable, to repeat DIV times.
+WHICH     Which syllable-fraction to keep (Range 1 to DIV)
+-z        Repeated elements do NOT grow in size (machine-like quality).
+RATIO     length of repeated elements reduces by RATIO : Range (> 0.0 to 1)
+RAND      Randomisation of lengths of repeated units.
+NWISE     Reverse order in groups of N.
+SEED      Intialisation for random order permutation (Modes 11 only).
+          If Seed > 0, using same seed again, gives IDENTICAL random output.
+
+REPET, ATTENCNT, ATTEN and WHICH may vary over time.

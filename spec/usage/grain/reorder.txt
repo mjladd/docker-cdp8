@@ -1,0 +1,22 @@
+CDP Release 7.1 2016
+REORDER GRAINS IN GRAINY-SOUND
+
+USAGE:
+grain reorder infil outfil code [-blen] [-lgate] [-hminhole] [-twinsize] [-x]
+
+CODE     a string such as 'adb:c' indicating how grains are to be reordered.
+         The example means use grains 1 (a), 4 (d) and 2 (b) in sequence,
+         then begin this grain-jumping pattern again, BUT start at grain3 (c).
+         Continue to advance in this fashion until no grains left in infile.
+         The ':' is obligatory.
+LEN      maximum time between grains
+GATE     required signal level for grain to be seen: Range 0-1: default 1
+MINHOLE  min duration of inter-grain holes:
+         Min value (default) 0.032
+-t       Gate level tracks signal level, found with windowsize winsize(msecs)
+         Range(0.0 - infiledur): 0.0 turns off tracking)
+-x       ignore the last grain in the source.
+
+Gate may vary over time.
+
+

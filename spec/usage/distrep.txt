@@ -1,0 +1,17 @@
+USAGE:
+distrep distrep mode infile outfile multiplier ccyleccnt
+       [-kskipcycles] [-ssplicelen]
+
+Mode 1: TIMESTRETCH FILE BY REPEATING 'WAVECYCLES'
+Mode 2: REPEAT 'WAVECYCLES' BUT THEN CYCLES SKIP TO AVOID TIMESTRETCH
+
+Uses brief splices between repeated blocks.
+
+MULTIPLIER: (integer) is no. of times each wavecycle(grp) repeats.
+CYCLECNT:   (integer) is no. wavecycles in repeated groups.
+SKIPCYCLES: number of cycles to ignore (skip over) at file start.
+SPLICELEN:  mS splices of repeated blocks (default 15).
+
+multiplier and cyclecnt may vary over time.
+
+Works on MONO files only

@@ -1,0 +1,27 @@
+USAGE:
+filtrage filtrage 1 outfiltdata dur cnt min max distrib rand ampmin amprand
+           ampdistrib [-sseed]
+OR
+filtrage filtrage 2 outfiltdata dur cnt min max distrib rand ampmin amprand
+           ampdistrib timestep timerand [-sseed]
+
+Generate randomised varibank filter files.
+Mode 1 generates a fixed filter: Mode 2 generates a time-varying filter.
+
+DUR        Duration spanned by output filter file.
+CNT        Number of parallel filters.
+MIN        Minimum MIDI value for filters.
+MAX        Maximum MIDI value for filters.
+DISTRIB    Distribution of pitch values. 1 = pitch-linear.
+           > 1 squeezed towards low pitches : < 1, squeezed towards high pitches.
+RAND       Randomisation of filter pitches.
+AMPMIN     Minimum filter amplitude (max = 1.0)
+AMPRAND    Randomisation of filter amplitudes.
+AMPDISTRIB Distribution of filter amplitudes.
+           1  Increasing with pitch :  -1  Decreasing with pitch :  0  Random.
+           Intermediate values give decreasing degrees of randomisation.
+TIMESTEP   Timestep between each specified set of filter-pitches.
+TIMERAND   Randomisation of timestep.
+SEED       Non-zero values fix the randomisation so that, on repeating the process,
+           identical random values are reproduced.
+

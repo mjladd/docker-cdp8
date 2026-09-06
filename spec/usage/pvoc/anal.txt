@@ -1,0 +1,15 @@
+CDP Release 7.1 2016
+CONVERT SOUNDFILE TO SPECTRAL FILE
+
+USAGE: pvoc anal  mode infile outfile [-cpoints] [-ooverlap]
+
+MODES ARE....
+1) STANDARD ANALYSIS
+2) OUTPUT SPECTRAL ENVELOPE VALS ONLY
+3) OUTPUT SPECTRAL MAGNITUDE VALS ONLY
+POINTS   No of analysis points (2-32768 (power of 2)): default 1024
+         More points give better freq resolution
+         but worse time-resolution (e.g. rapidly changing spectrum).
+OVERLAP  Filter overlap factor (1-4): default 3
+
+

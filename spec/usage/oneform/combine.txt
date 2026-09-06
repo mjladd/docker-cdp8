@@ -1,0 +1,9 @@
+USAGE:
+oneform combine pitchfile 1f-infile outanalfile
+
+Generate new sound from pitch data and single-moment-formants data.
+
+PITCHFILE    A binary pitchfile.
+1F-INFILE    A single-moment-formant datafile.
+OUTANALFILE  The new analysis file generated.
+

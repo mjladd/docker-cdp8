@@ -1,0 +1,8 @@
+USAGE:
+topantail2 topantail infile outfile startgate endgate [-ssplicelen] [-bbacktrack]
+
+STARTGATE  level at start before which sound is to be removed (0-1).
+ENDGATE    level at end after which sound is to be removed (0-1).
+SPLICELEN  splicelen in mS.
+BACKTRACK  backtrack from initial gate point to an earlier splice point, in mS.
+

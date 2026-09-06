@@ -1,0 +1,23 @@
+CDP Release 7.1 2016
+GENERATE A SET OF SOUNDS IN-BETWEEN THE 2 INPUT SOUNDS
+      THROUGH WEIGHTED MIXES OF THE INPUT SOUNDS,
+         FROM MOSTLY SOUND1 TO MOSTLY SOUND2.
+
+USAGE: submix inbetween 1 infile1  infile2  outname  count
+OR:    submix inbetween 2 infile1  infile2  outname  ratios
+
+OUTNAME  is your GENERIC name for the output sndfiles.
+         New soundfiles will be called outname001 outname002 etc
+
+COUNT    If a single number (COUNT) is given to the program,
+         it generates amplitude ratios for the new sounds, automatically,
+         and COUNT is the number of inbetween outfiles to produce.
+
+RATIOS   A ratio, or a list of ratios in a textfile. These are
+         the level of file2 RELATIVE to file 1,for each new outfile,
+         as FRACTIONS (Range 0-1)
+         There must be an even number of values and in ascending order.
+
+Ensure NONE of the files to be created already exists!!
+
+

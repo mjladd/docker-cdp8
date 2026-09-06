@@ -1,0 +1,10 @@
+
+CREATE TANGENT MOTION TO OR FROM 8-CHANNEL RING
+
+USAGE: tangent NAME mode infile(s) outfile parameters: 
+
+where NAME can be any one of
+
+onefile    twofiles    sequence    list
+
+Type 'tangent onefile' for more info on tangent onefile..ETC.

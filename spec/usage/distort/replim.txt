@@ -1,0 +1,16 @@
+CDP Release 7.1 2016
+USAGE:
+distort replim inf outf multiplier [-ccyleccnt] [-sskipcycles] -f[hilim]
+
+TIMESTRETCH FILE BY REPEATING 'WAVECYCLES' (BELOW SPECIFIED FRQ)
+
+MULTIPLIER: (integer) is no. of times each wavecycle(grp) repeats.
+CYCLECNT:   (integer) is no. wavecycles in repeated groups.
+SKIPCYCLES: (integer) is no. of wavecycles to skip at start of file
+HILIM:      (float)   is frq below which cycles are counted.
+
+multiplier and cyclecnt may vary over time.
+
+Works on MONO files only
+
+

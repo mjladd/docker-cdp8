@@ -1,0 +1,15 @@
+USAGE:
+distshift distshift 1 infile outfile grpcnt shift
+distshift distshift 2 infile outfile grpcnt
+
+Mode 1: Shift alternate (groups of) half-wavecycles forward in time
+        (wrapping back around zero-time if pushed beyond sound end).
+Mode 2: Swap alternate half-wavecycle(group)s.
+
+GRPCNT Size of elements to operate on.
+             1 = single half-wavesets
+             2 = 1 waveset + single half-waveset.
+             3 = 2 wavesets + single half-waveset.
+             etc.
+SHIFT  Move alternate groups forward by "shift" waveset(group)s.
+

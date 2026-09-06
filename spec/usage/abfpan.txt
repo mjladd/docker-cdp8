@@ -1,0 +1,18 @@
+CDP MCTOOLS V1.5.3 (c) RWD,CDP 2009,2010,2013
+ABFPAN:  apply fixed or orbiting 1st-order B-Format pan to infile
+usage : abfpan [-b][-x][-oN] infile outfile startpos endpos
+    infile:   input soundfile, must be mono
+    startpos: 0.0 <= startpos <= 1.0 (0.0 and 1.0 = Centre Front)
+    endpos:   endpos < 0.0 gives anticlockwise rotation,
+                endpos > 0.0 gives clockwise rotation.
+                Units give number of revolutions, fraction gives final position
+                Set endpos = startpos for fixed pan
+    -b:       write output as horizontal Ambisonic B-format (.amb),
+                (i.e. bypass B-Format decoding).
+    -x:       write (WAVE_EX) format file (.wav). 
+                Default: write standard m/c soundfile (WAVE,AIFF).
+                NB: -b overrides -x - no meaning in using both.
+    -oN:      number of B-Format output channels: N = 3 or 4 only.
+                Default: write 4-ch file.
+    See also ABFPAN2 for 2nd order version with fixed height.
+

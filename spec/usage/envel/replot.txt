@@ -1,0 +1,22 @@
+CDP Release 7.1 2016
+WARP THE ENVELOPE IN A (TEXT) BRKPNT ENVELOPE FILE
+
+envel replot 1-12  brkfile outbrkfile          wsize various_params [-dreduce]
+envel replot 13    brkfile outbrkfile rampfile wsize various_params [-dreduce]
+envel replot 14-15 brkfile outbrkfile          wsize various_params [-dreduce]
+
+where MODE NUMBERS stand for are....
+1 NORMALISE       5 LIFT            9  INVERT       13 TRIGGER
+2 REVERSE         6 TIMESTRETCH     10 LIMIT        14 CEILING
+3 EXAGGERATE      7 FLATTEN         11 CORRUGATE    15 DUCKED
+4 ATTENUATE       8 GATE            12 EXPAND 
+
+WSIZE   is duration of enveloping window, in MS.
+REDUCE  forces interpolation of data in brkpnt outfile
+        to reduce unnecessary data output: Range(0-1).
+
+for more info on MODES, and their 'various_params', type e.g.:
+      'envel replot normalise' for more info on 'normalise' option... etc
+NB: TRIGGER works better using reshape or warp.
+
+

@@ -1,0 +1,27 @@
+CDP Release 7.1 2016
+GENERATE ALL CHORDS POSSIBLE FROM NOTES IN GIVEN SET, WITHIN GIVEN PITCH RANGE
+USING EACH  NOTE (OR ITS OCTAVE TRANSPOSITION) ONCE ONLY IN ANY ONE CHORD.
+
+USAGE: hfperm hfchords 1   ifil ofil sr nd gd pd min bn bo tn to srt [-m -s -a -o]
+OR:    hfperm hfchords 2   ifil ofil sr nd gd    min bn bo tn to srt [-m -s -a -o]
+OR:    hfperm hfchords 3-4 ifil ofil sr      min bn bo tn to srt [-m -s -a -o]
+IFIL   text input file of midi note values
+MODES: 1 SOUND OUT...Outputs 1 soundfile of all chords.
+       2 SOUNDS OUT..Outputs several sndfiles, chords grouped by sort specified
+       3 TEXT OUT ...Outputs textfile listing chords described by note names.
+       4 MIDI OUT ...Outputs list of chords described by MIDI values.
+PARAMETERS: OFIL output filename              SR  sample rate sound output
+            ND   duration each chord (secs)   GD  gap btwn chords (secs)
+            PD   gap btwn chord-groups        MIN min no. notes to combine
+BN  bottom note pitchrange, for derived chords (0-11 for C-C#....Bb-B)
+BO  octave of bottom note (0 = octave upwards from middle C)
+            TN  top note of pitchrange        TO  octave of top note
+SRT 0 root: 1 topnote: 2 pitchclass: 3 chordtype: 4 chordtype(keep 1 of each)
+   -m  generate only chords of min number of notes specified
+   -s  in each group, put smallest span chord first (otherwise it goes last).
+-a  do final sort by a method other than by chord density
+    For ROOT or TOP NOTE sort, sort by way intervals stacked inside chord.
+    For PITCHCLASS SET, sort by size of containing interval, then by density.
+-o  eliminate chords duplicating-as-a-whole any chord 1 or more 8vas distant.
+
+

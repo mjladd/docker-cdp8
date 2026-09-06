@@ -1,0 +1,16 @@
+USAGE: psow interp infile1 infile2 outfile startdur interpdur enddur
+                  vibfrq  vibdepth  tremfrq  tremdepth
+
+Interpolate between 2 pitch-synchronised grains, to produce new sound.
+
+STARTDUR   Duration to sustain initial grain.
+INTERPDUR  Duration of interpolation.
+ENDDUR     Duration to sustain final grain.
+VIBFRQ     Frequency of any added vibrato.
+VIBDEPTH   Depth (semitones) of any added vibrato.
+TREMFRQ    Frequency of any added tremolo.
+TREMDEPTH  Depth of any added tremolo.
+
+Process assumes your files each contain a single pitchsync grain.
+obtained using 'psow grab' with output duration 0.0
+

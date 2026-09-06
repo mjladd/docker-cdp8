@@ -1,0 +1,25 @@
+CDP Release 7.1 2016
+SWITCH BETWEEN SEVERAL FILES, WITH DIFFERENT SWITCH TIMES, TO MAKE NEW SOUND.
+
+USAGE:
+sfedit sphinx mode infile(s) outfile switch-times splicelen (segcnt) [-wweight -r]
+
+MODES ARE
+1) In Sequence    Imagine all files are running in parallel on a multitrack.
+                  Switch from one to another at switch-times, where
+                  Nth switch-time in one file, corresponds to Nth in another file.
+                  but these are not necessarily the same absolute time.
+2) Permuted       ..similarly, but time-segment order randomly permuted.
+3) Random Choice  ..similarly, but chose any time-seg, at random, as next segment.
+
+SWITCH-TIMES texfile with times which divide each file into segments.
+             There must be one column of times for each input file,
+             and the same number of entries in each column.
+             Times, in each column, must be in ascending order.
+             (Include time zero if you want to use a segment at start of a file).
+SPLICELEN    is duration of splices, in milliseconds
+SEGCNT       is number of segments to use in output (only with modes 2 & 3)
+-wWEIGHT     if flag set, 1st file occurs WEIGHT times more often than other files.
+-r           if flag set, order of files used is randomly permuted.
+
+

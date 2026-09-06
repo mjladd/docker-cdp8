@@ -1,0 +1,16 @@
+USAGE:  distmore bright 1-3 infil outfil marklist [-ssplicelen -d]
+
+
+Reorders sound segments in order of average zero-crossing rate
+.
+MARKLIST A list of timemarks in source, marking (paired) Heads and Tails.
+         e.g. consonant onset, and vowel continuation of source.
+         (It is assumed that the first mark is at a Head segment.)
+
+Extract data ...
+MODE 1   from Heads, & from Tails cut to segments, size approx equal to Heads.
+MODE 2   from Heads and Tails, as defined by marklist.
+MODE 3   from Tails only.
+
+SPLICELEN Length of splice in mS
+-d        Output in decreasing order of brightness. (Default: increasing).

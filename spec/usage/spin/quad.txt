@@ -1,0 +1,29 @@
+USAGE: spin quad 1 inf1 inf2 outf
+rate ochns cntr dopl xbuf [-bboost] [-aatt] [-kcmn] [-ccmx]
+OR:    spin quad 2 inf1 inf2 outf
+rate ochns cntr dopl xbuf [-bboost] [-aatt] [-kcmn]
+
+Spin two wide stereo-image across a 5-channel-wide sound image
+(with possible doppler pitch-shift of the moving edges).
+
+When the spinning image crosses the centre ....
+MODE 1 uses outer channels to project stereo-at-centre image.
+MODE 2 uses ONLY central channel to project stereo-at-centre image.
+
+RATE  spin speed in cycles per second (can vary over time).
+      Positive values spin clockwise (as viewed from above).
+      Negative values spin anticlockwise (as viewed from above).
+OCHNS Number of channels in output file.
+CNTR  Output channel which carries the central channel of the 5 outputs.
+DOPL  Max doppler pitchshift, in semitones (Range 0-12).
+XBUF  Expand buffers used by process (may be nesss for large doppler shift)
+BOOST Multiplicative level changes, as edges pass through centre.
+      gradually increase (*boost) as edge passes "FRONT" centre
+      and decreases (*1/boost) as edge passes "REAR" centre.
+      The two edges pass through centre simultaneously
+      so one edge gets louder and the other quieter.
+ATT   overall level decrease (*atten) as BOTH edges pass thro centre.
+CMN   Min level on centre lspkr (0-1).
+Mode 2 only...
+CMX   Max level on centre lspkr (0-1).
+

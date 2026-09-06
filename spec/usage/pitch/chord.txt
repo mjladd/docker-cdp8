@@ -1,0 +1,15 @@
+CDP Release 7.1 2016
+pitch chord infile outfile transpose_file [-bbot] [-ttop] [-x]
+
+TRANSPOSED VERSIONS OF SOUND SUPERIMPOSED ON ORIGINAL
+
+transpose_file is file of (possibly fractional) semitone transposition values.
+
+-t   TOP = top frq, above which data is filtered out.
+-b   BOT = bottom frq, below which data is filtered out.
+-x   Fuller spectrum.
+
+top frq and bottom frq may vary over time.
+
+
+

@@ -1,0 +1,1 @@
+ERROR: Bad number of arguments to progmach.

@@ -1,0 +1,11 @@
+CDP Release 7.1 2016
+CUT FILE INTO PIECES WITH CUTS AT RANDOM TIMES.
+
+USAGE: sfedit randcuts infile average-chunklen scattering
+
+Names of outfiles will be infilename truncated by 1 character,
+      with a number added, starting from zero.
+average-chunklen is average length of chunks cut.
+scattering       is variation in length of cuts : range 0-8
+
+

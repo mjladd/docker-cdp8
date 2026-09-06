@@ -1,0 +1,17 @@
+CDP Release 7.1 2016
+specinfo peak infile outtextfile [-ccutoff_frq] [-ttimewindow] [-ffrqwindow] [-h]
+
+LOCATE TIME-VARYING ENERGY CENTRE OF SPECTRUM.
+
+CUTOFF_FRQ  above which spectral search begins
+TIMEWINDOW  for energy averaging: in SECONDS
+FRQWINDOW   for energy averaging: in SEMITONES
+-h          adjust result for sensitivity of ear.
+
+OUTFILE is a text file of lines of data in form...
+
+       WINDOW starttime endtime : PEB lofrq TO hifrq'
+
+(where 'PEB' means PEAK ENERGY BAND)
+
+

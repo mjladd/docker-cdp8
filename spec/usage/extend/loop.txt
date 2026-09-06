@@ -1,0 +1,24 @@
+CDP Release 7.1 2016
+USAGE:
+extend loop 1 infile outfile     start len    step  [-wsplen] [-sscat] [-b]
+extend loop 2 infile outfile dur start len [-lstep] [-wsplen] [-sscat] [-b]
+extend loop 3 infile outfile cnt start len [-lstep] [-wsplen] [-sscat] [-b]
+
+LOOP INSIDE SOUNDFILE.
+
+MODES
+1: Loop advances in soundfile until soundfile is exhausted.
+2: Specify outfile duration (shortened if looping reaches end of infile).
+3: Specify number of loop repeats (reduced if looping reaches end of infile).
+
+start:   time in infile at which looping process begins.
+dur:     duration of outfile required.
+cnt:     number of loop repeats required.
+len:     length of looped segment (MILLIsecs).
+step:    advance in infile from one loopstart to next (MILLIsecs).
+         NB: Can be ZERO in modes 2 and 3, but NOT in mode 1.
+splen:   length of splice in MILLIsecs (Default 25ms).
+scat:    make step advance irregular, within timeframe given by 'scat'.
+b:       play from beginning of infile (even if looping doesn't begin there).
+
+

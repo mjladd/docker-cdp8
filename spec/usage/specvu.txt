@@ -1,0 +1,10 @@
+USAGE:
+specvu specvu 1 inanalfile outtextfile windowno
+specvu specvu 2 inanalfile outtextfile
+
+MODE 1: Extracts the data in a specified spectral window as a textfile.
+MODE 2: Finds (abs) min & max frq, and min & max amp of spectral data.
+        and outputs to a textfile.
+
+WINDOWNO Number of the window to extract
+

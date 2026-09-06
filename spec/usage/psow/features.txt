@@ -1,0 +1,22 @@
+USAGE: psow features 1-2 infile1 outfile pitch-brkpnt-data segcnt
+              trans  vibfrq  vibdepth  spectrans  hoarseness  attenuation
+              subharmno  subharmamp fof-stretching [-a]
+Impose new features on vocal-type sound, preserving or modifying FOF-grains.
+
+PITCH-BRKPNT-DATA  a breakpoint file with time and frq information.
+                   File may contain zeros (indicating moments of no-signal)
+                   but NOT pitch-zeros (indicating moments of no-pitch).
+                   It must contain SOME significant frequency information.
+SEGCNT         No of grains in a chunk retained as-is.
+TRANS          Pitch transposition (semitones). Works differently in 2 modes.
+               1) Transpose accompanied by timewarp (pitch up, snd shorter).
+               2) Transposed pitch accompanied by additional lower pitch.
+VIBFRQ         Frequency of any added vibrato.
+VIBDEPTH       Depth (semitones) of any added vibrato.
+SPECTRANS      Transposition of spectrum (not fundamental) in semitones.
+HOARSENESS     Degree of hoarseness of voice (Range 0 to 1).
+ATTENUATION    Attenuation (maybe necessary when 'fof-stretching') (Range 0-1)
+SUBHARMNO      Amount by which fundamental divided, 0 or 1 gives NO subharm.
+SUBHARMAMP     Level of any subharmonic introduced.
+FOF-STRETCHING Time-extension of FOFs: does NOT stretch sound (Range 1 to 512)
+-a             Alternative algorithm for fof_stretch.

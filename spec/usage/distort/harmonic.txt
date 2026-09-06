@@ -1,0 +1,15 @@
+CDP Release 7.1 2016
+USAGE:
+distort harmonic infile outfile harmonics-file [-ppre_attenuation]
+
+HARMONIC DISTORTION BY SUPERIMPOSING 'HARMONICS' ONTO 'WAVECYCLES'.
+
+HARMONICS-FILE contains harmonic_no/amplitude pairs.
+    where amplitude of src sound is taken to be 1.0
+    and harmonics range between 2 and 1024
+
+PRE_ATTENUATION is applied to input sound before processing.
+
+Works on MONO files only
+
+

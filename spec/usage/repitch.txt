@@ -1,0 +1,18 @@
+CDP Release 7.1 2016
+
+REPITCHING OPERATIONS ON SPECTRAL AND PITCH FILES
+
+USAGE: repitch NAME (mode) infile (infile2) outfile parameters: 
+
+where NAME can be any one of
+
+getpitch
+approx      exag     invert    quantise    randomise    smooth
+vibrato     cut      fix       combine     combineb
+synth    vowels   insertzeros   insertsil   pitchtosil    noisetosil   analenv
+generate interp   pchtotext
+pchshift   transpose   transposef
+
+Type 'repitch getpitch' for more info on repitch getpitch..ETC.
+
+

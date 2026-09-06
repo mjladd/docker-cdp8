@@ -1,0 +1,10 @@
+USAGE:
+specnu squeeze inanalfile outanalfile centrefrq squeeze
+
+Squeeze spectrum in frequency range, around a specified centre frq.
+
+CENTREFRQ frequency around which frequency data is squeezed.
+SQUEEZE   Amount of squeezing of spectrum (< 1)
+
+All parameters may vray over time.
+

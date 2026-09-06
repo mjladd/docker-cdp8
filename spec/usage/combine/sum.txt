@@ -1,0 +1,10 @@
+CDP Release 7.1 2016
+combine sum infile infile2 outfile [-ccrossover]
+
+FIND SUM OF TWO SPECTRA.
+
+-c  CROSSOVER is amount of 2nd spectrum added to 1st (range 0 to 1)
+
+crossover may vary over time.
+
+

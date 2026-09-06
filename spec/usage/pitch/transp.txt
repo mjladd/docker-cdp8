@@ -1,0 +1,24 @@
+CDP Release 7.1 2016
+pitch transp 1-3 infile outfile frq_split                     [-ddepth]
+pitch transp 4-5 infile outfile frq_split transpos            [-ddepth]
+pitch transp 6   infile outfile frq_split transpos1 transpos2 [-ddepth]
+
+SHIFT PITCH OF (PART OF) SPECTRUM
+
+MODES :-
+1   Octave transpose up, above freq_split.
+2   Octave transpose down, below freq_split.
+3   Octave transpose up and down.
+4   Pitch  transpose up, above freq_split.
+5   Pitch  transpose down, below freq_split.
+6   Pitch  transpose up and down.
+
+frq_split is frequency above or below which transposition takes place.
+transpos  is transposition above or below freq_split.
+transpos1 is transposition above freq_split. (semitones)
+transpos2 is transposition below freq_split. (semitones)
+depth     transposition effect on source (from 0(no effect) to 1(full effect))
+
+depth,frq_split,transpos1 & transpos2 can vary over time.
+
+

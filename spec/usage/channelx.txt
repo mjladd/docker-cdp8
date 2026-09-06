@@ -1,0 +1,6 @@
+
+CDP MCTOOLS: CHANNELX V1.6 (c) RWD, CDP 2010
+Extract all channels from m/c file
+usage: channelx [-oBASENAME] infile chan_no [chan_no...]
+  -oBASENAME = base name (with extension) of outfiles (appended *_cN for ch N)
+(NB: Channels of WAVE-EX files are written as standard soundfiles)

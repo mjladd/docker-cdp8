@@ -1,0 +1,26 @@
+
+rmverb: Multi-channel reverb with room simulation
+	Version 1.3 Release 5 CDP 1998,1999,2011
+usage:
+rmverb [flags] infile outfile rmsize rgain mix fback absorb lpfreq trtime
+flags    : any or all of the following
+   -cN   : create outfile with N channels (1 <= N <= 16 : default =2)
+   -d    : apply double lowpass damping (internal to nested allpasses)
+            (see <absorb>. NB: reduces reverb time: 
+                  increase feedback to compensate)
+   -eFILE: read early reflections data from breakpoint textfile FILE
+   -f    : force floating-point output (default: infile format)
+   -HN   : apply 12dB Highcut filter with cutoff freq N Hz) to infile
+   -LN   : apply 12dB Lowcut filter with cutoff freq N Hz to infile
+           (NB: currently fixed at 12dB/oct - could be made variable)
+
+   -pN   : force reverb predelay to N msecs (shifts early reflections)
+rmsize   : 1,2 or 3: small, medium or large
+rgain    : set level of dense reverb (0.0 < egain <= 1.0)
+mix      : dry/wet balance (source and reverb). 1.0<-- mix -->=0.0
+fback    : reverb feedback level: controls decay time. 0.0 <= fback <= 1.0
+absorb   : cutoff freq (Hz) of internal lowpass filters (models air absorption)
+                (typ: 2500 for large room --- 4200 for small room 
+lpfreq   : lowpass filter cutoff freq(Hz) applied at input to reverb
+           NB: to disable either filter (absorb,lpfreq), use the value 0
+trtime   : trailer time added to outfile for reverb tail (secs)

@@ -1,0 +1,21 @@
+CDP Release 7.1 2016
+ALTER THE SPATIAL DISTRIBUTION OF A MIXFILE.
+
+USAGE: submix spacewarp 1-2 inmixfile outmixfile Q     [-sstartl] [-eendl]
+OR:    submix spacewarp 4-6 inmixfile outmixfile Q1 Q2 [-sstartl] [-eendl]
+OR:    submix spacewarp 7   inmixfile outmixfile
+OR:    submix spacewarp 8   inmixfile outmixfile Q
+STARTL: line at which warping begins (default: 1st in file)
+ENDL  : line at which warping ends  (default: last in file).
+MODES ARE....
+1) SOUNDS TO SAME POSITION           Q is position. (stereo files become mono)
+2) NARROW SPATIAL SPREAD             Q is a +ve number < 1.0
+3) SEQUENCE POSITIONS LEFTWARDS    over range Q1-Q2 (stereo files become mono)
+4) SEQUENCE POSITIONS RIGHTWARDS   over range Q1-Q2 (stereo files become mono)
+5) RANDOM-SCATTER POSITIONS      within range Q1-Q2 (stereo files become mono)
+6) RANDOM, BUT ALTERNATE TO L/R OF THE CENTRE OF THE SPATIAL RANGE SPECIFIED.
+                                        range Q1-Q2 (stereo files become mono)
+7) INVERT STEREO IN ALTERNATE LINES OF MIXFILE: (Use to avoid clipping).
+8) INVERT STEREO IN SPECIFIED LINE OF MIXFILE   Q is line number.
+
+

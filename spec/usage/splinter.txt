@@ -1,0 +1,37 @@
+USAGE:
+splinter splinter 1-4 infile outfile target wcnt shrcnt ocnt p1 p2
+        [-eecnt] [-sscv] [-ppcv] [-ffrq | -ddur] [-rrand] [-vshrand] [-i] [-I]
+
+Creates splinters by repeating & shrinking selected waveset-group in sound.
+Either splinters repeat before merging with orig snd at time-in-src specified.
+OR original sound plays up to selected time, then splinters,
+
+Mode 1+3: Splinters lead into original sound.    Mode 1 splinters change pitch.
+Mode 2+4: Splinters emerge from original sound.  Mode 2 splinters change pitch.
+
+TARGET Time in src immediately before desired waveset-group.
+       Waveset group selected should not be longer than 1 minute.
+WCNT   Number of wavesets to use to create splinter group.
+SHRCNT Number of waveset-group repets over which shrinkage takes place.
+OCNT   Number of max-shrunken splinters beyond shrink.
+P1     Pulse-speed of waveset repetitions (Hz) at originating waveset.
+P2     Pulse-speed of shrunken wavesets (Hz) SHRCNT+OCNT splinters away.
+ECNT   Number of additional regular pulses beyond SHRCNT+OCNT.
+
+SCV    Shrinkage curve: 1 = linear:
+       >1 contracts more rapidly near originating waveset; <1 less rapidly.
+PCV    Pulse-speed curve: 1 = linear:
+       >1 accels more rapidly near originating waveset; <1 less rapidly.
+
+FRQ    Modes1+2: approx Frq (1/wavelen) of max-shrunk splinters (dflt c6000Hz).
+       Resultant wavelen must be > average wavesetlen in wavesets chosen
+       and less than nyquist/2.
+DUR    Modes3+4: approx Duration (mS) of max-shrunk splinters.
+
+RAND   Randomisation of pulse timing. Time-variable parameter.
+SHRAND Randomisation of pulse shrinkage. Time-variable parameter.
+-i     Mix all source into output. (Default: use source only where no splinters)
+-I     Mix none of source into output.
+
+If P1 set to zero, Pulse-speed 1 determined by duration of selected waveset-group.
+If P2 set to zero, Pulse-speed 2 same as Pulse-speed 1.

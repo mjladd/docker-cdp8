@@ -1,0 +1,10 @@
+USAGE:
+repair repair infiles generic-outfilename channels
+
+Join a list of mono sounds into stereo, 4-channel or etc outputs.
+
+CHANNELS   No of channels in output files.
+
+Input files must be listed with all channel 1 sources in order, first,
+then all channel 2 sources in order, etc.
+

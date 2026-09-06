@@ -1,0 +1,9 @@
+CDP Release 7.1 2016
+repitch interp 1-2 infile outfile
+
+REPLACE NOISE OR SILENCE BY PITCH INTERPOLATED FROM EXISTING PITCHES
+
+Mode 1 glides from previous valid pitch to next vaild pitch.
+Mode 2 sustains previous valid pitch until next vaild pitch appears.
+
+

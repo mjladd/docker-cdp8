@@ -1,0 +1,19 @@
+CDP Release 7.1 2016
+DOVETAIL SNDFILE BY ENVELOPING THE START AND END OF IT.
+
+USAGE:
+envel dovetail 1 infile outfile infadedur outfadedur intype outtype [-ttimes]
+OR:   
+envel dovetail 2 infile outfile infadedur outfadedur [-ttimes]
+
+In mode 2, the dovetail slopes are doubly exponential (steeper).
+
+INFADE-DUR  is duration of start-of-file fade-in.
+OUTFADE-DUR is duration of end-of-file fade-out.
+            Infade-dur and Outfade-dur must not overlap each another.
+INTYPE      0 for linear fade, 1 (default) for exponential fade, at start.
+OUTTYPE     0 for linear fade, 1 (default) for exponential fade, at end.
+-t          times for fade durations are given in the units....
+            seconds (-t0) samples (-t1), or grouped-samples (-t2)
+
+

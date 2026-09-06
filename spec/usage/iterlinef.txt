@@ -1,0 +1,26 @@
+USAGE:
+iterlinef iterlinef mode infile outfile tdata outduration
+     [-ddelay] [-rrand] [-ppshift] [-aampcut] [-ggain] [-sseed] [-n]
+
+ITERATE AN INPUT SOUND SET, FOLLOWING A TRANSPOSITION LINE.
+The input set must consist of 25 transpositions of a source
+at intervals of one semitone, in ascending order.
+Input sounds must be of approx equal duration.
+The central sound (file 13) is the reference sound for transpositions (see below)
+
+MODE 1: interpolate between transpositions.
+MODE 2: step between transpositions.
+
+TDATA   File of time-transposition pairs, transpositions in semitones.
+        Transpositions are relative to the central sound (file 13) of the set.
+DELAY   (average) delay between iterations.
+RAND    delaytime-randomisation: Range 0 - 1: Default 0
+PSHIFT  max of random pitchshift of each iter: Range 0 - 12 semitones
+        e.g.  2.5 =  2.5 semitones up or down.
+AMPCUT  max of random amp-reduction on each iter: Range 0-1: default 0
+GAIN    Overall Gain: Range 0 - 1:
+        Special val 0, produces maximum acceptable level.
+        (this is overridden by the "-n" normalisation flag - see below).
+SEED    the same seed-number will produce identical output on rerun,
+        (Default: (0) random sequence is different every time).
+-n      Normalise output (max out level = max in level)> only with NON-zero seed.

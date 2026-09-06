@@ -1,0 +1,21 @@
+CDP Release 7.1 2016
+CURTAIL SNDFILE BY FADING TO ZERO AT SOME TIME WITHIN IT.
+
+USAGE: envel curtail 1 sndfile outfile fadestart fadeend  envtype [-ttimes]
+OR:    envel curtail 2 sndfile outfile fadestart fade-dur envtype [-ttimes]
+OR:    envel curtail 3 sndfile outfile fadestart          envtype [-ttimes]
+
+OR:    envel curtail 4 sndfile outfile fadestart fadeend          [-ttimes]
+OR:    envel curtail 5 sndfile outfile fadestart fade-dur         [-ttimes]
+OR:    envel curtail 6 sndfile outfile fadestart                  [-ttimes]
+
+MODES 4-6 produce doubly exponential (steeper) editing slope.
+
+FADESTART is start-time of fade.
+FADEEND   is end-time of fade. (In MODE 3, assumed to be endtime of origsnd).
+FADE-DUR  is duration of fade-out.
+ENVTYPE   0 for linear fade, 1 (default) for exponential fade.
+-t        TIMES for fade start, end or duration are given in the units....
+          seconds (-t0) samples (-t1), or grouped-samples (-t2)
+
+

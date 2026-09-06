@@ -1,0 +1,14 @@
+USAGE: spectwin spectwin
+       1-4 inanal1 inanal2 outanal [-ffrqint] [-eenvint] [-ddupl -sstep -rdec]
+
+FRQINT   Dominance of spectral freqs of infile2 (range  0-1: dflt 1.0).
+ENVINT   Dominance of spectral envelope of infile2 (range  0-1: dflt 1.0).
+DUPL     Duplicate original sound-1 "dupl" times, at higher pitches.
+STEP     pitchstep (semitones) at each duplication.
+DEC      Level multiplier from one transposition to next, in duplications.
+
+MODE 1  Formant envelope of file 1 v Formant envelope of file 2.
+MODE 2  Formant envelope of file 1 v Total envelope of file 2.
+MODE 3  Total envelope of file 1 v Formant envelope of file 2.
+MODE 4  Total envelope of file 1 v total envelope of file 2.
+

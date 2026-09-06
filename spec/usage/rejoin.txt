@@ -1,0 +1,13 @@
+USAGE:
+rejoin rejoin 1-2 infile infile2 [infile3 ....] [-ggain] [-r]
+
+Remix segment-files originating in "isolate" process.
+Mode 1: Remix segment files only.
+Mode 2: Remix segment files and remnant file.
+        NB Remnant file must be LAST infile in list of input files.
+
+GAIN   Change output level (Range 0 - 1).
+       Note that output level is automatically turned down if output clips.
+
+-r     Reverse the segment-files before mixing with remnant file.
+

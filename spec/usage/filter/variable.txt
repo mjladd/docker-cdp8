@@ -1,0 +1,22 @@
+CDP Release 7.1 2016
+LOPASS, HIGH-PASS, BANDPASS, OR NOTCH FILTER WITH VARIABLE FRQ
+
+USAGE: filter variable mode infile outfile acuity gain frq [-ttail]
+
+MODES ARE..
+1) NOTCH (Band Reject)
+
+2) BAND-PASS
+3) LOW-PASS
+4) HIGH-PASS
+ACUITY   acuity of filter: Range(0.000100 to 1.0).
+         Smaller vals give tighter filter.
+GAIN     overall gain on output:  Range(0.001000 to 10000.0)
+         Rule of thumb:
+         if acuity = (1/3)to-power-n: gain = (2/3)-to-power-n
+FRQ      frq of filter:           Range(0.1 to srate/2)
+
+ACUITY and FRQ can vary over time.
+TAIL       decay tail duration
+
+

@@ -1,0 +1,30 @@
+CDP Release 7.1 2016
+SPLICE SEGMENTS OF SRCFILE END-TO-END: START-TIMES (IN SRCFILE) OF SEGS,CHOSEN
+BY 'DRUNKEN-WALK' THROUGH SRCFILE:   IN MODE 2, SRCFILE PLAYS SOBERLY AT HOLDS
+
+USAGES:
+extend drunk 1 infile outfile outdur locus ambitus step clock
+       [-ssplicelen] [-cclokrand] [-ooverlap] [-rseed]
+
+extend drunk 2 infile outfile outdur locus ambitus step clock mindrnk maxdrnk
+       [-ssplicelen] [-cclokrand] [-ooverlap] [-rseed] [-llosober] [-hhisober]
+
+OUTDUR    Total (minimum) duration of output file (secs)
+LOCUS     Time in src around which drunkwalk happens.(secs) CAN MOVE THRO SRC.
+AMBITUS   (half)width of region from within which sound-segments read.(secs).
+STEP      Max length of (random) step between segment-reads (>0.002 secs).
+          (always falls WITHIN ambitus: automatically adjusted where too large)
+CLOCK     Time between segment reads = seg duration (> SPLICELEN * 2).(secs).
+MINDRNK   Min no. cloktiks between sober plays (1 - 32767: Default 10)
+MAXDRNK   Max no. cloktiks between sober plays (1 - 32767: Default 30)
+SPLICELEN in MILLIsecs (default 15ms).
+CLOKRAND  Randomisation of clock-ticks. (Range : 0-1: default 0)
+OVERLAP   Mutual overlap of segments in output. (Range 0 to 0.9900: default 0)
+SEED      Any set value gives REPRODUCIBLE output.
+LOSOBER   Min duration of sober plays (secs) (Range: >0 - infiledur+)
+          If >= infiledur (default): sober plays all go to end of src
+HISOBER   Max duration of sober plays (secs) (Range: >0 - infiledur+)
+
+all params EXCEPT outdur, splicelen and seed, may vary through time.
+
+

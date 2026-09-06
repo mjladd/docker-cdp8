@@ -1,0 +1,28 @@
+CDP Release 7.1 2016
+CHANGE THE SPEED & PITCH OF THE SRC SOUND.
+
+USAGE: modify speed 1 infile outfile     speed             [-o]
+OR:    modify speed 2 infile outfile     semitone-transpos [-o]
+OR:    modify speed 3 infile outtextfile speed             [-o]
+OR:    modify speed 4 infile outtextfile semitone-transpos [-o]
+OR:    modify speed 5 infile outfile     accel  goaltime   [-sstarttime]
+OR:    modify speed 6 infile outfile    vibrate vibdepth
+WHERE MODES ARE
+1)  Vary speed/pitch of a sound.
+2)  Vary speed/pitch by constant (fractional) no. of semitones.
+3)  Get information on varying speed in a time-changing manner.
+4)  Get info on time-variable speedchange in semitones.
+    -o  brkpnt times read as outfile times (default: as infile times).
+5)  Accelerate or decelerate a sound.
+    ACCEL:     multiplication of speed reached by GOALTIME.
+    GOALTIME:  time in OUTPUT file at which accelerated speed reached.
+               If infile not exhausted there, it continues to accel.
+               If insound finishes before GOALTIME reached,
+               outfile won't reach specified acceleration value.
+    STARTTIME: time in input/output file at which accel begins.
+6)  Add vibrato to a sound.
+    VIBRATE:   is rate of vibrato shaking in cycles-per-second.
+    VIBDEPTH:  is vibrato depth in (possibly fractional) semitones.
+    both of these may vary in time.
+
+

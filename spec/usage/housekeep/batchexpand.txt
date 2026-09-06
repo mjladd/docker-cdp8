@@ -1,0 +1,22 @@
+CDP Release 7.1 2016
+EXPAND AN EXISTING BATCHFILE.
+
+USAGE: housekeep batchexpand mode batch snd1 [snd2 ...] datafile ic oc pc
+
+BATCH      a batchfile, which uses same kind of param in one of its columns.
+SND1,2...  any number of soundfiles
+IC  is column in batchfile containing input file.
+OC  is column in batchfile containing  output file.
+PC  is column in batchfile containing parameter to be replaced.
+DATAFILE  of param values where 1st param applies to 1st sndfile, 2nd param to 2nd.
+New batchfile created, modelled on original........
+IN MODE 1:
+a) Existing batchfile has only 1 input file.
+b) Same sequence of operations applied to each in-sndfile using each new param.
+(So a 3 line file, with 3 sound inputs, becomes a 9-line file)
+IN MODE 2:
+a) Existing batchfile can operate on different soundfiles.
+Soundfiles in orig batchfile replaced by chosen files, and using new params.
+(So a 3 line file, with 3 sound inputs, becomes a 3-line file)
+
+

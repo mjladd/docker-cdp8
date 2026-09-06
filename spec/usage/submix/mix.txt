@@ -1,0 +1,16 @@
+CDP Release 7.1 2016
+MIX SOUNDS AS INSTRUCTED IN A MIXFILE
+
+USAGE:	submix mix mixfile outsndfile [-sSTART] [-eEND] [-gATTENUATION] [-a]
+
+START       gives starttime START (to start mixing later than zero).
+END         gives output endtime END (to stop mix before its true end).
+ATTENUATION reduces level of entire mix (range >0-1).
+
+Note that the START and END params are intended for mix TESTING purposes only.
+If you want to keep output from such a testmix, you should TOPNTAIL it.
+
+-a    alternative mix algorithm, slightly slower,
+      but may avoid clipping in special circumstances.
+
+

@@ -1,0 +1,17 @@
+CDP Release 7.1 2016
+stretch spectrum mode infile outfile frq_divide maxstretch exponent [-ddepth]
+
+STRETCH THE FREQUENCIES IN THE SPECTRUM
+
+MODES:-
+1     Stretch above the frq_divide.
+2     Stretch below the frq_divide.
+
+frq_divide is the frq above or below which spectral stretching takes place.
+maxstretch is the transposition ratio of the topmost spectral components.
+exponent   specifies the type of stretching required.  (> 0)
+depth      stretch effect on source (from 0 (no effect) to 1 (full effect))
+
+depth can vary over time.
+
+

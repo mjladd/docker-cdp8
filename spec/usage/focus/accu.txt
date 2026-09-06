@@ -1,0 +1,13 @@
+CDP Release 7.1 2016
+focus accu infile outfile [-ddecay] [-gglis]
+
+SUSTAIN EACH SPECTRAL BAND, UNTIL LOUDER DATA APPEARS IN THAT BAND
+
+-d    sutained channel data decays by factor DECAY per sec.
+      (Possible Range : 0.001000 to 1.0 : Default 1.0)
+      (Suggested Effective Range : 0.001000 to 0.5)
+-g    sutained channel data glisses at GLIS 8vas per sec.
+      (Approx Range : -11.7 to 11.7 : Default 0)
+
+
+

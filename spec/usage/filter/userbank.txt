@@ -1,0 +1,21 @@
+CDP Release 7.1 2016
+USER-DEFINED FILTERBANK,WITH TIME-VARIABLE Q
+
+USAGE: filter userbank mode infile outfile datafile Q gain [-ttail] [-d]
+
+MODES are
+1)  Filter-pitches as frq in Hz.
+2)  Filter-pitches as MIDI values.
+
+DATAFILE: has Pitch & Amp of filters (paired, one pair on each line).
+          Ranges: Pitch (0Hz to sr/3) Amp (0.001000 to 10000.0)
+          Amplitude may also be expressed in decibels.
+          Comment-lines (starting with ';') may be used.
+
+Q:        Q (tightness) of filter: Range(0.001000 to 10000.0)
+GAIN      overall gain, Range(0.001000 to 10000.0).
+TAIL      decay tail duration
+-d        double filtering.
+
+Q may vary over time.
+

@@ -1,0 +1,18 @@
+CDP Release 7.1 2016
+pitchinfo see 1 pitchfile    outsndfile scalefact
+pitchinfo see 2 transposfile outsndfile
+
+CONVERT BINARY PITCHFILE OR TRANSPOSITION-FILE TO PSEUDO-SNDFILE, FOR VIEWING.
+
+MODES....
+(1) PITCHFILE is a binary pitchdata file.
+    SCALEFACT (> 0.0) multiplies pitch vals, for ease of viewing.
+    Pitch data scaled by (e.g.) 100 can be read directly from 'sndfile'
+    (Remembering to divide numeric values by 100).
+
+(2) TRANSPOSFILE is a binary transposition-data file.
+    Transposition data is automatically scaled to half max range,
+    And displayed in log format (0 = no transposition, + = up, - = down),
+    giving a schematic idea ONLY, of transposition data.
+
+

@@ -1,0 +1,10 @@
+CDP Release 7.1 2016
+COMPARE CHANNELS IN A STEREO SOUNDFILE
+
+USAGE: sndreport chandiff infile [-tthreshold] [-ncnt]
+
+THRESHOLD  max permissible difference in data values.
+CNT        MAX NUMBER of differences to accept (default 1).
+   NB: The output sample display is counted in sample-pairs.
+
+

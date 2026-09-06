@@ -1,0 +1,23 @@
+CDP Release 7.1 2016
+repitch invert mode pitchfile outfile map [-mmeanpch] [-bbot] [-ttop]
+
+INVERT PITCH CONTOUR OF A PITCH DATA FILE.
+
+MAP	   Set map to ZERO if no mapping is required..OTHERWISE
+          map is a file of paired values showing how intervals
+          (in, possibly fractional, SEMITONES)
+          are to be mapped onto their inversions.
+          Range -96 to 96.
+MEANPCH   pitch (MIDI) around which pitchline inverted.
+          Range: MIDI equivalents of 9Hz to nyquist.
+BOT       bottom pitch (MIDI) permissible (default 0).
+          Range: MIDI equivalents of 9Hz to nyquist.
+TOP       top pitch (MIDI) permissible (default 127).
+          Range: MIDI equivalents of 9Hz to nyquist.
+MODES.
+(1) Gives a pitchfile as ouput.
+(2) Gives a transposition file as output.
+
+Meanpitch may vary over time.
+
+

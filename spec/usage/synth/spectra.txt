@@ -1,0 +1,19 @@
+CDP Release 7.1 2016
+GENERATE BOTH CHANNELS OF A STEREO SPECTRAL BAND
+
+USAGE: synth spectra outfilename dur frq spread max-foc min-foc
+                     timevar srate [-p]
+
+DUR      duration of output snd, in seconds.
+FRQ      centre frequency of the band.
+SPREAD   width of band, in Hz (default) or as transposition ratio.
+'Foc' = focus, degree to which band energy is concentrated at centre frequency.
+MAX-FOC  range 0 1
+MIN-FOC  range 0 1
+TIMEVAR  Degree to which the band varies over time. Range 0-1.
+SRATE    Sample rate of output audio file.
+
+-p       If flag set, 'SPREAD' is a transposition ratio.
+
+
+

@@ -1,0 +1,11 @@
+CDP Release 7.1 2016
+hilite bltr infile outfile blurring tracing 
+
+TIME-AVERAGE, AND TRACE, THE SPECTRUM
+
+blurring   is number of windows over which to average the spectrum.
+tracing    is number of (loudest) channels to retain, in each window.
+
+blurring AND tracing may vary over time. 
+
+

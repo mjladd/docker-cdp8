@@ -1,0 +1,25 @@
+CDP Release 7.1 2016
+USAGE:
+distort envel 1-2 infile outfile         cyclecnt [-ttroughing] [-eexponent]
+distort envel 3   infile outfile         cyclecnt troughing     [-eexponent]
+distort envel 4   infile outfile envfile cyclecnt 
+
+IMPOSE ENVELOPE OVER EACH GROUP OF cyclecnt 'WAVECYCLES'
+
+MODES (Works on MONO files only)-
+1  rising envelope.
+2  falling envelope.
+3  troughed envelope.
+4  user defined envelope.
+CYCLECNT  is no of wavecycles under a single envelope.
+EXPONENT  is exponent for envelope rise or decay:
+          If OMMITED envelope rise/decay is linear.
+TROUGHING is trough of envelope (0-1: default 0).
+ENVFILE   Defines user envelope as time/val(0-1) pairs.
+          (Time units arbitrary, as envelope stretched to each cycle(set) duration.
+
+CYCLECNT, TROUGHING and EXPONENT, may vary over time
+
+Works on MONO files only
+
+

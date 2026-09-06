@@ -1,0 +1,19 @@
+CDP Release 7.1 2016
+repitch combineb 1 pitchfile    pitchfile2    outtbrkfile [-dI]
+repitch combineb 2 pitchfile    transposfile  outpbrkfile [-dI]
+repitch combineb 3 transposfile transposfile2 outtbrkfile [-dI]
+
+       GENERATE TRANSPOSITION DATA FROM 2 SETS OF PITCH DATA,
+          OR TRANSPOSE PITCH DATA WITH TRANSPOSITION DATA,
+OR COMBINE 2 SETS OF TRANSPOSITION DATA TO FORM NEW TRANSPOSITION DATA,
+              PRODUCING A TIME/VAL BRKPNT FILE OUTPUT.
+
+PITCHFILE    binary pitchdatafile OR time/pitch(frq) brkpnt file
+TRANSPOSFILE binary transposition file OR time/transpos(ratio) brkpnt file
+OUTPBRKFILE  time/pitch(frq) brkpnt file
+OUTTBRKFILE  time/transposition(ratio) brkpnt file
+
+-d  I = acceptable pitch error in brkpntfile data-reduction.
+    Range > 1.0 : Default: eighth_tone = 0.250000
+
+

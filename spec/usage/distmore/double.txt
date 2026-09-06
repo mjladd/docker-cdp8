@@ -1,0 +1,5 @@
+USAGE:  distmore double infil outfil mult
+
+Doubles (quadruples etc.) frq of each waveset
+.
+MULT   Octave step up (1-4).

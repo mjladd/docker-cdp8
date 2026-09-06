@@ -1,0 +1,10 @@
+CDP Release 7.1 2016
+morph glide infile infile2 outfile duration
+
+INTERPOLATE, LINEARLY, BETWEEN 2 SINGLE ANALYSIS WINDOWS
+              EXTRACTED WITH spec grab.
+
+INFILE1, INFILE2  are single-window analysis files.
+DURATION          is duration of output sound required.
+
+

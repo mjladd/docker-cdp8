@@ -1,0 +1,16 @@
+USAGE: psow synth 1-5 infile1 outfile [oscdatafile] pitch-brkpnt-data depth
+
+Impose vocal FOFs on a stream of synthesized sound.
+
+OSCDATAFILE        (Amplitude values range is 0.0 to 1.0)
+  Mode 1: Each line has pair of values for frequency and amplitude.
+  Mode 2: Each line has pair of values for midipitch and amplitude.
+  Mode 3: Each line has frq and amp data in the 'filter varibank' format.
+  Mode 4: Each line has midipitch & amp data in 'filter varibank' format.
+  Mode 5: No 'oscdatafile' ... synthetic source is noise.
+PITCH-BRKPNT-DATA  a breakpoint file with time and frq information.
+                   File may contain zeros (indicating moments of no-signal)
+                   but NOT pitch-zeros (indicating moments of no-pitch).
+                   It must contain SOME significant frequency information.
+DEPTH              Depth of application of FOFS to the synthesized sound.
+

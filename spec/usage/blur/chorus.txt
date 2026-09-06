@@ -1,0 +1,22 @@
+CDP Release 7.1 2016
+blur chorus 1   infile outfile aspread        
+blur chorus 2-4 infile outfile         fspread
+blur chorus 5-7 infile outfile aspread fspread
+
+CHORUSING BY RANDOMISING AMPLITUDES AND/OR FREQUENCIES OF PARTIALS
+
+MODES :-
+1  Randomise partial amplitudes.
+2  Randomise partial frequencies.
+3  Randomise partial frequencies upwards only.
+4  Randomise partial frequencies downwards only.
+5  Randomise partial amplitudes AND frequencies.
+6  Randomise partial amplitudes, and frequencies upwards only.
+7  Randomise partial amplitudes, and frequencies downwards only.
+
+aspread   is maximum random scatter of partial-amps (Range 1-1028)
+fspread   is maximum random scatter of partial-frqs (Range 1-4)
+
+aspread and fspread may vary over time.
+
+

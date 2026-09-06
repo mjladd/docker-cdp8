@@ -1,0 +1,16 @@
+FREEZE A SEGMENT OF A SOUND BY ITERATION IN A FLUID MANNER
+
+USAGE: freeze freeze 1 infil outfil outduration
+     delay rand pscat ampcut start end adjust [-sseed]
+OR:    freeze freeze 2 infil outfil repetitions
+     delay rand pscat ampcut start end adjust [-sseed]
+delay   (average) delay between iterations: <= length of frozen segement.
+rand    delaytime-randomisation: Range 0 - 1
+pscat   max of random pitchshift of each iter: Range 0 - 12 semitones
+        e.g.  2.5 =  2.5 semitones up or down.
+ampcut  max of random amp-reduction on each iter: Range 0-1
+start   Time where frozen segment begins in original sound.
+end     Time where frozen segment ends in original sound.
+adjust  Adjust gain of frozen segment.
+seed    the same seed-number will produce identical output on rerun,
+        (Default: (0) random sequence is different every time).

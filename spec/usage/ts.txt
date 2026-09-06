@@ -1,0 +1,10 @@
+
+CREATE SOUND FROM TIME-SERIES TEXT DATA
+
+USAGE: ts NAME parameters
+
+where NAME can be any one of
+
+oscil trace
+
+Type 'ts oscil' for more info on ts oscil..ETC.

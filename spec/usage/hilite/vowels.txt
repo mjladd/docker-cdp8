@@ -1,0 +1,25 @@
+CDP Release 7.1 2016
+hilite vowels infile outfile vowelfile halfwidth steepness range threshold
+
+VOWELS......file containing paired times & vowels, where vowels can be....
+ee: as in 'heat'  i:  as in 'hit'    e:  as in 'pet'  ai: as in 'hate'
+a:  as in 'pat'   ar: as in 'heart'  o:  as in 'hot'  or: as in 'taught'
+oa: as in 'boat'  u:  as in 'hood'   oo: as in 'mood'
+xx: as in Southern English 'hub'     x:  neutral vowel in 'herb' or 'the'
+
+Times must start at zero, and increase.
+
+HALFWIDTH ....half-width of formant peaks as fraction of formant centre-frq.
+              (Range 0.01 - 10)
+STEEPNESS ....steepness of formant peaks. (Range 0.1 - 10)
+RANGE ........the peaks stand above the signal floor. The range of the peaks
+..............is therefore a part of the total range of the signal.
+..............Range = ratio (max) peakheight to (max) totalrange.(vals 0-1)
+THRESHOLD ....spectral window's level is compared with vowel-envelope level.
+..............If it exceeds a certain proportion of that level,
+..............it is forced to the vowel-envelope level.
+..............(Otherwise it remains where it is).
+..............threshold defines this proportion.(Range 0-1)
+good defaults might be 0.250000, 3, 0.950000, 0.5
+
+

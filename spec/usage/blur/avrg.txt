@@ -1,0 +1,10 @@
+CDP Release 7.1 2016
+blur avrg infile outfile N
+
+AVERAGE SPECTRAL ENERGY OVER N ADJACENT CHANNELS
+
+N must be ODD and <= half the -N param used in original analysis.
+
+N may vary over time.
+
+

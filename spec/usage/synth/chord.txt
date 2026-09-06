@@ -1,0 +1,17 @@
+CDP Release 7.1 2016
+GENERATE CHORD ON SIMPLE WAVEFORM
+
+USAGE: synth chord mode outfile datafile sr chans dur  [-aamp] [-ttabsize]
+
+MODES ARE
+1) DATAFILE has list of midi data
+2) DATAFILE has list of frequency data
+SR      (sample rate) can be 48000, 24000, 44100, 22050, 32000, or 16000
+CHANS   can be 1, 2 or 4
+DUR     is duration of output snd, in seconds.
+AMP     is amplitude of output sound: 0.0 < Range <= 1.0 (max & default).
+TABSIZE is size of table storing waveform.
+        defaults to 4096: input value always rounded to multiple of 4.
+
+
+

@@ -1,0 +1,11 @@
+CDP Release 7.1 2016
+CONVERT A (TEXT) BRKPNT ENVELOPE TO A BINARY ENVELOPE FILE.
+
+USAGE: envel brktoenv inbrkfile outenvfile  wsize
+
+WSIZE      window_size (in MS) for scanning envelope: Range (5 - filelen)
+
+If brkpnt starttime > zero, new envelope will start from zero,
+holding the brktabel startval as far as first brktable time.
+
+

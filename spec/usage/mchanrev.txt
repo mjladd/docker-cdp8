@@ -1,0 +1,15 @@
+CREATE MULTICHANNEL ECHOS OR REVERB
+
+USAGE: mchanrev mchanrev infile outfile gain roll_off size count
+             outchans centre spread
+
+GAIN      to apply to input signal: Default is 0.645654
+SIZE      multiplies average time between echoes: (Default time 0.1 secs).
+ROLL_OFF  rate of loss of level across stadium (default 1)
+COUNT     number of stadium echoes: Default (max) is 1000
+OUTCHANS  number of output channels
+CENTRE    centre position of reverbd image, amongst outchans.
+          With N-chan output, range is 1-N. Can be a fractional value. 
+          Values below 1 lie between outchan 1 and outchan N.
+SPREAD    Number of output channels over which echoes are spread,
+          (Can be a fractional value).

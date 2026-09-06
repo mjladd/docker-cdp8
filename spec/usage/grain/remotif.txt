@@ -1,0 +1,32 @@
+CDP Release 7.1 2016
+CHANGE PITCH AND RHYTHM OF GRAINS IN GRAINY-SOUND
+
+USAGE:
+grain remotif mode infile outfile transpmultfile
+		[-blen] [-lgate] [-hminhole] [-twinsize] [-x]
+
+MODES are:-
+(1) Transform each grain in turn, without repeating any grains:
+    on reaching end of transpmultfile-data, cycle back to its start.
+(2) Transform grain in each specified way, before proceeding to next grain.
+
+TRANSPMULTFILE is a file containing transposition\time-multiplier PAIRS.
+               Transpositions are (+ve or -ve) semitone shifts.
+               Max transposition is 4 octaves up or down.
+               Time-multipliers change the duration
+               between one grain onset and the next grain onset.
+               Max multiplier is 1000 : Min multiplier is 0.001000
+               if any inter-grain time reduced below MINGRAINTIME (0.032)
+               it will be set to MINGRAINTIME.
+
+LEN      maximum time between grains
+GATE     required signal level for grain to be seen: Range 0-1: default 1
+MINHOLE  min duration of inter-grain holes:
+         Min value (default) 0.032
+-t       Gate level tracks signal level,found with windowsize winsize(msecs)
+         Range(0.0 - infiledur): 0.0 turns off tracking)
+-x       ignore the last grain in the source.
+
+Gate may vary over time.
+
+

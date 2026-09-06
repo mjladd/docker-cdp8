@@ -1,0 +1,12 @@
+CDP Release 7.1 2016
+
+STRETCHING A SPECTRAL FILE
+
+USAGE: stretch NAME (mode) infile outfile parameters: 
+
+where NAME can be any one of
+spectrum      time
+
+Type 'stretch spectrum' for more info on stretch spectrum..ETC.
+
+

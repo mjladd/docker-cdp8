@@ -1,0 +1,20 @@
+njoin: insufficient arguemnts
+
+CDP MCTOOLS: NJOIN v1.1.1 (c) RWD,CDP 2006,2010,2013,2021
+concatenate multiple files into a single file
+Usage: njoin [-sSECS | -SSECS][-cCUEFILE][-x] filelist.txt [outfile] 
+       filelist.txt: text file containing list of sfiles
+                     in order. One file per line. 
+                     Channel spec (if present) must be the same,
+                     but files with no spec assumed compatible.
+       -cCUEFILE   : if outfile used, generate cue textfile as CUEFILE.
+       -sSECS      : separate files with silence of SECS seconds
+       -SSECS      : as above, but no silence before first file.
+                     Default: files are joined with no gap.
+      -x           : strict: allow only CD-compatible files:
+                     Must use sr=44100, minimum duration 4 secs.
+       NB: Files must match sample rate and number of channels,
+        but can have different sample types.
+       Output sample format taken from file with highest precision.
+       If no outfile given: program scans files and prints report.
+       Unix systems:  ~/ notation for home dir supported for file paths.

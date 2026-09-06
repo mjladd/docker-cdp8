@@ -1,0 +1,13 @@
+CDP Release 7.1 2016
+DISCARD SPECIFIED CHUNK OF SOUND, CLOSING UP THE GAP.
+
+USAGE: sfedit excise mode infile outfile start end [-wsplice]
+
+MODES ARE
+1) Time in seconds.
+2) Time as sample count (rounded to multiples of channel-cnt).
+START   starttime of excision.
+END     endtime of excision.
+SPLICE  splice window in milliseconds (default: 15)
+
+

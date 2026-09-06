@@ -1,0 +1,17 @@
+USAGE:  distmore segsbkwd 1-9 infil outfil marklist
+
+Reverses certain (sets of) segments
+.
+MODE 1: Reverse Tails
+MODE 2: Reverse Heads
+MODE 3: Reverse Head+Tail pairs
+MODE 4: Reverse Head & Tail+Head+Tail set
+MODE 5: Reverse Head+Tail+Head+Tail set
+MODE 6: Reverse Head & Tail+Head+Tail+Head+Tail set
+MODE 7: Reverse Head+Tail+Head+Tail+Head+Tail set
+MODE 8: Reverse Head & Tail+Head+Tail+Head+Tail+Head+Tail set
+MODE 9: Reverse Head+Tail+Head+Tail+Head+Tail+Head+Tail set
+
+MARKLIST A list of timemarks in source, marking (paired) Heads and Tails.
+         e.g. consonant onset, and vowel continuation of source.
+         (It is assumed that the first mark is at a Head segment.)

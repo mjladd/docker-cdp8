@@ -1,0 +1,23 @@
+CDP Release 7.1 2016
+REPLACE THE EXISTING ENVELOPE OF AN INPUT SOUNDFILE
+            WITH A DIFFERENT ENVELOPE.
+
+USAGE: envel replace 1 input_sndfile replacing-sndfile    outsndfile wsize
+USAGE: envel replace 2 input_sndfile replacing-envfile    outsndfile
+USAGE: envel replace 3 input_sndfile replacing-brkfile    outsndfile
+USAGE: envel replace 4 input_sndfile replacing-brkfile-dB outsndfile
+
+MODES:
+1 replaces envelope with new one extracted from another sndfile.
+2 replaces envelope with new one from a binary envelope file.
+3 replaces envelope with new one from (text) brkpnt file: valrange 0-1.
+4 replaces envelope with new one from (text) brkpnt file in dB (-96 to 0).
+
+In all cases, the entire sndfile is enveloped
+
+WSIZE      window_size (in MS) for scanning envelope: Range (5 - filelen)
+
+MODE 1 is especially useful for restoring the amplitude contour of a sound
+after filtering with time-varying Q-value.
+
+

@@ -1,0 +1,1 @@
+USAGE: getascii filename: where file is an ascii textfile

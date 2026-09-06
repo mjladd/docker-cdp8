@@ -1,0 +1,24 @@
+CDP Release 7.1 2016
+strange shift 1   infile outfile frqshift               [-l]
+strange shift 2-3 infile outfile frqshift frq_divide    [-l]
+strange shift 4-5 infile outfile frqshift frqlo   frqhi [-l]
+
+LINEAR FREQUENCY SHIFT OF (PART OF) THE SPECTRUM
+
+MODES :-
+1   Shift the whole spectrum.
+2   Shift the spectrum above frq_divide.
+3   Shift the spectrum below frq_divide.
+4   Shift the spectrum only in the range frqlo and frqhi.
+5   Shift the spectrum outside the range  frqlo to frqhi.
+
+frqshift      linear shift of spectral frequencies (same for all).
+frq_divide    frq at which shifting starts or stops.
+frqlo & frqhi define a range inside or outside of which shifting takes place.
+-l            log interpolation between varying frq vals (Default: linear).
+              (Useful only if any of above input parameters are time-varying,
+               AND frqshift vals must be all +ve, or all -ve for this to work).
+
+frqshift,frq_divide,frqlo & frqhi may vary over time.
+
+

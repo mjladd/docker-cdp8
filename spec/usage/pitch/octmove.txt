@@ -1,0 +1,20 @@
+CDP Release 7.1 2016
+pitch octmove 1-2 infile pitchfile outfile [-i] transposition
+pitch octmove 3   infile pitchfile outfile [-i] transposition bassboost
+
+OCTAVE TRANSPOSE WITHOUT FORMANT SHIFT
+
+MODES :-
+1   transpose up.
+2   transpose down.
+3   transpose down, with bass-reinforcement.
+
+PITCHFILE must be derived from infile.
+transposition an integer transposition-ratio: 2 is 8va, 3 is 12th etc.
+              as in harmonic series.
+bassboost     bass reinforcement: values >=0.0
+-i            quicksearch for formants (less accurate).
+
+bassboost may vary over time.
+
+

@@ -1,0 +1,18 @@
+USAGE:
+tostereo tostereo infil outfil start end [-oochans -lleftchan -rrightchan -mmixlev]
+
+Cause stereo file to start mixed-to-mono and then diverge to real stereo.
+
+START  Start time of divergence to stereo.
+END    Time of complete stereo.
+
+If "END" time is before "START", file goes FROM stereo TO mono.
+
+OCHANS Output channel count (default stereo).
+LEFT   Output left channel (default 1).
+RIGHT  Output right channel (default 2).
+MIXLEV Level of each chan when mixed to mono (Set to ZERO for good default level).
+       (Range 0.5 to 1.0 OR  zero: values above 0.707 are not recommended)
+
+In multichannel, if Leftchan is selected but RIGHT is set to zero,
+signal will FORK from the indicated channel to the channels on either side.

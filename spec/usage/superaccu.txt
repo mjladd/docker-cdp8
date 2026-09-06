@@ -1,0 +1,21 @@
+superaccu superaccu 1 inanalfile outanalfile [-ddecay] [-gglis] [-r]
+superaccu superaccu 2 inanalfile outanalfile [-ddecay] [-gglis] [-r]
+superaccu superaccu 3 inanalfile outanalfile tuning [-ddecay] [-gglis] [-r]
+superaccu superaccu 4 inanalfile outanalfile tuning [-ddecay] [-gglis] [-r]
+
+SUSTAIN EACH SPECTRAL BAND, UNTIL LOUDER DATA APPEARS IN THAT BAND
+
+MODE 2 forces (start of) resonances to tempered scale.
+
+For modes 3 and 4 (start of ) resonances are forced to ...
+
+MODE 3 frqs specified in "tuning" (harmonic set).
+MODE 4 frqs and their 8vas, specified in "tuning" (harmonic field).
+
+
+TUNING Set of frequencies for tuning the resonance (starts)
+-DECAY sutained channel data attenuates by factor DECAY per sec.
+      (Possible Range : >0.0 to 0.9 : Default 1.0 (no attenuation))
+-GLIS  sutained channel data glisses at GLIS 8vas per sec.
+      (Approx Range : -11.7 to 11.7 : Default 0)
+-r     reassign the glissing pitches to appropriate channels.

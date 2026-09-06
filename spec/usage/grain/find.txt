@@ -1,0 +1,18 @@
+CDP Release 7.1 2016
+LOCATE TIMINGS OF GRAIN-ONSETS IN A GRAINY-SOUND
+
+USAGE:
+grain find infil out-textfil [-blen] [-lgate] [-hminhole] [-twinsize] [-x]
+
+OUT-TEXTFILE will contain a list of grain-onset timings, in seconds.
+LEN          maximum time between grains
+GATE         min signal level for grain to be seen: Range 0-1: default 1
+MINHOLE      min duration of inter-grain holes:
+             Min value (default) 0.032
+-t           Gate tracks signal level,found with windowsize winsize(msecs)
+             Range(0.0 - infiledur): 0.0 turns off tracking)
+-x           ignore the last grain in the source.
+
+Gate may vary over time.
+
+

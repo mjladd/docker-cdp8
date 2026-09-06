@@ -1,0 +1,12 @@
+USAGE: psow synth infile1 infile2 outfile pitch-brkpnt-data depth wsize gate
+
+Impose vocal FOFs in 1st sound onto the 2nd sound.
+
+PITCH-BRKPNT-DATA  a breakpoint file with time and frq information.
+                   File may contain zeros (indicating moments of no-signal)
+                   but NOT pitch-zeros (indicating moments of no-pitch).
+                   It must contain SOME significant frequency information.
+DEPTH  Depth of application of FOFS to the 2nd sound.
+WSIZE  Windowsize (mS) to envelope track 2nd sound (for normalisation).
+GATE   Level (decibels) in 2nd sound at which it's assumed to be zero.
+

@@ -1,0 +1,18 @@
+CDP Release 7.1 2016
+strange waver 1 infile outfile vibfrq stretch botfrq
+strange waver 2 infile outfile vibfrq stretch botfrq expon
+
+OSCILLATE BETWEEN HARMONIC AND INHARMONIC STATE
+
+MODES :-
+1   Standard spectral stretching for inharmonic state.
+2   Specify spectral stretching for inharmonic state.
+
+vibfrq    is frq of oscillation. 
+stretch   is maximum spectral stretch in inharmonic state. 
+botfrq    is frq above which spectral stretching happens.
+expon     defines type of stretch (must be > 0.0).
+
+vibfrq and stretch may vary over time.
+
+

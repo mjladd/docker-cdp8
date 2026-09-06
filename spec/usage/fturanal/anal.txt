@@ -1,0 +1,23 @@
+Extract spectral features from an analysis file: output to textfile.
+
+USAGE:
+fturanal anal 1   inanalfil outfeaturefil marklist [-rrand]
+fturanal anal 2-3 inanalfil outfeaturfile marklist
+
+MARKLIST A list of timemarks in source, marking (paired) Heads and Tails.
+         e.g. consonant onset, and vowel continuation of source.
+         (It is assumed that the first mark is at a Head segment.)
+
+Extract data ...
+MODE 1   from Heads, & from Tails cut to segments, size approx equal to Heads.
+MODE 2   from Heads and Tails, as defined by marklist.
+MODE 3   from Tails only.
+
+RAND     Randomise timing of Tail segments (Range 0 to 1).
+
+OUTFEATURFILE  Outfile is a list of ....
+         (a) Segment start-times (+ duration of source).
+         (b) (Median) Frequency of 1st formant.
+         (c) (Median) Frequency of 2nd formant.
+         (d) (Median) Frequency of 3rd formant.
+         (e) Spectral brightness (Range 0 to 1).

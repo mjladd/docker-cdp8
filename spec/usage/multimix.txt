@@ -1,0 +1,46 @@
+CONVERT LIST OF SNDFILES TO A MULTICHANNEL MIXFILE
+
+USAGE:
+multimix create 1-2 infile1 infile2 [infile3..] mixfile
+multimix create 3 infile1 infile2 [infile3..] mixfile timestep
+multimix create 4 infile1 infile2 [infile3..] mixfile balance
+multimix create 5 infile1 infile2 [infile3..] mixfile stage wide rearwide rear
+multimix create 6 infile1 infile2 [infile3..] mixfile
+multimix create 7 infile1 infile2 [infile3..] mixfile ochans startch [-sskip -ttimestep]
+multimix create 8 infile1 infile2 [infile3..] mixfile ochans
+
+ANY SOUNDFILES
+
+mode 1 - all files start at time zero.
+mode 2 - each file starts where previous file ends.
+mode 3 - each file starts 'timestep' after previous file-start.
+mode 8 - each file starts at zero, leftmost chan to outchan 1: specify outchan count.
+
+TIMESTEP    time in seconds between entry of each file in mix.
+
+MONO OR STEREO FILES ONLY
+
+mode 4 - Distributes stereo over narrow and wide stereo pairs.
+mode 5 - Distributes stereo over 8 loudspeakers (pair-at-front format).
+
+Mono is treated as two identical channels of stereo
+
+BALANCE     proportion of stereo signal assigned to wider stereo pair.
+
+STAGE       level of signal assigned to front loudspeaker pair.
+WIDE        level of signal assigned to front-wide loudspeaker pair.
+REARWIDE    level of signal assigned to rear-wide loudspeaker pair.
+REAR        level of signal assigned to rear loudspeaker pair.
+
+MONO FILES ONLY
+
+mode 6 - Distributes N mono files, in order, to N successive output channels.
+mode 7 - Distributes mono files, in order, to successive chans of outfile.
+         If more files than ochans, restart again where it began.
+
+OCHANS     Number of channels in output file.
+STARTCH    Output channel to which first input channel is assigned.
+SKIP       Files can be distributed to each channel in turn (skip 1).
+           to alternate channels (skip 2), etc
+           in reverse chan order (skip -1), etc : Defaults to 1.
+TIMESTEP   Timestep between successive entries (default 0).

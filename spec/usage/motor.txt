@@ -1,0 +1,42 @@
+USAGE: motor motor 1,4,7 infile outfile params
+USAGE: motor motor 2,5,8 infile outfile data params
+OR:    motor motor 3,6,9 inf1 [inf2 inf3 ....] outfile params
+Params are...
+dur freq pulse fratio pratio sym [-ffrand] [-pprand] [-jjitter] [-ttremor]
+[-yshift] [-eedge] [-bbite] [-vvary | -a] [-sseed] [-c]
+
+Create fast (inner) pulse-stream, within slower (outer) pulsed-enveloping.
+Under every outer-pulse, set of inner events cut successively from input src(s)
+as the outer-envelope rises, then in reverse order as it falls.
+Outer-pulse, shortened by "PRATIO", must hold at least 2 inner-pulses.
+
+Mode 1+3:  Typical source(s) short, & widening in frq-range from start to end.
+Mode 2:    Cuts segments from single src, at slice-times specified in "data".
+Modes 4-6: Similar except source-reads only advance.
+Modes 7-9: Similar except source-reads either only advance or only regress.
+
+DATA   Textfile of times in infile at which to slice it into separate srcs.
+DUR    Duration of the output file.
+FREQ   Pulse-rate (Hz) of inner-pulses (range 2 to 100).
+PULSE  Pulse-rate (Hz) of outer-pulses. (range 0.1 to 10)
+FRATIO Proportion of on-time to off-time of inner-events. (range 0 to 1)
+PRATIO Proportion of on-time to off-time of outer-events. (range 0 to 1)
+SYM    Symmetry of outer-pulses.  (range 0 to 1)
+       "sym" marks peak of rising-falling envelope on range 0 to 1.
+       0.5 gives symmetrical cresc-decresc envelope.
+       1 gives cresc envelope:      0 gives decresc envelope.
+       0.75 gives long cresc and short decresc. etc
+FRAND  Freq(f) randomisation (Range 0-1): max variation from f/2 to 3f/2
+PRAND  Pulse(p) randomisation (Range 0-1): max variation from p/2 to 3p/2
+JITTER Range of any pitch randomisation of inner-pulses (0 - 3 semitones).
+TREMOR Range of any random amplitude attenuation of inner-pulses (0-1).
+SHIFT  Range of any randomisation of outer-pulse symmetry (Range 0 to 1).
+EDGE   Length of decay-tail of inner-pulses (multiple of dur: Range 0 to 20)
+BITE   Shape of outer-pulses. (Range 0.1 to 10: Dflt 3). 1 = Linear rise-fall
+       > 1 slow-fast rise, fast-slow fall: < 1 fast-slow rise, slow-fast fall.
+VARY   Advance-step in src-read rand-varies from 1 outer-pulse to next.(0-1).
+       0 = no variation, 1 = max variation range (from no advance to max-step).
+SEED   Different seed vals gives different randomised outputs.(Range 0 to 256)
+-a     Inner-events under outer-pulse-cresc advance by fixed step.
+       (Default: Inner-events advance to end of source, unless "vary" set).
+-c     (Mode 2-3 only) cycle through input srcs.(Default, randomly permute order).

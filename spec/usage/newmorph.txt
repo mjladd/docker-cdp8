@@ -1,0 +1,13 @@
+
+NEW TYPES OF SPECTRAL MORPHING
+
+USAGE: newmorph NAME mode infile1 infile2 outfile parameters: 
+
+where NAME can be any one of
+
+newmorph  newmorph2
+
+Type 'newmorph newmorph' for more info on newmorph newmorph..ETC.
+CDP Release 7.1 2016
+
+

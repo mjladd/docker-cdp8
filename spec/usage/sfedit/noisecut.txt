@@ -1,0 +1,12 @@
+CDP Release 7.1 2016
+SUPPRESS NOISE IN A (MONO) SOUND FILE: REPLACE BY SILENCE.
+
+USAGE: sfedit noisecut infile outfile splicelen noisfrq maxnoise mintone [-n]
+
+SPLICELEN    duration of splices, in MS
+NOISEFRQ     frequency above which signal regarded as noise (try 6000 Hz)
+MAXNOISE     max duration of any noise segments permitted to remain (NOT replaced)
+MINTONE      min duration of any non-noise segments to be retained.
+-n           retain noise rather than non-noise
+
+

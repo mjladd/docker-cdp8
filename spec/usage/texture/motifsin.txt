@@ -1,0 +1,31 @@
+CDP Release 7.1 2016
+TEXTURE OF MOTIFS, FORCED ONTO A HARMONIC FIELD: USAGE:
+texture motifsin mode infile [infile2..] outfile notedata outdur packing
+scatter tgrid sndfirst sndlast mingain maxgain 
+minpitch maxpitch phgrid gpspace gpsprange amprise  contour multlo multhi
+                [-aatten] [-pposition] [-sspread] [-rseed] [-w] [-d] [-i]
+MODES:-
+1) ON HARMONIC-FIELD 2) CHANGING HFLDS 3) HARMONIC-SET 4) CHANGING HSETS
+notedata: infofile,'pitch' of insnds, timings for timed textures, hfields etc
+outdur:             (min) duration of outfile
+packing:            (average) time between motif onsets.
+scatter:            randomisation of event-onsets (0 - 10)
+tgrid:              minstep(MS) quantised timegrid (for mtf starttimes)(dflt 0)
+sndfirst,sndlast:   1st,last snd to use, from input snds (range 1 - all)
+mingain,maxgain:    min & max level of input events (1-127:default 64,64)
+minpitch,maxpitch:  min & max pitch (MIDI VALUE)
+phgrid:             a timegrid (MS) applying WITHIN the motifs
+gpspace:            spatialisation of event-groups (Range 0-5: default 1)
+gpsprange:          spatial range of event-groups (Range 0-1: default 1)
+amprise:            amplitude change within motifs: (0-127: default 0)
+contour:            amplitude contour of groups (Range 0-6: default 0)
+multlo, multhi:     min & max multiplier of total input duration of motif
+atten:              overall attenuation of the output
+position:           centre of output sound-image (0(Left) 1(Right):default 0.5)
+spread:             spatial-spread of texture events (0 - 1(full-spread))
+seed:             same seed-no: same output on rerun(dflt 0: differs each time)
+-w:                 always play whole input-sound (ignoring duration values).
+-d                  notes within any one motif all have same duration.
+-i:                 motif not each confined to fixed instr (default:fixed)
+
+

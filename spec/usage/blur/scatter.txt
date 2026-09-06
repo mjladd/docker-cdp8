@@ -1,0 +1,14 @@
+CDP Release 7.1 2016
+blur scatter infile outfile keep [-bblocksize] [-r] [-n] 
+
+RANDOMLY THIN OUT THE SPECTRUM
+
+keep      number of (randomly-chosen) blocks to keep, in each spectral window.
+blocksize is freq range of each block (default is width of 1 analysis channel).
+          (Rounded internally to a multiple of channel width).
+-r        number of blocks actually selected is randomised between 1 & keep.
+-n        Turn OFF normalisation of resulting sound.
+
+keep & blocksize may vary over time.
+
+

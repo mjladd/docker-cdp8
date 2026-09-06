@@ -1,0 +1,31 @@
+USAGE:
+fractal wave 1 inf outf shape     [-mmaxfrac] [-tstr] [-iwarp] [-s] [-o]
+fractal wave 2 inf outf shape dur [-mmaxfrac] [-tstr] [-iwarp] [-s]
+
+Fractally distort (1 or more channel) input sound (Mode 1).
+OR generate fractal wave from (mono) input wavecycle (Mode 2)
+Fractal is time-pattern of transpositions (and, in Mode 1
+causes corresponding time contractions and expansions).
+Transposition happens over total duration specified in "SHAPE"
+and is then repeated over every resulting sub-unit of pattern,
+over every sub-sub-unit, etc. until smallest time-unit reached.
+
+SHAPE   Breakpoint textfile of
+        (Mode 1) time-(semitone)transposition pairs, (Range -12 to 12)
+        (Mode 2) time-MIDIpitch pairs, (Range 0 to 127)
+        defining pitch-time contour of the (largest) fractal shape.
+        Times must start at zero and increase,
+        with final time indicating duration of pattern.
+        (Value at final time will be ignored).
+
+DUR     (Mode 2) Output duration (secs) (max 2 hours).
+MAXFRAC Max degree of fractalisation.  (Time-variable). If not set (or zero),
+        fractalisation proceeds until min possible wavelength reached.
+STR     Time stretch of fractal pattern (Time-variable : values >= 1).
+        If set to zero, no timestretching is done.
+WARP    Interval warping of fractal pattern (Time-variable).
+        If set to zero, no warping is done.
+
+-s      Shrink pitch-intervals as fractal time-scales shrink.
+-o      Brkpnt data read using time in outfile (default: Use time in infile).
+

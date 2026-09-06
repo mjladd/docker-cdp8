@@ -1,0 +1,14 @@
+CDP Release 7.1 2016
+EXTRACT ENVELOPE FROM AN INPUT SOUNDFILE.
+
+USAGE: envel extract  1  infile outenvfile  wsize
+OR:    envel extract  2  infile outbrkfile  wsize  [-ddatareduce]
+
+MODE 1 extracts a binary envelope file:
+MODE 2 extracts a (text) brkpnt file.
+
+WSIZE      window_size (in MS) for scanning envelope: Range (5 - filelen)
+DATAREDUCE variable determines quantity v. accuracy of data written to brkfile
+           Range(0 - 1)
+
+

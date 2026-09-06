@@ -1,0 +1,38 @@
+USAGE: transit doppler 1-5 infile1 infile2 [infile3 ....] outfile
+       focus dur steps max dec [-tthres -dlim -etlim -mmaxdur] [-l]
+
+Place repetitions of a mono sound on tangent path to & from 8-channel array.
+Lspkrs equidistant in a ring, numbered clockwise, Output is a mixfile.
+
+Second sound is pitch-shifted version of first, suggesting doppler shift.
+Change to sound 2 after centre is passed.
+(Possibly insert more sounds around motioncentre: suggest gradual doppler change
+ NB order of sounds is aprroaching-sound, final-sound, intermediate-sounds.)
+
+MODES:
+      1                2                3               4               5
+   (glancing)      (edgewise)      (crossing)         (close)        (central)
+->>---O->>      ->>--O---O->>           O             O   O             O
+  O       O                    ->>--O-------O->>                    O       O
+                  O         O                  ->>-O---------O->>
+ O         O                       O         O                 ->>-O---------O->>
+                  O         O                      O         O
+  O       O                         O       O                       O       O
+      O              O   O              O             O   O             O
+
+FOCUS  Centre of motion. Integer for odd modes, 1.5 ; 2.5 etc for even modes.
+DUR    Duration of motion from edge to centre (ONLY).
+STEPS  Count of events from edge to centre (ONLY).
+MAXA   (Modes 1-4) Maxangle from centreline reached( < 90).
+MAXD   (Mode 5) Max distance from centre reached, where halfradius = 1.
+DEC    Gain decrement (>0 <1) on passing from one event to the next.
+
+To extend motion further (increasing duration and total number of events)....
+gain decrement can be modofied with these 4 parameters ... 
+
+THRESH Threshold (overall) gain at which gain decrement starts to increase.
+LIM    Maximum level of gain decrement after this point (> DEC).
+TLIM   Minimum (overall) gain at which event ends ( < THRESH).
+MAXDUR Max duration motion edge-to-centre (in case TLIM never reached) ( >= DUR).
+
+-l     Motion towards left of focal position (Default: motion towards right).

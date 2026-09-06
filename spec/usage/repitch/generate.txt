@@ -1,0 +1,20 @@
+CDP Release 7.1 2016
+repitch generate outpitchdatafile midipitch-data srate  [-cpoints] [-ooverlap]
+
+CREATE BINARY PITCHDATA FILE FROM A TEXTFILE OF TIME-MIDI VALUE PAIRS
+
+MIDIPITCH-DATA is a list of paired time and midi-note-values
+     where times must start at zero and increase,
+     and note values may be numeric MIDI values (possibly fractional)
+     OR note names (A,B,C,D,E,F or G)
+     possibly followed by '#'(sharp) or 'b'(flat)
+     followed by an octave number between -5 and 5
+     where 0 corresponds to the octave starting at middle C.
+
+SRATE is the sample rate of the soundfile that might later be generated
+     from the binary pitch data.
+POINTS   No of analysis points (2-32768 (power of 2)): default 1024
+         More points give better freq resolution but worse time-resolution.
+OVERLAP  Filter overlap factor (1-4): default 3
+
+

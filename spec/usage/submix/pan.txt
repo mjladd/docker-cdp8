@@ -1,0 +1,11 @@
+CDP Release 7.1 2016
+PAN A MIXFILE.
+
+USAGE: submix pan inmixfile outmixfile pan
+
+PAN may vary over time
+    in this case, soundfiles in mix are POSITIONED differently
+    depending on time they begin, and value in PAN file at that time.
+    BUT the sounds THEMSELVES will not be panned (in the final mixdown)
+
+

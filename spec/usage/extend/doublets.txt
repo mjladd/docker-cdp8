@@ -1,0 +1,9 @@
+CDP Release 7.1 2016
+SPLICE SOURCE INTO SEGMENTS, REPEATING EACH.
+USAGE:  extend doublets infile outfile segdur repets [-s]
+
+SEGDUR       Duration of segments (can vary through time).
+REPETS       Number of times each segment repeated.
+-s           Outfile tries to stay 'synced' to infile.
+
+

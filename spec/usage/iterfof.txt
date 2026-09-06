@@ -1,0 +1,51 @@
+USAGE:
+iterfof iterfof 1-4 infile outfile linedata outduration
+     [-pprand] [-aampcut] [-ttrimto] [-Ttrimby] [-Etrimslope]
+     [-rrand] [-vvibmin] [-Vvibmax] [-depmin] [-Ddepmax]
+     [-ggainmin] [-Ggainmax] [-Fupfade] [-ffade] [-Sseparation]
+     [-Pportamento] [-iinterval]
+     [-sseed]
+
+ITERATE AN INPUT FOF OR SOUND-PACKET, FOLLOWING A DEFINED PITCHLINE.
+
+MODES 1 & 2: linedata is transposition in semitones.
+(Input sound assumed to represent 1 wavelength, at zero transposition.)
+MODES 3 & 4: linedata is MIDI pitch.
+(Input sound can be anything.)
+
+LINEDATA   Modes 1 & 2: semitone-transposition (can vary through time).
+           (varies delay between segments in output)
+           Modes 3 & 4: MIDI-pitch (can vary through time).
+IF "linedata" is a breakpoint file
+MODES 1 & 3: interpolate between timed values in the file.
+MODES 2 & 4: step between timed values in the file.
+
+SEED       the same seed-number will produce similar output on rerun.
+
+(FOR MORE INFORMATION ----- hit any key)
+
+Parameters of the line-elements
+
+PRAND      randomises pitch of segments (semitones in range +- 2)
+AMPCUT     max of random amp-reduction on each iter: Range 0-1:
+           default 0 (no amp-reduction)
+TRIMTO     Shorten elements to specified duration
+TRIMBY     Fade elements over specified duration
+TRIMSLOPE  Slope of any fades
+
+Parameters of the line
+
+RAND       transposition/pitch randomisation: Range 0 - 1: Default 0
+           (randomises delay between segments in output)
+VIBMIN/MAX Min & max vib frequency (frq set rand between these).
+DEPMIN/MAX Min & max vib depth (semitones) (depth set rand between these).
+(Modes 2 and 4 only)
+GAINMIN/MAX min and max level of stable-pitched portions of line.
+UPFADE     duration of fade into stable-pitched portions.
+FADE       duration of fade out of stable-pitched portions.
+SEPARATION end-fraction of any stable-pitched portion which is silent.
+PORTAMENTO type of line-portamento (if any)
+           0 = none : 1 = up : -1 = down : 2 = randomly up/down
+INTERVAL   Portamento interval (semitones : range 0 - 2)
+           Interval attained only by start of next note.
+           (If note fades before next note enters, interval not reached).

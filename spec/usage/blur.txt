@@ -1,0 +1,14 @@
+CDP Release 7.1 2016
+
+BLURRING OPERATIONS ON A SPECTRAL FILE
+
+USAGE: blur NAME (mode) infile outfile parameters: 
+
+where NAME can be any one of
+
+avrg      blur      suppress    chorus      drunk
+shuffle   weave     noise       scatter     spread
+
+Type 'blur avrg' for more info on blur avrg..ETC.
+
+

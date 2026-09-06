@@ -1,0 +1,11 @@
+CDP Release 7.1 2016
+CONVOLVE THE FIRST SOUND WITH THE SECOND
+
+USAGE: modify convolve 1 infile1 infile2 outfile
+OR:    modify convolve 2 infile1 infile2 outfile tranposfile
+
+TRANSPOSFILE is textfile of time / semitone-transposition pairs
+infile2 must NOT be longer than infile1
+and both files must have the same channel count.
+
+

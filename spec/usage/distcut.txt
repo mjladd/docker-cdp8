@@ -1,0 +1,13 @@
+USAGE:
+distcut distcut 1 infile generic_outfilename cyclecnt exp [-climit]
+OR:
+distcut distcut 2 infile generic_outfilename cyclecnt cyclestep exp [-climit]
+
+Cut sound into elements with falling envelope.
+
+CYCLECNT  number of wavesets in each outfile.
+CYCLESTEP number of wavesets steps from start of one group to start of next.
+          (In mode 1 : cyclestep = cyclecnt : waveset-groups abutted and disjunct).
+EXP       Envelope Decay shape. 1 linear : >1 more rapid decay : < 1 less rapid.
+LIMIT     Minimum level of output events to accept (value 70 = -70dB).
+

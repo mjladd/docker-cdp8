@@ -1,0 +1,13 @@
+CDP Release 7.1 2016
+
+MORPHING BETWEEN SPECTRAL FILES
+
+USAGE: morph NAME (mode) infile infile2 outfile parameters: 
+
+where NAME can be any one of
+
+glide     bridge     morph
+
+Type 'morph glide' for more info on morph glide..ETC.
+
+

@@ -1,0 +1,8 @@
+USAGE: notchinvert datafile outdatafile srate [minnotch]
+
+Invert notches in a spectrum.
+
+DATAFILE     textfile of frq/amp pairs.
+OUTDATAFILE  inverted notches as frq/amp pairs.
+MINNOTCH     min depth of notch to qualify as true notch (Range 0-1).
+

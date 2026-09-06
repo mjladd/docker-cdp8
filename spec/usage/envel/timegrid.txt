@@ -1,0 +1,13 @@
+CDP Release 7.1 2016
+PARTITION SOUNDFILE INTO STAGGERED GRIDS.
+EACH GRID IS SEQUENCE OF WINDOWS FROM SOURCE, AT THEIR ORIGINAL TIMES, SEPARATED BY SILENCE.
+
+USAGE: envel timegrid input_sndfile  generic_outsndfile_name gridcnt gridwidth splicelen
+
+GRIDCNT      Number of grids (and hence output files).
+GRIDWIDTH    Duration of Grid windows, in seconds.
+SPLICELEN    Splice length, in mS
+
+gridwidth and splicelen may vary over time.
+
+

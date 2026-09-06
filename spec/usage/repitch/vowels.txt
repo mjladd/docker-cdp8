@@ -1,0 +1,33 @@
+CDP Release 7.1 2016
+repitch vowels infile outfile vowel-data halfwidth curve pk_range fweight foffset
+
+CREATE SPECTRUM OF VOWEL SOUND(S) FOLLOWING PITCH CONTOUR IN PITCH FILE
+
+VOWEL-DATA is a vowel, OR a file of paired time/vowel values
+where vowel is one of the following strings
+     ee : as in 'heat'
+     i  : as in 'hit'
+     ai : as in 'hate'
+     aii: as in scottish 'e'
+     e  : as in 'pet'
+     a  : as in 'pat'
+     ar : as in 'heart'
+     o  : as in 'hot'
+     or : as in 'taught'
+     u  : as in 'hood'
+     uu : as in scottish 'you'
+     ui : as in scottish 'could'
+     x  : neutral vowel as in 'herb', or 'a'
+     xx : as in Southern English 'hub'
+     n  : as in mean, can, done
+
+In brkpnt files, times must start at zero, and increase.
+
+HALFWIDTH is half-width of formant, in Hz, as fraction of formant centre-frq (range .01 - 10)
+CURVE     is the steepness of the formant peak (range 0.1 to 10.0)
+PK_RANGE  ratio of (max) amplitude range of formant peaks to (max) total range (range 0 to 1)
+FWEIGHT   is amplitude weighting of fundamental (range 0 to 1)
+FOFFSET   is amount of scattering of frqs of harmonics from their true value (range 0 to 1)
+
+
+

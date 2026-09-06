@@ -1,0 +1,21 @@
+USAGE: spectrum format outdatafile indatafile pointcnt srate
+
+Convert data in "frq amp" format to special format for sound conversion.
+Assume data represents a graph of frq against amplitude.
+SEE ALSO "spectrum lines"
+
+INDATAFILE   text data as "frq amp" pairs.
+             frq range 0 - nyquist, with frequencies always increasing.
+             amp range, >= 0 .
+OUTDATAFILE  textfile as "frq amp" pairs
+             showing peaks, troughs and amplitude envelope.
+             Local peaks indicated by peak frq and amplitude.
+             Local troughs indicated by -(frq) and amplitude.
+             Elsewhere frq = zero (i.e. unspecific frq within channel)
+                       amp = amplitude at channel centre frq.
+POINTCNT     Number of analysis points per window.
+SRATE        Samplerate of sound which will eventually be generated.
+
+Ideally, input should have many more frq points than pointcnt in output
+if peaks and troughs of spectrum are to be accurately located.
+

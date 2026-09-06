@@ -1,0 +1,21 @@
+USAGE:
+retime retime modenumber parameters.....
+
+MODE 1  Output user-specified peaks at regular pulse at given tempo.
+MODE 3  Shorten existing (silence-separated) events.
+MODE 4  Find existing (silence-separated) events and output at regular MM.
+MODE 5  Find existing (silence-separated) events and change speed by factor.
+MODE 6  Find existing (silence-separated) events: position at specified beats.
+MODE 7  Find existing (silence-separated) events: position at specified times.
+MODE 8  Mark (silence-separated) event within sound & repeat at specified tempo.
+MODE 9  Replace by silence (silence-separated) events in specified pattern.
+MODE 10 Adjusts levels (silence-separated) events, so more equal, or accented.
+MODE 11 Finds durations of shortest and longest (silence-separated) event.
+MODE 12 Find start of sound in file (1st non-zero sample).
+MODE 13 Find peak and move all data so peak goes to specified time.
+MODE 14 Mark peak, then move all data so peak goes to specified time.
+
+Retime works by editing existing files (removing sound or adding silence)
+and is best suited to making small changes to rhythmic placement.
+
+Type "retime retime modenumber" for more details

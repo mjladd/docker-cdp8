@@ -1,0 +1,26 @@
+CDP Release 7.1 2016
+CLICKTRACK    USAGE: synth clicks mode outname clickfile [-sstart -eend -zzero]
+
+      make clicktrack from 'start' to 'end'; music starting at dataline 'zero'.
+      MODE 1: start and end are TIMES:    MODE 2: start & end are data linenos.
+    CLICKFILE contains sequence of datalines. Each dataline has a line number 
+    followed by 2, 3 or 4 data items, separated by spaces, which can be....
+TIME  141.52   (Set time to 141.52 secs: must be later than previous event)
+GP  1  23.7    (Pause of 23.7sec, with accent [1] at start: '0' for no accent)
+       OR the following set of items:-
+1) TEMPO : in one of the forms (with no spaces around '='):-
+       1=144         (crotchet = 144)   1.5=100    (dotted crotchet = 100)
+       0.5=144to85.3 (tempo change from quaver = 144 to 85.3)
+2) BARRING :  in the form 4:4 or 6:8 or 7:16 etc. (no spaces around the ':')
+3) COUNT :  i.e. the (integer) number of bars in this format.
+------- and, optionally ---------
+4) ACCENT PATTERN  1.....  strong beat followed by 5 weak beats
+                   1..1..  strong beat (start), secondary (at 4), weak between
+                   100100  strong & secondary beats, but NO intermediate beats
+IF THE ACCENT PATTERN IS OMITTED, default patterns are used. These are:-
+An accent on the start of each bar PLUS
+a) in 6:8, 9:8, 12:8, 15:8 etc, or 6:4, 6:16, 6:32, 9:4, 9:16 etc.
+      sound on every unit (4,8,16,32 etc.), secondary accents every 3rd beat
+b) in All other meters: NO secondary accents
+
+

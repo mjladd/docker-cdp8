@@ -1,0 +1,26 @@
+CDP Release 7.1 2016
+repitch transposef 1-3 infile outfile -fN|-pN [-i] transpos [-lminf][-hmaxf][-x]
+repitch transposef 4   infile transpos outfile -fN|-pN [-i] [-lminf][-hmaxf][-x]
+
+TRANSPOSE SPECTRUM : BUT RETAIN ORIGINAL SPECTRAL ENVELOPE
+
+MODES
+1    transposition as a frq ratio.
+2    transposition in (fractions of) octaves.
+3    transposition in (fractions of) semitones.
+4    transposition as a binary data file.
+
+-f   extract formant envelope linear frqwise,
+     using 1 point for every N equally-spaced frequency-channels.
+-p   extract formant envelope linear pitchwise,
+     using N equally-spaced pitch-bands per octave.
+-i   quicksearch for formants (less accurate).
+
+-l     MINF = minimum frq, below which data is filtered out.
+-h     MAXF = maximum frq, above which data is filtered out.
+-x     Fuller spectrum.
+
+frq-ratio, octave or semitone transpositions may vary over time.
+maxfrq and minfrq may vary over time.
+
+

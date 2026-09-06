@@ -1,0 +1,27 @@
+CDP Release 7.1 2016
+USAGE:
+distort pulsed
+1 infil outfil env stime dur frq frand trand arand transp tranrand [-s -e]
+OR
+2-3 inf outf env stime dur frq frand trand arand cyctime transp tranrand [-s -e]
+    Impose impulse-train on source (mode 1), OR
+    Use segment of src as looped content of synthetic impulse-train(modes 2,3).
+ENV        brkpnt envelope of impulse. Will be scaled to duration needed.
+STIME      time in src sound where impulses begin.(In mode 3,time as samplecnt)
+DUR        time for which impulses persist.
+FRQ        frequency of the impulses, in Hz: range 0.1 to 50
+FRAND      randomisation of frequency of impulse (in semitones) (range 0-12).
+TRAND      randomisation of relative time-positions of amp peaks & troughs
+           from impulse to impulse. (range 0 - 1)
+ARAND      randomisation of amplitude shape created by peaks & troughs
+           from impulse to impulse. (range 0 - 1)
+CYCTIME    duration of wavecycles to grab for sound inside impulses (mode 2)
+           OR number of wavecycles to grab as sound inside impulses (mode 3)
+TRANSP     transposition contour of sound inside each impulse. Brkpnt file of
+           time:semitone-shift pairs,(time will be scaled to impulse dur),
+TRANRAND   randomisation transp contour from impulse to impulse.(Range 0-1)
+-s         keep start of src sound, before impulses begin (if any).
+-e         keep end of src sound, after impulses end (if any)
+Works on MONO files only
+
+

@@ -1,0 +1,27 @@
+CDP Release 7.1 2016
+specinfo report mode infile outfile -fN|-pN [-i] pks [-bbt] [-ttp] [-sval]
+
+REPORT ON LOCATION OF FREQUENCY PEAKS IN EVOLVING SPECTRUM,
+
+OUTFILE is a textfile
+
+MODES
+(1) Report on spectral peaks.
+(2) Report spectral peaks in loudness order.
+(3) Report spectral peaks as frq only (no time data).
+(4) Report spectral peaks in loudness order, as frq only (no time data).
+
+-f   extract formant envelope linear frqwise,
+     using 1 point for every N equally-spaced frequency-channels.
+-p   extract formant envelope linear pitchwise,
+     using N equally-spaced pitch-bands per octave.
+-i   quicksearch for formants (less accurate).
+PKS  (max) number of peaks to find : Range 1 - 16
+-b   BT is bottom frequency to start peak search.
+-t   TP is top frequency to stop peak search.
+-s   VAL is number of windows over which peaks averaged.
+     Range 2 - 4097 : default 9 : WARNING: high values slow program!!
+
+bottom frequency & top frequency may vary over time.
+
+

@@ -1,0 +1,17 @@
+CDP Release 7.1 2016
+CUT CHUNKS FROM FILE, RANDOMLY.
+
+USAGE:
+sfedit randchunks infile chunkcnt minchunk [-mmaxchunk] [-l] [-s]
+
+Names of outfiles will be 'infilename' truncated by 1 character,
+      with a number added, starting from zero.
+Chunkcnt is number of chunks to cut.
+Minchunk is minimum length of chunks.
+
+-m    maxchunk is maximum length of chunks.
+-l    chunks chosen are evenly distributed over file
+      (default: random distribution)
+-s    all chunks start at beginning of file
+
+

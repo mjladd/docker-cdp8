@@ -1,0 +1,13 @@
+USAGE:
+sfecho echo infile outfile delay attenuation totaldur [-rrand] [-ccutoff]
+
+DELAY        Time between echo repeats.
+ATTENUATION  Relative level of each repeat (0 - 1).
+TOTALDUR     Maximum output duration (duration may be less).
+RAND         Randomisation of echo times.
+CUTOFF       dB Level at which decaying echoes cut off (default -96dB).
+
+Delay, attenuation and randomisation may vary over time.
+Delay cannot be less than duration.
+ (use "MODIFY REVECHO DELAY" process if overlapping delays required)
+

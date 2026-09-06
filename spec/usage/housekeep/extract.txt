@@ -1,0 +1,26 @@
+CDP Release 7.1 2016
+USAGE: housekeep extract 
+       1 inf [-ggate] [-sS] [-eE] [-tT] [-hH] [-bB] [-iI] [-lL] [-wW] [-n]
+OR:    2 inf outf             OR: 3 inf outf [-ggate] [-ssplice] [-b] [-e]
+OR:    4 inf outf shift       OR: 5 inf outf valsfile
+OR:    6 inf gate endgate threshold baktrak initlevel minsize gatewin
+MODE 1) CUT OUT & KEEP SIGNIFICANT EVENTS FROM INPUT SNDFILE.
+-g  GATE level (G) above which sounds accepted : Range:0-1 (default 0).
+-s  SPLICE LENGTH in mS (default 15mS)
+-e  END-CUTOFF level (E) below which END of sound cut.(If 0, defaults to GATE).
+-t  THRESHOLD (T) If segment level never exceeds threshold,not kept(default 0)
+-h  HOLD sound till S sectors BEFORE START of next segment.(default 0)
+-b  KEEP B sects prior to gate-on, if level there > I (see below). Max B is 64.
+-i  INITIAL level (I). Use with -b flag.
+-l  Min LENGTH of events to keep (secs).
+-w  GATE_WINDOW Gates off only if level < gate for W+1 sectors. (default 0).
+-n  STOP if NAME of EXISTING sndfile generated. Default: ignore and continue.
+MODE 2) PREVIEW: make envel as 'sound'. View to get params for CUT OUT & KEEP.
+MODE 3) TOP AND TAIL: REMOVE LOW LEVEL SIGNAL FROM START & END OF SOUND.
+ GATE   level ABOVE which signal accepted : (Range 0-1 : default 0).
+ SPLICE length in mS (default 15mS) : -b Don't trim start : -e Don't trim end.
+MODE 4) RECTIFY: SHIFT ENTIRE SIGNAL TO ELIMINATE DC DRIFT.
+MODE 5) MODIFY 'BY HAND'. This process is no longer available.
+MODE 6) GET ONSET TIMES:gate,end-cutoff,thresh,keep,init-lvl,minlen,gate-windw.
+
+

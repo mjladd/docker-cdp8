@@ -1,0 +1,34 @@
+CDP Release 7.1 2016
+USER-DEFINED TIME_VARYING FILTERBANK,WITH TIME-VARIABLE Q
+
+USAGE:
+filter varibank mode infile outfile data Q gain [-ttail] [-hhcnt] [-rrolloff] [-d]
+
+MODES ARE...
+1)  Enter filter-pitches as frq, in Hz.
+2)  Enter filter-pitches as MIDI values.
+
+DATAFILE: has lines of data for filter bands at successive times.
+          Each line contains the following items
+                Time:   Pitch1 Amp1   [Pitch2 Amp2    etc....].
+          Pitch and Amp values must be paired:
+          any number of pairs can be used in a line,
+          BUT each line must have SAME number of pairs on it.
+          (To eliminate a band in any line(s), set its amplitude to 0.0).
+          Time values (in secs) must be in ascending order (and >=0.0)
+          Pitch vals may be EITHER frq, OR MIDI, depending on MODE.
+          Amp values may be numeric, or dB values (e.g. -4.1dB).
+          Comment-lines may be used: start these with ';'.
+
+Q         Q (tightness) of filter : Range(0.001000 to 10000.0).
+GAIN:     overall gain: Range: (0.001000 to 10000.0)
+TAIL      decay tail duration
+HCNT      No of harmonics of each pitch to use: Default 1.
+          High harmonics of high pitches may be beyond nyquist.
+          (No-of-pitches times no-of-harmonics determines program speed).
+ROLLOFF   Level drop (in dB) from one harmonic to next. Range(0 to -96.0)
+-d        double filtering.
+
+Q may also vary over time.
+
+

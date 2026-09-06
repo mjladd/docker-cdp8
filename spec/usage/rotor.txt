@@ -1,0 +1,27 @@
+USAGE:
+rotor rotor 1   fi fo env cnt minp maxp step prot trot phas dur gstp [-ddove] [-s]
+rotor rotor 2-3 fi fo env cnt minp maxp step prot trot phas dur [-ddove] [-s]
+
+Generate note-sets that grow and shrink in pitch-range and speed (and spatial-width).
+
+Mode 1: Note-set start-times determined by param "gstp".
+Mode 2: Next Note-set start-time, depends on spacings WITHIN current set.
+Mode 3: First event of next note-set overlaid on last event of previous set.
+
+FI     File to be read at different speeds to generate output events.
+       (should start and end at sample value 0.0, OR use "dove")
+FO     Output file(can be mono or stereo).
+ENV    Envelope to be imposed over output events.
+       Envelope duration determines duration of all events.
+CNT    Number of events in each (changing) set (Range 3 to 127).
+MINP   Minimum (MIDI) pitch of events (Range 0 to 127).
+MAXP   Maximum (MIDI) pitch of events (Range 0 to 127).
+STEP   Maximum timestep between event-onsets (Range 0 to 4 secs).
+PROT   Number of notesets before pitch-sequence returns to orig (Range 4 to 256).
+TROT   Number of speeds, before speed returns to original (Range 4 to 256).
+PHAS   Initial phase difference between prot and trot (range 0 - 1).
+DUR    Duration of output to generate (Range 1 to 32767).
+GSTP   (Mode 1 only) timestep between each note-group (Range 1 to 60).
+DOVE   Size (mS) of start/end dovetails of insound  (Range 0 to 5).
+
+-s     Stereo output: output grows and shrinks in spatial width.

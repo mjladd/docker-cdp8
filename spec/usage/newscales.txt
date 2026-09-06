@@ -1,0 +1,8 @@
+USAGE: newscales outfile datafile spectrumfile [srate]
+outfile      Generic name for output soundfiles (must not end with a number)
+datafile     Frq-amp pairs defining note-events in output
+spectrumfile Harmonicnumber-amplitude pairs, define spectrum of note.
+             One line for all notes
+             OR
+             One line for each note in the frq-list.
+            (First line corresponds to lowest note, etc.)

@@ -1,0 +1,15 @@
+USAGE:
+specnu remove 1-2 inanalfile outanalfile midimin midimax rangetop atten
+
+MODE 1: removes pitch and its harmonics up to a specified frequency limit
+MODE 2: removes everything else.
+
+MIDIMIN    minimum pitch to remove (MIDI).
+MIDIMAX    maximum pitch to remove (MIDI).
+RANGETOP   frequency at which search for harmonics stops (Hz).
+ATTEN      attenuation of suppressed components (1 = max, 0 = none).
+
+Midi range normally should be small.
+If range is octave or more, whole spectrum between lower pitch & rangetop
+will be removed.
+

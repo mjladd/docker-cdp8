@@ -1,0 +1,8 @@
+CDP Release 7.1 2016
+FIND LARGEST LOW LEVEL HOLE IN A SOUNDFILE
+
+USAGE: sndreport findhole infile [-tthreshold]
+
+THRESHOLD  hole only if level falls and stays below threshold (default: 0).
+
+

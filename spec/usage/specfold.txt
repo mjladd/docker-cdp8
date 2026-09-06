@@ -1,0 +1,19 @@
+USAGE: specfold specfold 1 inanalfile outanalfile stt len cnt  [-a]
+USAGE: specfold specfold 2 inanalfile outanalfile stt len      [-a]
+USAGE: specfold specfold 3 inanalfile outanalfile stt len seed [-a]
+
+MODE 1 : Fold the spectrum.
+
+Channels in fold group are split into 2 equal sets of consective channels.
+Values in first set are moved from channel N to channel 2N
+Values in 2nd set are assigned to remaining channels, in descending order.
+
+MODE 2 : Invert the spectrum.
+MODE 2 : Randomise the spectrum.
+
+STT   Lowest spectrum channel to process.
+LEN   Number of channels to process (>= 4)
+      For Folding (Mode 1) this must be an even number.
+CNT   (Mode 1) Number of folds (less than "len").
+SEED  (Mode 3) Seed value sets a specific random perm of channels.
+-a    Process the amplitudes only.

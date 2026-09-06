@@ -1,0 +1,14 @@
+CDP Release 7.1 2016
+DELAY AND TRANSFORM EACH INPUT NOTE, CUMULATIVELY.
+
+USAGE: hfperm delperm 0 
+   infile outfile permfile srate initial-notelen cycles-of-perm
+PARAMETERS ARE
+   INFILE          text input file of midi note values
+   PERMFILE		pairs of vals: 1st a semitone transpos, 2nd a time multiplier
+                   Sum of all time-multipliers must be 1.0
+   SRATE           sample rate of the sound output
+   INITIAL-NOTELEN length of each input note, before it is transformed
+   CYCLES-OF-PERM  Number of times the permutation is recursively applied.
+
+

@@ -1,0 +1,11 @@
+CDP Release 7.1 2016
+formants see infile outsndfile [-v]
+
+CONVERT FORMANT DATA IN A BINARY FORMANTDATA FILE TO 'SNDFILE' FOR VIEWING.
+
+-v     display data about formant-band parameters.
+
+The resulting logarithmically scaled display indicates formant shapes,
+but NOT the absolute amplitude values.
+
+

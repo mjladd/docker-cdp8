@@ -1,0 +1,24 @@
+Use spectral features data to reassemble MONO source file.
+
+USAGE:
+fturanal synth 1-10 inwavfil outfile infeaturefile [-ssplicelen]
+
+INFEATUREFILE list of feature values obtained from the analysis file
+          derived from the INWAVFIL.
+        (a) Segment start-times (+ duration of source).
+        (b) (Median) Frequency of 1st formant.
+        (c) (Median) Frequency of 2nd formant.
+        (d) (Median) Frequency of 3rd formant.
+        (e) Spectral brightness (Range 0 to 1).
+
+SPLICELEN for cutting segments, in mS (Range 2 to 15: default 5).
+
+MODE 1  Reassemble in order of increasing 1st Formant.
+MODE 2  Reassemble in order of decreasing 1st Formant.
+MODE 3  Reassemble in order of increasing 2nd Formant.
+MODE 4  Reassemble in order of decreasing 2nd Formant.
+MODE 5  Reassemble in order of increasing 3rd Formant.
+MODE 6  Reassemble in order of decreasing 3rd Formant.
+MODE 7  Reassemble in order of increasing Brightness.
+MODE 9  Reassemble in order of increasing Formants, summed.
+MODE 10 Reassemble in order of decreasing Formants, summed.

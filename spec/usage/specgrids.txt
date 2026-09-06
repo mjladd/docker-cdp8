@@ -1,0 +1,7 @@
+CDP Release 7.1 2016
+PARTITION SPECTRUM INTO PARTS, OVER A GRID
+USAGE: specgrids specgrids analfile1 outanalfilesname outfilecnt changrouping
+
+Type "specgrids specgrids" for more information
+
+

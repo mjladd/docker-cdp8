@@ -1,0 +1,73 @@
+USAGE:
+frame shift 1 infile outfile snake rotation [-ssmear]
+frame shift 2 infile outfile snake rotation1 rotation2 [-ssmear]
+frame shift 3 infile outfile reorient
+frame shift 4 infile outfile mirrorplane
+frame shift 5 infile outfile [-b]
+frame shift 6 infile outfile swapA swapB
+frame shift 7 infile outfile chaninfo gain
+frame shift 8 infile outfile [-b]
+
+Modes 1 & 2 Rotate the entire frame of a multichannel file.
+Mode 3 Changes the channel assignment of a multichannel file.
+Mode 4 Mirrors the channel output around specified mirrorplane.
+Mode 5 Converts between ring-numbered & bilaterally numbered outchans.
+Mode 6 Swaps any pair of channels (swapA and swapB).
+Mode 7 Allows any channel, or set of channels, to be enveloped,
+       independently of the other channels.
+Mode 8 Converts between ring-numbered & BEAST bilateral numbering.
+
+ROTATION    rotation-rate in cycles (complete frame-rotations) per sec.
+            Mode 2 (only with files with even number of input channels)
+            rotates odd & even chans independently; has 2 rotation vals.
+            Negative values produce anticlockwise rotation.
+            Rotation rate can vary through time. Range -500 to +500.
+SMEAR       Extent to which channel-signals bleed onto adjacent chans.
+            (range 0 to 0.5 : default 0)
+SNAKE       In clockwise rotation,in (e.g.) 8 chans, input chan-1 follows
+            the route 1->2->3->4->5->6->7->8->1 etc. around lspkrs.
+            Other input chans form a "snake" following chan-1 round.
+            To produce rotation (default) set '"snake" to ZERO.
+            HOWEVER, channels might snake along a different route,
+            & route (which could vary over time) can be specified
+            in a data file of "time : snake-list" values
+            e.g. might specify route at time zero ,for 8-chan file
+            "0.0 8 6 5 2 7 3 4 1" & change route at a later time
+            e.g. "1.378245 4 1 5 2 6 7 8 3"
+            1st time-val in data must be zero. Times must increase.
+            IN MODE 2, odd & even chans rotate independently.
+            1->3->5->7->1 etc and 2->4->6->8->2 etc
+            Snake data directs motion round a different route.
+            e.g.  the snake "8 6 5 2 7 3 4 1" above
+            produces one snake around the odd entries
+            i.e. 8 -> 5 -> 7 -> 4 -> 8 etc
+            and a 2nd snake around the even entries
+            i.e. 6 -> 2 -> 3 -> 1 -> 6 etc
+REORIENT    List of ALL input chans, in new positions they will have.
+            e.g. for 4-chans: Data 4 1 2 3
+            sends Ch1 to 4, Ch2 -> 1, Ch3 -> 2 and Ch4 -> 3
+MIRRORPLANE Line around which frame is (symmetrically) mirrored.
+            Values can be any (integer) outchannel number OR
+            any half-way position between outchans e.g. 1.5, 2.5
+            With N chans, 'N.5' lies between Nth & 1st chan.
+-b (Mode 5) Convert bilateral to ring (Default, ring to bilateral).
+            Numbering of outchans can be ring, or bilateral.
+            e.g. for 7 outchans ...
+                 RING                   BILATERAL
+                   1                        1
+                7     2                  2     3
+               6       3                4       5
+                5     4                  6     7
+            All multichan pan programs assume RING numbering.
+            Use this mode to convert out of and into bilateral format.
+-b (Mode 8) Convert BEAST bilateral to ring (Default, ring to BEAST).
+            BEAST bilateral numbering for 8 outchans ...
+                 RING                     BEAST
+                   1                        7
+                8     2                  1     2
+               7       3                3       4
+                6     4                  5     6
+                   5                        8
+SWAPA,SWAPB The 2 channels that are to be swapped.
+CHANINFO    A single channel number, or a list of channels in a file.
+GAIN        Gain to apply to enveloped channels (can vary over time).

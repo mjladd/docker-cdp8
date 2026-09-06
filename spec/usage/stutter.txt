@@ -1,0 +1,33 @@
+USAGE:
+stutter stutter infile outfile datafile dur segjoins silprop
+silmin silmax seed [-ttrans] [-aatten] [-bbias] [-mmindur] [-p]
+
+Slice src (e.g. speech) into elements (e.g. words or syllables).
+Cut segments from elements, always cutting from element start.
+Play these in a random order (with possible intervening silence).
+
+DATAFILE List of times at which to slice src into elements.
+         Minimum timestep between times (MT) = 0.016 secs.
+         Times range: MT secs to (duration - MT).
+DUR      Duration of output.
+SEGJOINS Value 1: uses the specified elements as srcs to cut.
+         Value 2: also use pairs-of-segments as srcs.
+         Value N: also use 2,3,....N joined-segments as srcs.
+         Where joined segs used, cuts end in the last seg joined.
+         Range 1 to 8.
+SILPROP  Silence may be inserted at joins between cut-segments.
+         "silprop" is proportion of joins to have inserted silence.
+         (Range 0 - 1). (Apart from none, minimum is 1 in 20)
+SILMIN   Minimum duration of any silences at joins.
+SILMAX   Maximum duration of any silences at joins.
+SEED     Same seed value (with all other params same)
+         produces identical output from any random-varying processes.
+TRANS    Range (semitones) of any random transposition of segments.
+ATTEN    Range of any random attenuation of segment level (Range 0-1).
+BIAS     Bias size of segments cut (Range -1 to 1). 0 = no bias.
+         -ve vals bias towards smaller segs: +ve vals towards larger segs.
+MINDUR   Minimum duration of cut segments, in mS ( >8 mS ).
+-p       Permute elements (all elements used before any used again).
+         i.e.randomly order elements, cut segs from each and play.
+         Then permute order, cut new segs and play, etc.
+         (Default: segs cut from elements taken entirely at random).

@@ -1,0 +1,78 @@
+CDP Release 7.1 2016
+
+USAGE:
+texture NAME (mode) infile (infile2..etc) outfile notedata params:
+
+
+where NAME can be any one of
+
+	TEXTURE MADE FROM ONE OR SEVERAL SOUND FILES
+
+simple   grouped    decorated    ornate       motifs
+                    predecor     preornate    motifsin
+                    postdecor    postornate
+
+	TIMED TEXTURES MADE FROM ONE OR SEVERAL SOUND FILES
+
+timed     tmotifs   tmotifsin   tgrouped
+
+ORNAMENTS & MOTIFS   have user-specified pitch-shapes.
+DECORATIONS & GROUPS have random pitch-shapes.
+
+Type 'texture simple' for more info on simple texture option.... etc.
+
+
+
+*********************************************************************
+SOME SPECIAL PARAMETER VALUES
+*********************************************************************
+GPSPACE: spatialisation of event-groups
+
+     0:still            1:scattered(default) 2:towards-texture-centre
+     3:away-from-centre 4:follow-texmotion   5:contrary-to-motion
+     4 & 5 only function if spatial position varies in time..
+*********************************************************************
+CONTOUR: amplitude contour of groups
+
+     0:mixed(default) 1:cresc     2:flat   3:decresc    4:c_or_fl
+     5:c_or_d         6:d_or_fl  [7:directed_to_event   8:dir_or_flat]
+*********************************************************************
+CENTRING: how decoration pitches centre on decorated line pitches
+
+     0: centred(default) 1: above       2: below
+     3: c_and_a          4: c_and_b     5: a_and_b     6: c_and_a_and_b
+     In all cases except 0, pitchrange shifted to tally with line pitch
+
+
+*********************************************************************
+       ALL OTHER PARAMS, except outdur, MAY VARY IN TIME.
+*********************************************************************
+
+
+
+*********************************************************************
+HARMONIC SETS   use only the pitches specified.
+
+HARMONIC FIELDS duplicate the specified pitches in all 8vas.
+*********************************************************************
+NOTEDATA is in a textfile containing.....
+*********************************************************************
+     assumed MIDI 'pitch' of each input snd, specified on 1st line.
+
+   FOLLOWED BY, where ness,  NOTELIST(S), SPECIFIED THUS:-
+
+     #N (where N = no. of notes in notelist: follows by N lines of...)
+     time(SECS)   infile_no    pitch(MIDI)    amp(MIDI)   dur(SECS)
+
+where times within motif must increase (or remain same, during chords)
+*********************************************************************
+NOTELISTS REPRESENT: IN THIS ORDER..
+*********************************************************************
+Notelist of notes in any timed, ornamented or decorated line in texture.
+Notelist of notes in any harmonic field(s) or set(s) specified.
+      (For more than one  hfield(hset),
+      data should specify chords, placed at appropriae times.)
+Notelist(s) of notes in any ornament(s) or motif(s) specified.
+*********************************************************************
+
+

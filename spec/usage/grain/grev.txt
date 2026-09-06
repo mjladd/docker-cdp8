@@ -1,0 +1,24 @@
+CDP Release 7.1 2016
+FIND AND MANIPULATE 'GRAINS', USING ENVELOPE TROUGHS AND ZERO-CROSSINGS.
+This process locates elements of sound by searching for troughs in envelope.
+It doesn't need a clear attack to recognise 'grain' in sound, and is
+more appropriate for e.g. separating syllables in speech.
+
+(REVERSE)     USAGE: grain grev 1 inf outf wsiz trof gpcnt
+(REPEAT)      USAGE: grain grev 2 inf outf wsiz trof gpcnt repets
+(DELETE)      USAGE: grain grev 3 inf outf wsiz trof gpcnt keep outof
+(OMIT)        USAGE: grain grev 4 inf outf wsiz trof gpcnt keep outof
+(TIMESTRETCH) USAGE: grain grev 5 inf outf wsiz trof gpcnt tstretch
+(GET)         USAGE: grain grev 6 inf out_timesfile wsiz trof gpcnt
+(PUT)         USAGE: grain grev 7 inf outf in_timesfile wsiz trof gpcnt
+WSIZ    sizeof window in ms, determines size of grains to find.
+TROF    acceptable trough height, relative to adjacent peaks (range >0 - <1)
+GPCNT   number of grains to treat as a unit in the operations.
+REPETS  number of repetitions of each unit.
+KEEP | OUTOF  number of units to keep, e.g. 3 out of 5.
+TSTRETCH amount to timestretch output (grains NOT streched) (Range .01 - 100).
+GET gets grain-pos to (text) timesfile: PUT puts grains at times in timesfile
+DELETE removes specified units: OMIT replaces them with silence,
+GPCNT, REPETS, KEEP and TSTRETCH can vary over time,
+
+

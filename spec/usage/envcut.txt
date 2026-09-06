@@ -1,0 +1,14 @@
+USAGE:
+envcut envcut 1 infile generic_outfilename attack envlen exp [-climit]
+OR:
+envcut envcut 2 infile generic_outfilename attack envlen step exp [-climit]
+
+Cut sound into elements with falling envelope.
+
+ENVLEN    Duration of each outfile.
+STEP      Timestep between start of each envelope cut.
+          (In mode 1 : envlen = step : cut-segments abutted and disjunct).
+ATTACK    Envelope attack duration (mS) : (must be less than half envelope duration).
+EXP       Envelope Decay shape. 1 linear : >1 more rapid decay : < 1 less rapid.
+LIMIT     Minimum level of output events to accept (value 70 = -70dB).
+

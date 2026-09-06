@@ -1,0 +1,6 @@
+
+INCREASE SPECTRAL SELF-SIMILARITY
+
+USAGE: selfsim selfsim inanalfile outanalfile param
+
+Type 'selfsim selfsim' for more info.

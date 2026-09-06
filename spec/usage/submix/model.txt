@@ -1,0 +1,6 @@
+CDP Release 7.1 2016
+REPLACE SOUNDFILES IN EXISTING MIXFILE.
+
+USAGE: submix model mixfile sndfile1 [sndfile2 ........] outfile
+
+

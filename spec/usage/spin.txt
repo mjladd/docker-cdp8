@@ -1,0 +1,7 @@
+USAGE: spin NAME mode infile outfile (parameters)
+
+where NAME can be any one of
+
+stereo  quad
+
+Type 'spin stereo'  for more info on spin stereo option... ETC.

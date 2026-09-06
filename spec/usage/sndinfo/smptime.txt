@@ -1,0 +1,9 @@
+CDP Release 7.1 2016
+CONVERT SAMPLE COUNT TO TIME IN SOUNDFILE
+
+USAGE: sndreport smptime infile samplecnt [-g]
+
+-g   sample count is count of GROUPED samples
+     e.g. stereo file: sample-PAIRS counted.
+
+

@@ -1,0 +1,15 @@
+USAGES:
+stretcha -c -ddur|-fsndfile|(-bbeats -ttempo) -Touttempo
+stretcha -s -ddur|-fsndfile|(-bbeats -ttempo) -Doutdur|(-Boutbeats -Touttempo)
+stretcha -s             -tintempo             -Touttempo
+
+-----------for more information, type 'stretcha -h' -------------
+	    ***************************************************
+	    *           COMPOSERS DESKTOP PROJECT             *
+	                    STRETCHA $Revision: 6.0.0 $
+	    *                                                 *
+	    *       Calculate required time-stretches.        *
+	    *                                                 *
+	    *                by TREVOR WISHART                *
+	    ***************************************************
+

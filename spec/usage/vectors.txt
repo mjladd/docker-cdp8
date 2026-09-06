@@ -1,0 +1,18 @@
+ERROR: Invalid command
+	    ***************************************************
+	    *           COMPOSERS DESKTOP PROJECT             *
+	                   VECTORS $Revision: 1.1 $
+	    *                                                 *
+	    *     Manipulate 2 columns of numbers (vectors)   *
+	    *                                                 *
+	    *                by TREVOR WISHART                *
+	    ***************************************************
+
+USAGE: vectors column1 column2 [outfile] -flag [-eERROR]
+
+	columnN  textfile containing list of numbers.
+	outfile  receives output as text (Default: screen)
+	flag     determines operation.
+	         use 'vectors -h' to see flags.
+	-e       ERROR is acceptable error in checking equality of numbers.
+	         (Default: 0.000002).

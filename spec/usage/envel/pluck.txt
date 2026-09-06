@@ -1,0 +1,13 @@
+CDP Release 7.1 2016
+PLUCK START OF SOUND (MONO FILES ONLY)
+
+envel pluck infile outfile startsamp wavelen [-aatkcycles] [-ddecayrate]
+
+STARTSAMP  Sample, in src sound, at which pluck will END:
+           must be a sample AT A ZERO_CROSSING...
+WAVELEN    no of (absolute) samples in pluck wavelen: 
+           should be same as src_signal's wavelen immediately after STARTSAMP
+ATKCYCLES  no of wavecycles in pluck-attack : Range(2 - 32767) (Default 32)
+DECAYRATE  rate of decay of the pluck_attack: Range(1 - 64) (Default 48)
+
+

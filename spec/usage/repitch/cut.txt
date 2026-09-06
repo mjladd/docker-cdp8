@@ -1,0 +1,8 @@
+CDP Release 7.1 2016
+repitch cut 1 pitchfile outpitchfile starttime
+repitch cut 2 pitchfile outpitchfile endtime
+repitch cut 3 pitchfile outpitchfile starttime endtime
+
+CUT OUT AND KEEP A SEGMENT OF A BINARY PITCH-DATAFILE.
+
+

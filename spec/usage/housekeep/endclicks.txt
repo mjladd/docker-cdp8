@@ -1,0 +1,10 @@
+CDP Release 7.1 2016
+REMOVE CLICKS FROM START OR END OF FILE.
+
+USAGE: housekeep endclicks infile outfile gate splicelen [-b] [-e]
+GATE   level ABOVE which signal accepted : (Range 0-1).
+SPLICE length in mS
+-b     Trim start
+-e     Trim end.
+
+

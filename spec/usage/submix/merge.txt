@@ -1,0 +1,14 @@
+CDP Release 7.1 2016
+QUICK MIX OF 2 SNDFILES (Mono or Stereo only).
+
+USAGE: submix merge sndfile1 sndfile2 outfile
+          [-sstagger] [-jskip] [-kskew] [-bstart] [-eend]
+
+STAGGER ...2nd file enters, 'stagger' secs after first.
+SKIP ......skip by 'skip' secs into the 2nd file, before starting to mix.
+SKEW.......1st sound has 'skew' times more gain than 2nd.
+START .....Start the mix at the time specified.
+END........Stop the mix at the time specified.
+Stagger and Skip are approximated to within about one hundredth of a second.
+
+

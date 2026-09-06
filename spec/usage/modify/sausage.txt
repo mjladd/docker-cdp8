@@ -1,0 +1,39 @@
+CDP Release 7.1 2016
+GRANULAR RECONSTITUTION OF SEVERAL SOUNDFILES SCRAMBLED TOGETHER.
+
+USAGE       (name of outfile must NOT end with a '1')
+modify sausage infile [infile2 ...] outfile velocity density
+  hvelocity hdensity grainsize  pitchshift  amp  space  bsplice  esplice
+  hgrainsize hpitchshift hamp hspace hbsplice hesplice
+  [-rrange] [-jjitter] [-loutlength] [-cchannel] [-d] [-x] [-n]
+
+VELOCITY:  speed of advance in infiles, relative to outfile. (>=0)
+           inverse of timestretch, (permits infinite timestretch).
+DENSITY:   grain overlap (>0 : <1 leaves intergrain silence)
+           Extremely small values don't perform predictably.
+GRAINSIZE: grainsize in MS (must be > 2 * splicelen) (Default 50)
+PITCHSHIFT:pitchshift in +|- (fractions of) semitones.
+AMP:       gain on grains (range 0-1) (Default 1.0)
+           use if amp variation required (over a range &/or in time)
+BSPLICE:   grain-startsplice length,in MS (Default 5)
+ESPLICE:   grain-endsplice length,in MS (Default 5)
+SPACE:     stereo position in outputfile. 0=L,1=R    (Range 0-1).
+           Space flag on STEREO input, mixes to mono before acting.
+RANGE:     of search for nextgrain, before infile 'now'  (Default 0 MS).
+JITTER:    Randomisation of grain position (Range 0-1) Default (0.50).
+OUTLENGTH: max outfile length (if end of data not reached).
+           Set to zero (Default) to ignore.
+           BUT if VELOCITY is ANYWHERE 0: OUTLENGTH must be given.
+CHANNEL:   work on just 1 channel of stereo snd: Range(1-2).
+           Set to zero (Default) to ignore.
+-x:        do exponential splices           (Default: linear).
+-n:        no interpolation for pitch vals, (quick but dirty).
+
+HVELOCITY,HDENSITY,HGRAINSIZE,HPITCHSHIFT,HAMP,HBSPLICE,HESPLICE,HSPACE
+allow a range of values to be specified for any of these params. e.g. With
+PITCHSHIFT & HPITCHSHIFT set, random pitchshift chosen between these limits.
+AND NB PITCHSHIFT & HPITCHSHIFT can both vary through time.
+
+All params, except OUTLENGTH and CHANNEL, can vary through time.
+
+

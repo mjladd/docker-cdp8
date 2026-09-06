@@ -1,0 +1,23 @@
+CDP Release 7.1 2016
+SWITCH BETWEEN SEVERAL FILES, TO MAKE A NEW SOUND.
+
+USAGE:
+sfedit twixt mode infile(s) outfile switch-times splicelen (segcnt) [-wweight] [-r]
+
+MODES ARE
+1) In Sequence    Imagine all files are running in parallel on a multitrack.
+                  Switch from one to another at switch-times.
+2) Permuted       ..similarly, but time-segment order randomly permuted.
+3) Random Choice  ..similarly, but chose any time-seg, at random, as next segment.
+
+4) Edit only      Cut file-1 (only) to chunks defined by switch-times,
+                  and output chunks as separate files.
+SWITCH-TIMES is a texfile with times which divide every file into segments.
+             Times must be in ascending order.
+             (Include time zero if you want to use segments at start of files).
+SPLICELEN    is duration of splices, in milliseconds
+SEGCNT       is number of segments to use in output (only with modes 2 & 3)
+-wWEIGHT     if flag set, file-1 occurs WEIGHT times more often than other files.
+-r           if flag set, order of files used is randomly permuted.
+
+

@@ -1,0 +1,19 @@
+CDP Release 7.1 2016
+repitch transpose 1-3 infile          outfile transpos [-lminfrq][-hmaxfrq][-x]
+repitch transpose 4   infile transpos outfile          [-lminfrq][-hmaxfrq][-x]
+
+TRANSPOSE SPECTRUM (SPECTRAL ENVELOPE ALSO MOVES)
+
+MODES
+1    transposition as a frq ratio.
+2    transposition in (fractions of) octaves.
+3    transposition in (fractions of) semitones.
+4    transposition as a binary data file.
+
+-l     MINFRQ = minimum frq, below which data is filtered out.
+-h     MAXFRQ = maximum frq, above which data is filtered out.
+-x     Fuller spectrum.
+
+frq-ratio, octave or semitone transpositions may vary over time.
+
+

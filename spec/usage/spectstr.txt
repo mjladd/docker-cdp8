@@ -1,0 +1,7 @@
+spectstr stretch time infile outfile timestretch d-ratio di-rand
+
+TIME-STRETCHING OF INFILE, SUPPRESSING ARTEFACTS WHEN STRETCH IS > 1.0
+
+TIMESTRETCH may itself vary over time.
+D-RATIO     proportion of channels to discohere.
+D-RAND      Frequency randomisation of discohered channels.

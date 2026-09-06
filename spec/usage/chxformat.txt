@@ -1,0 +1,20 @@
+CDP MCTOOLS: CHXFORMAT v1.0.1beta (c) RWD,CDP 2009
+change GUID and/or speaker mask in WAVEX header of infile.
+usage: chxformat [-m | [[-t] [-gGUID] [-sMASK]] filename
+ -gGUID : change GUID type between PCM and AMB.
+          Plain WAVEX: GUID = 1
+          AMB:         GUID = 2
+ -sMASK : change speaker position mask.
+          MASK = 0:  unset channel mask
+             else set to MASK
+          MASK may be given in decimal or hex (prefix '0x').
+ -m     : (not in combination with other options)
+ NOTE: speaker positions are only supported for WAVEX PCM files.
+       If GUID is set to 2, the -s option should not be used. Any existing
+       speaker positions will be set to zero.
+ Type chxformat -m to see list of WAVEX mask values.
+ -t     : Test only: do not modify file.
+  If only infile given, program prints current GUID type and speaker mask.
+  In test mode, program checks file, prints current channel mask as binary,
+   and new mask in binary, if -s option set.
+  Otherwise: program modifies infile ("destructively") - use with care!

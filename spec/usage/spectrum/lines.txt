@@ -1,0 +1,35 @@
+USAGE: spectrum lines 1 outanalfile indatafile pointcnt srate duration 
+            harmonics rolloff datafoot datatop specfoot spectop max datawarp ampwarp
+USAGE: spectrum lines 2 outfiltfile indatafile duration 
+            datafoot datatop specfoot spectop datawarp ampwarp
+
+Convert data in "frq amp" format representing spectral lines, to sound spectrum.
+(Mode 2 produces a varifilt filter-file "equivalent" to the spectrum).
+To convert a "frq amp" GRAPH to a spectrum ,see "spectrum format".
+
+INDATAFILE   text data as "frq amp" pairs.
+             frequencies always increasing.
+             amp range, >= 0 .
+OUTDATAFILE  textfile as "frq amp" pairs
+             showing peaks, troughs and amplitude envelope.
+             Local peaks indicated by peak frq and amplitude.
+             Local troughs indicated by -(frq) and amplitude.
+             Elsewhere frq = zero (i.e. unspecific frq within channel)
+                       amp = amplitude at channel centre frq.
+POINTCNT     Number of analysis points per window.
+SRATE        Samplerate of sound which will eventually be generated.
+DURATION     Duration of output spectrum.
+HARMONICS    Number of harmonics to add to original spectral components.
+ROLLOFF      Amplitude loss from one harmonic to next (dB).
+DATAFOOT     Lowest frq in INPUT to be represented in output.
+DATATOP      Highest frq in INPUT to be represented in output.
+SPECFOOT     Lowest frq in OUTPUT representation of spectrum.
+SPECTOP      Highest frq in OUTPUT representation of spectrum.
+MAX          Amplitude of maximum spectral channel.
+             (input data amplitudes  first normalised to range 0 to 1.
+             these amplitudes are then scaled by "max"
+DATAWARP     If not equal to 1, input spectrum is mapped non-linearly...
+             if "warp" > 1, lower frqs are squeezed downwards.
+             if "warp" < 1, upper frqs are squeezed upwards.
+AMPWARP      If > 1, low input spectrum amplitudes are adjusted upwards.
+

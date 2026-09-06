@@ -1,0 +1,18 @@
+CDP Release 7.1 2016
+  TEST THE MAXIMUM LEVEL OF A MIX, DEFINED IN A MIXFILE
+AND SUGGEST A GAIN FACTOR TO AVOID OVERLOAD, IF NECESSARY
+
+USAGE: submix getlevel 1   mixfile             [-sSTART] [-eEND]
+USAGE: submix getlevel 2-3 mixfile outtextfile [-sSTART] [-eEND]
+
+MODES...
+1) finds maximum level of mix.
+2) finds locations of clipping in mix.
+3) finds locations of clipping, and maxlevel, in mix.
+START gives starttime START (to start mixing later than zero).
+END   gives output endtime END (to stop mix before its true end).
+OUTTEXTFILE  stores clipping locations (& maxlevel, in mode 3).
+
+You can alter the overall level of a mix with 'submix attenuate'.
+
+

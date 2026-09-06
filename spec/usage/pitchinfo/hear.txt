@@ -1,0 +1,9 @@
+CDP Release 7.1 2016
+pitchinfo hear pitchfile outfile [-ggain]
+
+CONVERT BINARY PITCHFILE TO ANALYSIS TESTTONE FILE.
+           (RESYNTHESISE TO HEAR PITCH).
+
+-g  gain > 0.0 (default: 1.0)
+
+

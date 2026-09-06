@@ -1,0 +1,7 @@
+USAGE:
+envnu expdecay infile outfile starttime endtime
+
+Impose exponential decay (to zero) on a sound, from starttime to endtime.
+
+To force decay-end to be at end of file,
+enter an endtime at OR beyond file duration.

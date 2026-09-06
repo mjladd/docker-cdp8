@@ -1,0 +1,71 @@
+USAGE: strands strands 1 generic_outdatafilename ...
+OR:    strands strands 2 outsndfilename ...
+dur bands threads tstep bot top twist rand scat vamp vmin vmax turb seed
+[-ggap] [-mminband] [-f3d] [-s]
+
+OR:    strands strands 3 generic_outdatafilename ...
+thrdsfile dur bands tstep bot top twist rand scat vamp vmin vmax turb seed
+[-ggap] [-mminband] [-f3d] [-s]
+
+Generate pitch-data for several streams (or the combined sound itself)
+where total pitch-tessitura divided into equal-sized pitch-BANDS
+and each band made of pitch-line THREADS, cycling around one-another
+pitchwise, within the band, IF twist strays from zero.
+Strands in adjacent bands spiral in opposite directions.
+
+DUR       Duration of output data or sound.
+BANDS     Number of bands in the output.
+THREADS   Number of sounds in a band.
+THRDSFILE Textfile listing number of sounds in EACH band.
+TSTEP     Timestep (in mS) between pitch-data vals in output.
+BOT       Lowest pitch of all output.
+TOP       Highest pitch of all output.
+TWIST     Rate of cycling of output pitches in bands (Hz).
+RAND      Random variation of twist frq from band to band.
+SCAT      Random-warp of cycles of threads in same band.
+VORTEX WAVINESS
+VAMP      ammount band-boundaries wander from fixed frqs.
+VMIN      min rate of oscillation of band boundaries.
+VMAX      max rate of oscillation of band boundaries.
+TURBULENCE
+TURB      0  none: >0-to-1 turbulence in bands: >1-to-2 gobal turbulence.
+SEED      Seed value for randomisation settings.
+GAP       Minimum pitch-gap between bands.
+MINBAND   Minimum pitchwidth of any band.
+3D        Motion in 3D:  0 = none: 1 = bottom band up at front: -1 = down.
+
+-s        (Mode 2 only) - outputs each band in succesion.
+
+Press any key to see further information.
+
+TWIST &   With twist ZERO, streams do not cycle round one another
+LAMINAR   but stay at steady(ish) pitches .. ("laminar flow").
+FLOW      To force laminar flow, use 2 adjacent brkpnt vals of zero
+          (laminar flow is forced between the associated times).
+          To move to twisted flow, follow a zero val by a non-zero val.
+          To maintain twisted flow, follow non-zero val by non-zero val.
+          To untwist the flow, follow a non-zero val by a zero val.
+          
+          During laminar flow,
+          "RAND" controls pitch-jitter of laminae.
+          "SCAT" controls level-jitter of laminae.
+          
+3D        Outputs 2 extra param sets for each stream.
+          1st set can control loudness, or synth partial-cnt
+          in creation of a synthesized output.
+          2nd set can control a mix with reverb (etc) version,
+          (parameter is level of modified source in that mix)
+          both to simulate distance from the listener.
+          In modes 1 & 3, this extra data is output in separate files
+          AFTER all the pitchdata files have been output.
+          The output order is ...
+          all pitch data, all 1st controlfiles, all 2nd controlfiles.
+
+TURBULENT This can only happen (turb > 0.0) when twist > 0.0
+FLOW      (i.e. there can be no turbulence during laminar flow
+          or in the transitions to and from twisted flow).
+
+MODE 2 SOUND OUTPUT
+          Intended only as sound-test for the data output in mode 1.
+          Bands are output, equally spaced, across the stereo stage.
+

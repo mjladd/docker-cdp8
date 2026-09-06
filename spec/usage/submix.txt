@@ -1,0 +1,16 @@
+CDP Release 7.1 2016
+USAGE: submix NAME (mode) infiles     outfile(s) [parameters]:
+OR:    submix NAME (mode) mixdatafile outfile    [parameters]:
+
+where NAME can be any one of
+
+merge      balance     crossfade   interleave   inbetween   inbetween2
+mix        getlevel      attenuate
+shuffle    timewarp      spacewarp      sync       syncattack
+test       fileformat    dummy     addtomix     atstep
+ongrid     faders      mergemany   pan          model
+
+Type 'submix  mix'  for more info on submix  mix.
+Type 'submix  fileformat'  for more info on mixfile fileformat... ETC
+
+

@@ -1,0 +1,42 @@
+USAGE: unknot unknot 1-2 inf1 inf2 [inf3 ...]    outfile combos r_pats r_combos r_all r_unknots r_goal spacetyp cha chb ....
+OR:    unknot unknot 3 inf1 inf2 [inf3 ...] ....
+ [-mmin] [-cclip] [-e] [-t]
+
+Takes set of textfiles, representing rhythmic patterns, creating combined pattern,
+repeating this, gradually unknotting it to regular timepulse & spatial distribution.
+MODES:
+1) Unknots (Events gradually moved, in turn, to be time & space equidistant).
+2) Knots   (Runs process in reverse).
+3) Counts unknotting steps (No output).
+There are 5 (possible) stages to the unknotting process....
+(1)  Repeat (each) original pattern (optional).
+(2)  Repeat (each) specified combination of patterns (optional).
+(3)  Repeat the combination of all patterns (optional).
+(4)  Unknot the combined pattern.
+(5)  Repeat the unknotted pattern (optional).
+Input patterns have lines each with 4 entries "time  MIDI  level  pos"
+time :     must start at zero and not decrease.
+MIDI :     vals between 0 & 127, where convention is 0 indicates a silent file.
+level:     lies between >0 and 1.
+pos  :     position in an 8-channel space, range 0 to 8 (fractional values OK).
+PARAMETERS:
+COMBOS    Textfile List of pattern combos to use. (or zero, if no combos used)
+          Each line lists 2 or more patterns to combine.
+Number of repetitions of......
+R_PATS    each original pattern    (Unknot, placed at start : Knot, placed at end).
+R_COMBOS  each pattern combination.(Unknot, placed next : Knot, placed penultimate).
+R_ALL     combined initial pattern.
+R_UNKNOTS each unknotting/knotting step.
+R_GOAL    goal pattern.
+SPACETYP  Type of spatial distribution for unknotted pattern.
+  0  No spatial redistribution.        3  Rotate anticlock between channels.
+  1  Alternating between channels.     4  Rotate clock-anticlock between channels.
+  2  Rotate clockwise between chans.   5  Rotate anticlock-clock between channels.
+(Redistributions to mono, tutti etc, can be made by a mix to mono, & crossfading).
+CHA       First channel for spacetyp redistribution.
+CHB       Second channel for spacetyp redistribution.
+MIN       Event-Duration-differences read as "zero" (pulse "regular" = unknotted).
+CLIP      Number of events to reposition at each (un)knotting step (default 1).
+-e        Spatial redistribution starts at (un)knotting end.
+          (default: ....starts at (un)knotting start.)
+-t        Output data with titles and spacing to identify patterns being output.

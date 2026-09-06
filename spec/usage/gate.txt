@@ -1,0 +1,11 @@
+USAGE:
+gate gate mode infile outfile gatelevel
+
+Remove low-level sound from signal.
+
+GATELEVEL  level below which sound is to be removed (Range 0 to -96 dB).
+
+Mode 1: low level sound replaced by silence.
+
+Mode 2: low level sound edited out (output is shorter)
+

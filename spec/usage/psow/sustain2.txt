@@ -1,0 +1,12 @@
+USAGE:
+psow sustain2 infil outfil start end  dur vibfrq vibdepth nudge
+
+Freeze and Sustain a sound on a specified grain.
+
+START          Time at which to cut grain.
+END            Time OF end of grain.
+DUR            Output file duration. (Greater than input file's duration).
+VIBFRQ         Frequency of any added vibrato.
+VIBDEPTH       Depth (semitones) of any added vibrato.
+NUDGE                  Move selected grain position by 'nudge' zerocrossings
+

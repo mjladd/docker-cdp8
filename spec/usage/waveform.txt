@@ -1,0 +1,22 @@
+USAGE: waveform make 1 infile outfile time cnt.
+OR:    waveform make 2 infile outfile time dur.
+OR:    waveform make 3 infile outfile time dur balance.
+
+Generate a wavetable from existing sound.
+
+Input file must be MONO.
+
+Mode 1 extracts a group of half-wavesets at specified time in infile.
+Mode 2 extracts given duration of source, cutting at zero-crossing.
+Mode 3 combines specified duration-segment of infile with a sinusoid.
+
+CNT     Number of half-wavesets to extract.
+DUR     Duration, in mS, of sound-clip to extract.
+TIME    Time in infile where data is extracted.
+BALANCE Level of extracted material relative to imposed sinusoid.
+
+In each case, the cut segment is abutted to its inversion,
+making a symmetric wavecycle (and doubling its duration).
+In Modes 1 & 2 this forms the output.
+In Mode 3 this is superimposed on a sinusoid of wavelength DUR * 2.
+

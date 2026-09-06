@@ -1,0 +1,28 @@
+CDP Release 7.1 2016
+ADJUST LOUDNESS OF A SOUNDFILE
+
+USAGE: modify loudness 1 infile         outfile gain
+OR:    modify loudness 11-12 infile     outfile gain
+OR:    modify loudness 2 infile         outfile gain
+OR:    modify loudness 3 infile         outfile [-llevel]
+OR:    modify loudness 4 infile         outfile [-llevel]
+OR:    modify loudness 5 infile infile2 outfile
+OR:    modify loudness 6 infile outfile
+OR:    modify loudness 7 infile infile2 etc.
+OR:    modify loudness 8 infile infile2 etc. outfile
+
+WHERE MODES ARE
+1) GAIN:         adjust level by factor GAIN.
+2) dBGAIN:       adjust level by GAIN dB. Range +-96.0
+3) NORMALISE:    force level (if ness) to max possible, or to LEVEL given.
+4) FORCE LEVEL:  force level to maximum possible, or to LEVEL given.
+5) BALANCE:      force max level of file1 to max level of file 2.
+6) INVERT PHASE: Invert phase of the sound.
+7) FIND LOUDEST: find loudest file.
+8) EQUALISE:     force all files to level of loudest file.
+11) PROPORTIONAL:    adjust level with envelope stretched to dur of sound.
+12) PROPORTIONAL dB: adjust level with dB envelope stretched to dur of sound.
+                 Infiles are rescaled in input order, with output names as
+                 outfile0, outfile1, outfile2, outfile3 etc.
+
+

@@ -1,0 +1,16 @@
+USAGE:
+distmark distmark 1 infile outfile marklist unitlen [-ststretch] [-rrand] [-f] [-t]
+distmark distmark 2 infile outfile marklist unitlen [-ststretch] [-rrand] [-f]
+
+Interpolate between waveset-groups at marked points in MONO soundfile.
+In Mode 2 interpolate within ALTERNATE marked blocks.
+
+MARKLIST List of times within source at which to find waveset-groups.
+UNITLEN  (approx) size of waveset group to find (mS). Can vary over time.
+         Min UNITLEN < 1/2 of min step between Times in MARKLIST.
+TSTRETCH Timestretch distances between marks, in making output.
+RAND     Randomise duration of interpolated wavesets (Range 0 - 1).
+         Randomisation decreases waveset lengths (heard "pitch" higher).
+-f   Flip phase of alternate wavesets.
+-t   Add original (remaining) tail of source sound to output.
+

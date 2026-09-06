@@ -1,0 +1,12 @@
+USAGE: psow split infile1 outfile pitch-brkpnt-data subharmno uptrans balance
+
+Split vocal FOFs into subharmonic and upwardly transposed pitch.
+
+PITCH-BRKPNT-DATA  a breakpoint file with time and frq information.
+                   File may contain zeros (indicating moments of no-signal)
+                   but NOT pitch-zeros (indicating moments of no-pitch).
+                   It must contain SOME significant frequency information.
+SUBHARMNO  Subharmonic number (divides frequency of source) (Range 3-8).
+UPTRANS    Upward transposition in semitones (Range 0 - 48).
+BALANCE    Level of up-transposed components relative to subharms (0-8).
+

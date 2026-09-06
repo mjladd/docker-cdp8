@@ -1,0 +1,10 @@
+CDP Release 7.1 2016
+strange invert mode infile outfile
+
+INVERT THE SPECTRUM
+
+MODES :-
+1	Normal inversion.
+2	Output sound retains amplitude envelope of source sound.
+
+

@@ -1,0 +1,37 @@
+USAGE:
+tesselate tesselate inf [inf2 ...] outf datafile chans cycledur outdur type [-ffrom]
+
+Create repeating-pattern-with-shift in space and time.
+Each (mono) source repeated on pair(s) of channels,
+But with slightly different delay in the paired channels.
+Shortest repeat-time (without the extra delay) = "cycledur".
+
+CHANS     Number of output channels (>= 2) and an even number.
+CYCLEDUR  The delay between repetitions (same for every source)
+          (Sources can have staggered entry, so they form a rhythmic phrase)
+          see "datafile", line 2.
+          Increase in delay on paired-channel(s) determined by "datafile" - line 2.
+OUTDUR    Duration of output sound.
+TYPE      0: Delay drift between odd and even channels (e.g. 1357-v-2468).
+          1: Delay drift between adjacent channels  (1-v-2, 2-v-3, 3-v-4 etc).
+          2: Delay drift between alternate channels (1-v-3, 2-v-4, 3-v-5 etc).
+          3 :Delay drift between every 3rd channel  (1-v-4, 2-v-5, 3-v-6 etc).
+          and so on.
+FROM      Pattern normally starts with all chans in sync at time zero.
+          To start later in pattern, specify an integer number of cycles
+          from which to start outputting sound.
+
+DATAFILE  textfile containing two lines, with the same number of entries per line,
+          and the number of entries corresponds to the number of input files..
+          Line 1 - Lists number of repeats before time-delayed repeat-cycle
+                   resychronises with the "cycledur"-delayed src.
+                   e.g.  with value 5 
+                   "cycledur"-delayed src x    x    x    x    x    x    x
+                   timedelayed src        x     x     x     x     x     x
+          Line 2 - Time delay of initial entry of each src.
+                   Allows sources to be arranged in some initial rhythmic order.
+                   e.g.  0.0  0.1  0.2   0.3   0.4   0.45  0.55  0.7
+                   Maximum time-delay must be less than "cycledur".
+                   All vals must be different.
+                   (With same value, 2 sources would collapse into one double-src).
+

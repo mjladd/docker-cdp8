@@ -1,0 +1,24 @@
+
+CDP MCTOOLS V1.0.1 beta (c) RWD,CDP 2010
+
+ABFPAN2:  apply fixed or orbiting 2nd-order B-Format pan to infile
+usage : abfpan2 [-gGAIN][-w] [-p[DEG]] infile outfile startpos endpos
+    infile : mono source.
+    outfile: 2nd order B-format output.
+        0.0 <= startpos <= 1.0 (0.0 and 1.0 = Centre Front).
+    endpos : endpos < 0.0 gives anticlockwise rotation,
+            endpos > 0.0 gives clockwise rotation.
+            Units give number of revolutions, fraction gives final position
+            Set endpos = startpos for fixed pan
+    -gGAIN : scale infile amplitude by GAIN (GAIN > 0).
+    -w     : Write standard soundfile (wave, aiff)
+            Default: WAVEX B-Format; use .amb extension.
+    -p[DEG]: write full 9-channel (periphonic) B-Format file.
+        Default: write 5-channel (2nd-order horizontal) file.
+        DEG:  optional fixed height argument (degrees).
+             Range = -180  to +180,
+             where  -90 = nadir, +90 = zenith (directly above).
+             Default: DEG=0;  height channels (Z,R,S,T)  will be empty.
+    NB: this program does not create a decoded output.
+    Use FMDCODE to decode to choice of speaker layouts.
+

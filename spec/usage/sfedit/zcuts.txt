@@ -1,0 +1,11 @@
+CDP Release 7.1 2016
+CUT & KEEP SEGS OF MONO SOUND, CUTTING AT ZERO-CROSSINGS (NO SPLICES).
+
+USAGE: sfedit zcuts mode infile outfile cuttimes
+
+MODES ARE
+1) Time in seconds.
+2) Time as sample count.
+CUTTIMES is a file of time-pairs of the start and end of each segment
+
+

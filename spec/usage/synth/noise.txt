@@ -1,0 +1,13 @@
+CDP Release 7.1 2016
+GENERATE NOISE
+
+USAGE: synth noise outfile sr chans dur [-aamp]
+
+SR      (sample rate) can be 48000, 24000, 44100, 22050, 32000, or 16000
+CHANS   can be 1, 2 or 4
+DUR     is duration of output snd, in seconds.
+AMP     is amplitude of output sound: 0.0 < Range <= 1.0 (max & default).
+
+Amp may vary through time.
+
+

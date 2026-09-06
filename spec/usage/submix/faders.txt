@@ -1,0 +1,22 @@
+CDP Release 7.1 2016
+MIX SEVERAL MONO OR STEREO FILES USING TIME-CHANGING BALANCE-FUNCTION
+
+USAGE: submix faders inf1 inf2 [inf3..] outf balance-data envelope-data
+
+(NB do not mix mono and stereo in the input)
+BALANCE-DATA  is a list of value sets.
+              Each consisting of a time, followed by the
+              RELATIVE level of each file in the mix, at that time.
+
+              Whatever set of numbers is used, THESE ARE SCALED
+              so the total set of levels used ON ANY LINE adds up to 1.0
+              (This means that if all signals are at max level
+              the output will never exceed max level)
+
+              You can't use this data to vary the OVERALL level.
+              and, in particular, the values cannot ALL be zero.
+
+ENVELOPE-DATA is the loudness envelope to apply to the TOTAL sound.
+              and this (also) can vary over time.
+
+

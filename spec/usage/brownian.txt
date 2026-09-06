@@ -1,0 +1,39 @@
+USAGE:
+brownian motion 1 fi fo chans dur att dec plo phi pstart sstart step sstep tick seed
+[-aarange] [-mminamp] [-saslope] [-ddslope] [-l]
+OR
+brownian motion 2 fi fo chans dur plo phi pstart sstart step sstep tick seed
+[-aarange] [-mminamp] [-l]
+
+Generate texture of sampled elements following brownian motion in pitch and space.
+
+FI      (Mono) Source to be read at different speeds to generate output events.
+        MODE 1: src must start & end at sampval 0.0 : sampled as a waveform.
+        MODE 2: src can be anything, whole src is transposed for output events..
+                (In mode 2, very int source may take very long time to finish).
+FO      Output file.
+CHANS   Number of channels in output file.
+DUR     (Max) duration of output file.
+ATT*    Rise time of events (Mode 1 only).
+DEC*    Decay time of events (Mode 1 only).
+PLO*    Bottom of pitch range (MIDI).
+PHI*    Top of pitch range (MIDI).
+PSTART  Initial pitch (MIDI).
+SSTART  Initial spatial position (numbering chans 1 - N) (ignored if mono output).
+STEP*   Maximum pitch step between events.
+SSTEP*  Max spatial step between events (fraction of distance between channels).
+TICK*   (Average) Time between events.
+SEED    Seed (initialises random vals. Gives reproducible random sequence).
+ARANGE* Max loudness step between events, in dB (default = min = 0: max = 96dB).
+MINAMP* Min loudness (Range  >0 to 96dB). default = 0 = NO minimum.
+        (Only comes into play if "ARANGE" is > 0).
+        (If min > 0: if amp falls to -min dB, levels 'bounce' off the min value).
+        (If min = 0: no min set, & if level falls to -96dB, sounds stream halts).
+(Mode 1 only)
+ASLOPE* attack slope: < 1 rise fast then slows  : > 1 rise slow then faster.
+DSLOPE* decay slope:  < 1 fall slow then faster : > 1 fall fast then slows.
+        Slope ranges are 0.1 to 10.
+
+-l      loudspeakers arrayed in a line. (Default: arrayed in a "circle").
+
+All items marked with "*" can vary though time.

@@ -1,0 +1,23 @@
+CDP Release 7.1 2016
+hilite trace 1 infile outfile N
+hilite trace 2 infile outfile N lofrq       [-r]
+hilite trace 3 infile outfile N       hifrq [-r]
+hilite trace 4 infile outfile N lofrq hifrq [-r]
+
+RETAIN THE N LOUDEST PARTIALS ONLY (ON A WINDOW-BY-WINDOW BASIS)
+
+MODES :-    
+1  Select loudest spectral components.
+2  Select loudest from above lofrq: Reject all spectral data below lofrq.
+3  Select loudest from below hifrq: Reject all spectral data above hifrq.
+4  Select loudest from between lofrq and hifrq: Reject data outside.
+
+-r If trace index > no of chans in fltband (defined by lofrq\hifrq)
+   RETAIN loudest chans OUTSIDE fltband.
+   (Default: always omit chans outside fltband)
+
+N   is number of spectral components to retain.
+
+N, lofrq and hifrq may vary over time.
+
+

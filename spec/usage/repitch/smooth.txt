@@ -1,0 +1,20 @@
+CDP Release 7.1 2016
+repitch smooth mode pitchfile outfile timeframe [-pmeanpch] [-h]
+
+SMOOTH PITCH CONTOUR IN A PITCH DATA FILE.
+
+TIMEFRAME (millisecs) over which to interpolate pitch values.
+          Range: duration of 1 anal window to dur of entire file.
+-p        interp between PEAK value in each timeframe block of pitch values.
+          MEANPITCH is pitch from which peaks measured
+          (and must be within pitch range, in every timeframe block).
+          Peak is maximum displacement from mean (up or down).
+-h        At end of file, hold last interpolated pitchvalue calculated.
+          Default: interpolate thence to last actual value in input.
+MODES....
+(1) Gives a pitchfile as ouput.
+(2) Gives a transposition file as output.
+
+Timeframe and meanpitch may vary over time.
+
+

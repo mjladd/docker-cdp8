@@ -1,0 +1,25 @@
+CDP Release 7.1 2016
+ALTER THE SPECIFICATION OF A SOUNDFILE.
+
+USAGE: housekeep respec 1 infile outfile new_samplerate
+OR:    housekeep respec 2 infile outfile
+OR:    housekeep respec 3 infile outfile [-ssrate] [-cchannels]
+MODES ARE
+
+1) RESAMPLE  at some different sampling rate.
+           New sampling rate must be one of...
+           96000,88200,48000,24000,44100,22050,32000,16000
+
+2) CONVERT FROM INTEGER TO FLOAT SAMPLES, OR VICE VERSA
+
+3) CHANGE PROPERTIES OF SOUND: (USE WITH CAUTION!!)
+      SRATE is the new sample rate to impose.
+           NB: this does NOT RESAMPLE the data.
+           Simply causes original data to be read at different srate.
+           Sound has same no of samples, but different duration,
+           and will appear to be transposed in pitch.
+      CHANNELS is the new channel count to impose.
+           NB: this does NOT RECHANNEL the data.
+           Hence e.g. a stereo file will appear twice as long.
+
+

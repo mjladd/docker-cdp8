@@ -1,0 +1,29 @@
+CDP Release 7.1 2016
+QUICK CROSSFADE BETWEEN SNDFILES (WITH SAME NUMBER OF CHANNELS).
+
+USAGE: submix crossfade 1 sndfile1 sndfile2 outfile
+		[-sSTAGGER] [-bBEGIN] [-eEND]
+OR:    submix crossfade 2 sndfile1 sndfile2 outfile
+		[-sSTAGGER] [-bBEGIN] [-eEND] [-pPOWFAC]
+
+MODES ARE...
+1) Linear crossfade.
+2) Cosinusiodal crossfade
+
+Crossfade is from sndfile1 towards sndfile2.
+
+STAGGER   2nd file starts 'stagger' secs. after 1st. (Default: 0)
+BEGIN     crossfade starts at BEGIN secs. (>Stagger) (Default: 0)
+END       crossfade ends at END secs. (>Begin) (Default: end of shortest file)
+          If crossfade ends before end of file2, remainder of file2 plays on.
+POWFAC    crossfade skew.
+          if powfac = 1, cosinusoidal-crossfade is normal.
+          in range 0.12 - 1, cosin-fade begins rapidly then slows.
+          in range 1 - 8, cosin-fade begins slowly, then speeds up.
+
+Stagger approximated in c. hundredths of a sec. For more precise stagger, 
+splice silence to start of sndfile2 & use stagger 0 (or use 'submix mix').
+
+(Only spectral morphing will create true morph between 2 sounds).
+
+

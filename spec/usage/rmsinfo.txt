@@ -1,0 +1,16 @@
+
+CDP MCTOOLS: RMSINFO v1.0.1 (c) RWD, CDP 2009
+Scans infile and reports rms and average loudness (power) of infile,
+ relative to digital peak (0dBFS)
+Usage: rmsinfo [-n] infile [startpos [endpos]]
+Standard output shows:
+     RMS level
+     Average level
+     DC level (bipolar average)
+-n : Include equivalent 0dBFS-normalised RMS and AVG levels.
+Optional arguments:
+startpos  :  start file scan from <startpos> seconds.
+endpos    :  finish file scan at <endpos> seconds.
+To stop a scan early, use CTRL-C.
+Program will report levels up to that point.
+

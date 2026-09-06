@@ -1,0 +1,7 @@
+CDP Release 7.1 2016
+spec magnify infile outfile time dur
+
+MAGNIFY A SINGLE ANALYSIS WINDOW, AT TIME 'TIME', TO DURATION 'DUR'.
+
+
+

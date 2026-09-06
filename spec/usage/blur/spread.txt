@@ -1,0 +1,16 @@
+CDP Release 7.1 2016
+blur spread infile outfile -fN|-pN [-i] [-sspread]
+
+SPREAD PEAKS OF SPECTRUM, INTRODUCING CONTROLLED NOISINESS
+
+-f   extract formant envelope linear frqwise,
+     using 1 point for every N equally-spaced frequency-channels.
+-p   extract formant envelope linear pitchwise,
+     using N equally-spaced pitch-bands per octave.
+-i   quicksearch for formants (less accurate).
+
+spread    degree of spreading of spectrum (Range 0-1 : Default 1).
+
+spread may vary over time.
+
+

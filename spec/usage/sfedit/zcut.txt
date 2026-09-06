@@ -1,0 +1,12 @@
+CDP Release 7.1 2016
+CUT & KEEP SEG OF MONO SOUND, CUTTING AT ZERO-CROSSINGS (NO SPLICES).
+
+USAGE: sfedit zcut mode infile outfile start end
+
+MODES ARE
+1) Time in seconds.
+2) Time as sample count.
+START  is (approx) time in infile where segment to keep begins.
+END    is (approx) time in infile where segment to keep ends.
+
+

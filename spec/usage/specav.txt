@@ -1,0 +1,20 @@
+CDP Release 7.1 2016
+USAGE: specav specav 1 inafil outfil starttime endtime [-n]
+OR:    
+specav specav 2 inafil1 inafil2 [inafil3 ....] outfil starttime endtime [-n]
+OR:    
+specav specav 3 inafil generic_outfilname [-ggroupcnt] [-n]
+
+FIND AVERAGE SPECTRUM OF A SOUND OR OF SEVERAL SOUNDS
+OR
+EXTRACT CHANGING SPECTRUM OF SINGLE ANALYSIS FILE AS LIST OF TEXTFILES
+
+INAFIL    Inputs are analysis files (of the same type).
+OUTFIL    Output is a textfile, or a set of textfiles.
+STARTTIME Start time of section to be averaged.
+ENDTIME   End time of section to be averaged.
+GROUPCNT  Number of windows averaged in each output textfile (default = 1).
+-n        Normalise the output data, to peak at 1.0
+(Useful to display formant contour of source).
+
+

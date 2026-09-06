@@ -1,0 +1,30 @@
+USAGE: tangent onefile
+ 1 infile    outf dur steps maxangle dec     [-ffoc] [-jjitter] [-sslow] [-r] [-l]
+ 2 infile    outf dur steps skew     dec     [-ffoc] [-jjitter]          [-r] [-l]
+
+Play repets of mono sound on tangent path to (or from) 8-channel, front-centred
+loudspeaker array. Lspkrs numbered clockwise, starting with "1" at front-centre.
+
+MODE 1  For focus at 1, tangent starts along line at right-angles to lspkr 2.
+MODE 2  For focus at 1 tangent starts along line formed by lspkrs 2 and 3.
+
+DUR        Duration of output file.
+STEPS      Count of events in tangent stream (Modes 1-4 only).
+           Note that in ALL modes, in the part of the stream closest to the focus
+           SAME initial (receding) or final (approaching) event is repeated,
+           and these repeated events are ADDITIONAL to this step-count.
+MAXANGLE  (Mode 1) Motion between 3 lspkr pairs (e.g. 1-2, 2-3, 3-4)
+           Max angle of rotation of motion lies between 3rd pair (  90 to 135 ).
+          (lsprks 3-4 in the example)
+SKEW      (Mode 2) Motion between 3 lspkr pairs (e.g. 1-2, 2-3, 3-4)
+           Skew is ratio (0-1) of time spent between last pair & penultimate pair
+          (lspkr pairs 3-4 and 2-3, in the example)
+DEC        Loudness decimation on passing from one event to the next.
+FOC        Focal lpskr to or from which motion takes place (default, front centre).
+JITTER     Randomisation of event timings (0-1, default 0) Can vary over time.
+SLOW       Slow (or speed up) the pan-motion acceleration (default 0.5).
+           Smaller values make stream arrive more slowly at goal.
+           For approaching motion, 0.5 makes arrival not too fast.
+           For receding motion, 1.0, makes initial motion rapid.
+-r         Sounds RECEDE (default, sound approaches)
+-l         Motion to or from LEFT of focal lspkr (default: to or from right).

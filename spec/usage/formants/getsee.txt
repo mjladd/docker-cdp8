@@ -1,0 +1,17 @@
+CDP Release 7.1 2016
+formants getsee infile outsndfile -fN|-pN [-s]
+
+EXTRACT FORMANTS FROM ANALFILE AND WRITE AS 'SNDFILE' FOR VIEWING.
+
+-f     extract formant envelope linear frqwise,
+       using 1 point for every N equally-spaced frequency-channels.
+-p     extract formant envelope linear pitchwise,
+       using N equally-spaced pitch-bands per octave.
+-s     semitone bands for display (Default: equal hz bands).
+
+The resulting logarithmically scaled display indicates formant shapes,
+but NOT the absolute amplitude values.
+
+(Do not use filenames which end in '1').
+
+

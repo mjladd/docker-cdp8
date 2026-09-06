@@ -1,0 +1,55 @@
+CDP Release 7.1 2016
+GRANULAR RECONSTITUTION OF SOUNDFILE
+
+MODES ARE...
+1) PITCHSHIFT      4) SCRAMBLE
+2) TIMESTRETCH     5) GRANULATE
+3) REVERB          6) BRASSAGE
+                   7) FULL MONTY
+USAGE:
+modify brassage 1 infile outfile pitchshift
+modify brassage 2 infile outfile velocity
+modify brassage 3 infile outfile density pitch amp [-rrange]
+modify brassage 4 infile outfile grainsize [-rrange]
+modify brassage 5 infile outfile density 
+
+modify brassage 6 infile outfile velocity density grainsize pitchshft amp space
+          bsplice esplice
+          [-rrange] [-jjitter] [-loutlength] [-cchannel] [-x] [-n]
+
+modify brassage 7 infile outfile velocity density hvelocity hdensity
+          grainsize  pitchshift  amp  space  bsplice  esplice
+          hgrainsize hpitchshift hamp hspace hbsplice hesplice
+          [-rrange] [-jjitter] [-loutlength] [-cchannel] [-x] [-n]
+
+
+VELOCITY:  speed of advance in infile, relative to outfile. (>=0)
+           This is inverse of timestretch, (& permits infinite timestretch).
+DENSITY:   amount of grain overlap (>0 : <1 leaves intergrain silence)
+           Extremely small values will cease to perform predictably.
+GRAINSIZE: grainsize in MS (must be > 2 * splicelen) (Default 50)
+PITCHSHIFT:is pitchshift in +|- (fractions of) semitones.
+AMP:       is gain on grains (range 0-1)             (Default 1.0)
+           use only if you want amp to vary (over a range &/or in time)
+BSPLICE:   length of startsplices on grains,in MS (Default 5)
+ESPLICE:   length of endsplices   on grains,in MS (Default 5)
+SPACE:     set stereo position in outputfile. 0=L,1=R    (Range 0-1).
+           Space flag on STEREO input, mixes it to mono before acting.
+RANGE:     of search for nextgrain, before infile 'now'  (Default 0 MS).
+JITTER:    Randomisation of grain position (Range 0-1) Default (0.50).
+OUTLENGTH: maximum outfile length (if end of data not reached).
+           Set to zero (Default) for this parameter to be ignored.
+           BUT if VELOCITY is ANYWHERE 0: OUTLENGTH must be given.
+CHANNEL    Extract & work on just 1 channel of stereo snd: Range(1-2).
+           Set to zero (Default) for this parameter to be ignored.
+-x:        do exponential splices           (Default: linear).
+-n:        no interpolation for pitch vals, (quick but dirty).
+
+HVELOCITY,HDENSITY,HGRAINSIZE,HPITCHSHIFT,HAMP,HBSPLICE,HESPLICE,HSPACE
+allow a range of values to be specified for any of these params. e.g. With
+PITCHSHIFT & HPITCHSHIFT set, random pitchshift chosen between these limits.
+AND NB PITCHSHIFT & HPITCHSHIFT can both vary through time.
+
+All params, except OUTLENGTH and CHANNEL, can vary through time.
+
+

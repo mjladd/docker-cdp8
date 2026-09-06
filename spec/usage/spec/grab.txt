@@ -1,0 +1,9 @@
+CDP Release 7.1 2016
+spec grab infile outfile time
+
+GRAB A SINGLE ANALYSIS WINDOW AT 'TIME'
+
+A time beyond end of file will grab last window in file.
+
+
+

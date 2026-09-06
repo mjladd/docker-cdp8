@@ -1,0 +1,5 @@
+USAGE:
+subtract subtract infile1 infile2 outfile [-cchan]
+
+Subtract file2 (which must be mono) from file1 (channel "chan").
+

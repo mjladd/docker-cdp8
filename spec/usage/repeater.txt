@@ -1,0 +1,38 @@
+USAGE: repeater repeater
+1-2 infile outfile datafile                 [-rrand] [-prand] [-sseed]
+3   infile outfile datafile accel warp fade [-rrand] [-prand] [-sseed]
+
+Play source, with specified elements repeating.
+MODE 3 produces dimming, accelerating output, like bouncing object.
+
+MODES 1 & 3 DATAFILE has sets of 4-values, being....
+       "Start-time"   "End-time"   "Repeat-cnt"   "Delay"
+       with one set-of-values for each element to be repeated.
+       Elements can overlap, or baktrak in src, & must be at >= 0.010 secs.
+       "Delay", is time between start of 1 repeated element & start of next.
+       Delay zero will produce a delay equal to the segment length.
+       Otherwise, delays < 0.05 secs may produce output like oscillator.
+
+MODE 2 DATAFILE has sets of 4-values, being....
+       "Start-time"   "End-time"   "Repeat-cnt"   "Offset"
+       Similar to MODE 1 but using "Offset" instead of "Delay".
+       "Offset", for any repeating segment,
+       is the gap between end of one repeated element and start of next.
+
+RAND   Randomise delay:
+       Mode 1&3: Extend each delay-time by a random multiple.
+                 Multiplier generated in range you specify (between 1 & 2).
+       Mode 2:   Extend each offset-time by a random multiple.
+                 Multiplier generated in range you specify (between 1 & 8).
+       Value 1 gives NO randomisation. "RAND" may vary through time.
+
+PRAND  Randomise pitch of repeats within given semitone range (between 0 & 12)
+       "PRAND" may vary through time.
+
+SEED   An integer value. repeated runs of process with same input
+       and same seed value will give identical output.
+
+ACCEL  Delay (& segment) shortening by end of repeats
+       e.g. accel = 2 gradually shortens delay to 1/2 its duration.
+WARP   Warps delay change. 1 no warp. > 1 shortens less initially, more later.
+FADE   Decay curve. 1 linear, >1 fast then slow decay, <1 slow then fast.

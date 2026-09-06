@@ -1,0 +1,8 @@
+
+USAGE: fturanal NAME (mode) infile outfile (parameters)
+
+AUTOMATIC FEATURE EXTRACTION
+
+where NAME can be any one of
+anal   synth
+Type 'fturanal anal' for more info on anal option.. ETC.

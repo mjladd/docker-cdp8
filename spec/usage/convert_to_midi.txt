@@ -1,0 +1,12 @@
+Converts frqequency-brkpnt and peakdata textfiles to a standard midi data file.
+
+USAGE:
+convert_to_midi  frqbrkpnt  peakvals  datalen  staccato  outfilename  system
+
+FRQBRKPNT   File of time-frq pairs for note starts and ends.
+PEAKVALS    Levels of each note (Range 0-1).
+DATALEN     Number of peaks (no. of vals in 'frqbrkpnt' should be datalen * 4)
+STACCATO    Force staccato output.
+OUTFILENAME (File extension will be forced to '.mid' or '.rmi')
+SYSTEM      0 gives Standard Midi File, with extension '.mid'
+            1 gives PC Midi File, with extension '.rmi'

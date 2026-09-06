@@ -1,0 +1,20 @@
+CDP Release 7.1 2016
+focus freeze mode infile outfile datafile
+
+FREEZE SPECTRAL CHARACTERISTICS IN SOUND, AT GIVEN TIMES 
+
+Datafile contains times at which spectrum is frozen.
+These times may be preceded by character MARKERS....
+
+a   use window here as freezewindow for spectrum AFTER this time.
+b   use window here as freezewindow for spectrum BEFORE this time.
+
+Otherwise, times are end\start of freeze established at one of these markers.
+
+MODES
+1   freeze channel amplitudes
+2   freeze channel frequencies
+3   freeze channel amplitudes & frequencies
+
+
+

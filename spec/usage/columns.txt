@@ -1,0 +1,28 @@
+USAGE: columns infile [outfile] -flag[@] [{threshold|}threshold] [--cCOLCNT]
+
+     { = less than:     } = greater than      THRESHOLD is numeric value.
+     threshold can only be used with R,a,m,d,P,c.
+     and specified operation then applies ONLY to vals > OR < threshold value.
+
+     If multicolumn data is being processed
+     COLCNT is the column of the input data to which process is applied.
+     Not all processes work with multicolumn data.
+FOR MORE INFORMATION:
+       columns -f   to see all available flags.
+       columns -g   for generative operations.
+       columns -l   for list manipulation and editing.
+       columns -m   for mathematical operations.
+       columns -M   for musical operations.
+       columns -R   for random operations.
+ALSO
+columns inoutfile1 infile2 [infile3....] -J      to juxtapose cols in one file
+columns infile1 outfiles -SX   to separate cols to X distinct files.
+columns infile1 outfiles -NX   to separate vals to X distinct files, in blocks.
+columns infile1 outfiles -NrX  to separate vals to X distinct files, in rotation
+	    ***************************************************
+	    *           COMPOSERS DESKTOP PROJECT             *
+	                   COLUMNS $Revision: 1.8 $
+	    *    Manipulate or Generate columns of numbers    *
+	    *                by TREVOR WISHART                *
+	    ***************************************************
+

@@ -1,0 +1,14 @@
+CDP Release 7.1 2016
+formants vocode infile infile2 outfile -fN|-pN [-llof] [-hhif] [-ggain]
+
+IMPOSE SPECTRAL ENVELOPE OF 2nd SOUND, ON 1st SOUND.
+
+-f     extract formant envelope linear frqwise,
+       using 1 point for every N equally-spaced frequency-channels.
+-p     extract formant envelope linear pitchwise,
+       using N equally-spaced pitch-bands per octave.
+-l     LOF = low frq,  below which data is filtered out.
+-h     HIF = high frq, above which data is filtered out.
+-g     GAIN adjustment to signal (normally < 1.0).
+
+

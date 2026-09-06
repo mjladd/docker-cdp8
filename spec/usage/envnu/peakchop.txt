@@ -1,0 +1,28 @@
+USAGE:
+envnu peakchop 1 infil outfil wsize pkwidth risetime tempo gain
+              [-ggate -qskew -sscatter -norm -rrepeat -mmiss]
+OR:
+envnu peakchop 2 infil outfil wsize pkwidth risetime [-ggate -qskew]
+
+Isolate peaks in source, and (Mode 1) play back at specified tempo,
+or (Mode 2) output peak-isolating envelope.
+
+WSIZE    windowsize (in mS) for extracting envelope (1-64 dflt 50)
+PKWIDTH  width of retained peaks (in mS) (dflt 20mS).
+         (Must be less than minimum distance between data peaks).
+RISETIME risetime from zero to peak (in mS) (dflt 10mS)
+TEMPO    tempo of resulting output, MM = events per minute.
+GAIN     lower this if rapid tempo causes peaks to overlap (0-1, dflt 1)
+GATE     level (relative to max) below which peaks ignored (0-1 dflt 0)
+SKEW     envelope centring on peak (0 to 1: dflt 0.25). 0.5 = centred,
+         0 = peak at envelope start,  1 = peak at envelope end.
+SCATTER  randomisation of output times (0-1 dflt 0)
+NORM     force peakevent levels towards that of loudest (0-1 dflt 0)
+REPEAT   number of times peakevents are repeated (0-256 dflt 0)
+MISS     use peakevent, skip next 'miss' peakevents (0-64 default 0).
+
+
+All parameters may vary in time, EXCEPT wsize, gate and skew.
+
+Times in breakpoint files are times in the output.
+

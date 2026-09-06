@@ -1,0 +1,13 @@
+USAGE:
+psow del infile outfile pitch-brkpnt-data propkeep segcnt
+
+Time shrink sound by deleting proportion of pitch-syncd grains.
+
+PITCH-BRKPNT-DATA  a breakpoint file with time and frq information.
+                   File may contain zeros (indicating moments of no-signal)
+                   but NOT pitch-zeros (indicating moments of no-pitch).
+                   It must contain SOME significant frequency information.
+PROPKEEP           Proportion of chunks to keep.
+                   '2' keeps 1 in 2:    '7' Keeps 1 in 7:   etc.
+SEGCNT             no of grains in a chunk.
+

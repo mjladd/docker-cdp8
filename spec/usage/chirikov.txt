@@ -1,0 +1,22 @@
+USAGE:
+chirikov chirikov 1-2 outfile dur frq damping srate dovesplice
+chirikov chirikov 3-4 outfile dur frq damping pmin pmax timestep timerand
+
+
+MODE 1 Synthesize potentially chaotic Chirikov Standard map.
+MODE 2 Synthesize potentially chaotic Circle map.
+MODE 3 Create time MIDIpitch breakpoint file from Chirikov Standard map.
+MODE 4 Create time MIDIpitch breakpoint file from Circle map.
+
+In modes 3 and 4, soundwave is magnified so each samplestep (at 44.1KHz)
+becomes one MIDIpitch value at each "timestep".
+
+DUR        Duration of synthesized sound, or textfile output.
+FRQ        (Possibly time-varying) driving frequency of output.
+DAMPING    (Possibly time-varying) damping of forced oscillation.
+SRATE      Sample rate of synthesized sound.
+DOVESPLICE Length of splice of start and end of output sound (mS).
+PMIN,PMAX  Bottom and Top of MIDI pitch range.
+TIMESTEP   Timestep between values in output brkpnt file.
+TIMERAND   Randomisation of times in output brkpnt file.
+

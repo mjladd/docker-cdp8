@@ -1,0 +1,20 @@
+CDP Release 7.1 2016
+USAGE:
+distort pitch infile outfile octvary [-ccyclelen] [-sskipcycles]
+
+PITCHWARP 'WAVECYCLES' OF SOUND.
+
+octvary:    max possible transposition (up or down) in octaves.
+            Range(>0 - 8.0)
+            pitch of each wavecycle is varied by a random amount
+            within the range octvary 8vas up to octvary 8vas down.
+cylelen:    Max no. cycles possible between generation of transpos vals(>1)
+            (Default : 64)
+            Actual cyclecnt is a random number, less than this maximum.
+skipcycles: No of cycles to skip at start of file.
+
+cyclelen and octvary may vary over time.
+
+Works on MONO files only
+
+

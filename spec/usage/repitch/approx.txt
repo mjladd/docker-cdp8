@@ -1,0 +1,21 @@
+CDP Release 7.1 2016
+repitch approx mode pitchfile outfile [-pprange] [-ttrange] [-ssrange]
+
+MAKE AN APPROXIMATE COPY OF A PITCHFILE.
+
+PRANGE  Interval (semitones) over which pitch +- randomly varies from orig.
+        Range > 0.0
+TRANGE  Time-interval (msecs) by which pitchval can stray from orig time.
+        Applied to turning-points in pitch-contour.
+        Range: from duration of 1 analysis window to duration of entire file.
+SRANGE  Time-interval (msecs) over which pitch contour scanned.
+        Pitchshift by a semitone within srange, indicates pitch rise or fall.
+        Range: from duration of 8 analwindows to (approx) dur of infile.
+
+MODES....
+(1) Gives a pitchfile as ouput.
+(2) Gives a transposition file as output.
+
+Prange, trange and srange may vary over time.
+
+

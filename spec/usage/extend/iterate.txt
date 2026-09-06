@@ -1,0 +1,20 @@
+CDP Release 7.1 2016
+ITERATE AN INPUT SOUND IN A FLUID MANNER
+
+USAGE: extend iterate 1 infil outfil outduration
+     [-ddelay] [-rrand] [-ppshift] [-aampcut] [-ffade] [-ggain] [-sseed]
+OR:    extend iterate 2 infil outfil repetitions
+     [-ddelay] [-rrand] [-ppshift] [-aampcut] [-ffade] [-ggain] [-sseed]
+
+delay   (average) delay between iterations. Default: infile duration.
+rand    delaytime-randomisation: Range 0 - 1: Default 0
+pshift  max of random pitchshift of each iter: Range 0 - 12 semitones
+        e.g.  2.5 =  2.5 semitones up or down.
+ampcut  max of random amp-reduction on each iter: Range 0-1: default 0
+fade    (average) amplitude fade between iters (Range 0 - 1: default 0)
+gain    Overall Gain: Range 0 - 1:
+        special val 0 (default), gives best guess for no distortion.
+seed	 the same seed-number will produce identical output on rerun,
+        (Default: (0) random sequence is different every time).
+
+

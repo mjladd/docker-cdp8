@@ -1,0 +1,13 @@
+USAGE:
+specnu subtract sigfile noisfile outanalfile persist noisgain
+
+Eliminate frqbands in 'sigfile' falling below maxlevels found in 'noisfile'
+and subtract amplitude of noise in noisfile channels from signal that is passed.
+
+PERSIST    min-time chan-signal > noise-level, to be retained (Range 0-1000 ms).
+NOISGAIN   multiplies noiselevels in noisfile channels before they are used
+           for comparison with infile signal: (Range 1 - 40).
+
+Both input files are analysis files.
+'noisfil' is a sample of noise (only) from the 'sigfile'.
+

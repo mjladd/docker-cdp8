@@ -1,0 +1,11 @@
+CDP Release 7.1 2016
+DELAY AND TRANSFORM EACH INPUT NOTE, CUMULATIVELY.
+
+USAGE: hfperm delperm2 0 
+   infile outfile permfile cycles-of-perm
+PARAMETERS ARE
+   PERMFILE		pairs of vals: 1st a semitone transpos, 2nd a time multiplier
+                   Sum of all time-multipliers must be 1.0
+   CYCLES-OF-PERM  Number of times the permutation is recursively applied.
+
+

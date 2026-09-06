@@ -1,0 +1,12 @@
+CDP Release 7.1 2016
+
+USAGE: extend NAME (mode) infile outfile parameters: 
+
+where NAME can be any one of
+
+zigzag loop iterate freeze scramble drunk sequence sequence2 baktobak doublets
+repetitions
+
+Type 'extend zigzag' for more info on zigzag option.. ETC.
+
+

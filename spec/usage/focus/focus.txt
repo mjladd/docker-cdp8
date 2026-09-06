@@ -1,0 +1,21 @@
+CDP Release 7.1 2016
+focus focus infile outfile -fN|-pN [-i] pk bw [-bbt] [-ttp] [-sval]
+
+FOCUS SPECTRAL ENERGY ONTO PEAKS IN SPECTRUM
+
+-f     extract formant envelope linear frqwise,
+       using 1 point for every N equally-spaced frequency-channels.
+-p     extract formant envelope linear pitchwise,
+       using N equally-spaced pitch-bands per octave.
+-i   quicksearch for formants (less accurate).
+pk   (max) number of peaks to find : Range 1 - 16
+bw   bandwidth of peak-centred filters, in octaves.
+-b   BT is bottom frequency to start peak search.
+-t   TP is top frequency to end peak search.
+-s   Attempt to retain only peaks which are STABLE over time.
+       Range 2 - 4097 : default 9 : is no. of windows over which peaks averaged.
+
+bandwidth,bottom frequency & top frequency may vary over time.
+
+
+

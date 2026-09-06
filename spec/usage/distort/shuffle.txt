@@ -1,0 +1,18 @@
+CDP Release 7.1 2016
+USAGE:
+distort shuffle infile outfile domain-image [-ccylecnt] [-sskipcycles]
+
+DISTORTION BY SHUFFLING 'WAVECYCLES'
+
+DOMAIN  group of letters representing consecutive (groups of) wavecyles.
+IMAGE   group of letters which is some permutation of the domain.
+Items from domain may be reordered, ommitted or duplicated.
+  N.B. DOMAIN and IMAGE must be connected by a DASH (-).
+CYCLECNT is size of wavecycle-groups to operate on. (default 1)
+SKIPCYCLES: (integer) is no. of wavecycles to skip at start of file
+
+Cyclecnt may vary over time.
+
+Works on MONO files only
+
+

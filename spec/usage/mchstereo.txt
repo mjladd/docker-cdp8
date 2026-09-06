@@ -1,0 +1,20 @@
+USAGE:
+mchstereo mchstereo infil1 [infil2 ..] outfile ochandata ochans pregain [-s]
+
+Place several stereo files in a multichannel output space.
+
+OCHANDATA Position of each stereo input in the outchannel frame.
+          This is a list of output channel-numbers.
+          There must be one number for each input file.
+          e.g. with 3 input stereo sounds to an 8-channel output,
+          '1 3 6' means the 3 input stereo sounds
+          are centred at output channels 1, 3 and 6 respectively.
+          BUT
+-s        Shifts stereo images half-a-channel to right
+          so, in our example
+          1st stereo image is centred BETWEEN channels 1 and 2.
+          2nd stereo image is centred BETWEEN channels 3 and 4.
+          3rd stereo image is centred BETWEEN channels 6 and 7.
+
+OCHANS    Number of channels in the output file (Range 2-16).
+PREGAIN   Gain applied to input sounds. (Range 0-1)

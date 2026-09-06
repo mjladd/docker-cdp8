@@ -1,0 +1,20 @@
+CDP Release 7.1 2016
+IMPOSE AN ENVELOPE ON AN INPUT SOUNDFILE.
+
+USAGE: envel impose  1  input_sndfile imposed-sndfile    outsndfile    wsize
+USAGE: envel impose  2  input_sndfile imposed-envfile    outsndfile
+USAGE: envel impose  3  input_sndfile imposed-brkfile    outsndfile
+USAGE: envel impose  4  input_sndfile imposed-brkfile-dB outsndfile
+
+MODE 1 imposes an envelope extracted from another sndfile.
+MODE 2 imposes an envelope from a binary envelope file.
+MODE 3 imposes an envelope from a (text) brkpnt file: val range (0 - 1).
+MODE 4 imposes an envelope from a (text) brkpnt file with dB vals (-96 to 0).
+
+WSIZE      window_size (in MS) for scanning envelope: Range (5 - filelen)
+
+In MODES 1 & 2, the whole sndfile is enveloped.
+In MODES 3 & 4, brkpnt may start (and end) at any time in file,
+                effectively editing it. Must have at least 2 brkpnt pairs.
+
+

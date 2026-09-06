@@ -1,0 +1,33 @@
+USAGE:
+packet packet 1 infile outfile times mindur narrowing centring [-n|-f] [-s]
+packet packet 2 infile outfile times dur    narrowing centring [-n|-f] [-s]
+
+Isolate or generate  a sound packet.
+
+Mode 1:    Found packet:  Looks for signal minima as edges of wave-packet.
+Mode 2:   Forced packet: Creates packet at specified time.
+
+TIMES     Time (or textfile of times) at which packet is extracted/created.
+
+MINDUR    Min duration of (found) packet (in mS) (less than half src duration).
+DUR       Duration of (forced) packet (in mS)  (less than half src duration).
+
+NARROWING Narrowing of packet envelope (0 - 1000).
+          Values below 1.0 broaden the packet.
+          Values very close to zero may produce clicks (square-wave envelope).
+          Very high vals with very short packets may produce
+          click-impulses or silence.
+
+CENTRING  Centring of peak of packet envelope.
+          0  peak at centre: -1 peak at start: 1 peak at end.
+          If packet content has varying level, true peak position may not
+          correspond to envelope peak position, unless "-f" flag used.
+
+-n        Normalise packet level.
+
+-f        Packet wave maxima and minima forced up(down)to packet contour.
+          (default, packet envelope simply imposed on existing signal).
+          (normalisatiojn flag ignored if "-f" flag used
+
+-s        Shave off leading or trailing silence.
+

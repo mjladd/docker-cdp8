@@ -1,0 +1,30 @@
+CDP Release 7.1 2016
+hilite filter 1-4   infile outfile frq1 Q 
+hilite filter 5-6   infile outfile frq1 Q gain
+hilite filter 7-10  infile outfile frq1 frq2 Q
+hilite filter 11-12 infile outfile frq1 frq2 Q gain
+
+FILTER THE SPECTRUM
+
+MODES:-
+1    high pass filter 
+2    high pass filter (normalised output) 
+3    low pass filter 
+4    low pass filter (normalised output) 
+5    high pass filter with gain 
+6    low pass filter with gain 
+7    band pass filter 
+8    band pass filter (normalised output) 
+9    notch filter 
+10   notch filter (normalised output) 
+11   band pass filter with gain 
+12   notch filter with gain 
+
+frq1            filter cutoff frq.
+frq1 with frq2  limits of filter band.
+Q               width of filter skirts, in Hz (Range: >0).
+gain            amplification of resulting sound.
+
+frq1, frq2 and Q may vary over time.
+
+

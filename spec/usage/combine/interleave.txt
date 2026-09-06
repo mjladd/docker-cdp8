@@ -1,0 +1,6 @@
+CDP Release 7.1 2016
+combine interleave infile infile2 [infile3 ....] outfile leafsize
+
+INTERLEAVE WINDOWS FROM INFILES, LEAFSIZE WINDOWS PER LEAF.
+
+

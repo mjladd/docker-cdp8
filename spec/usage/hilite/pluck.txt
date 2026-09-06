@@ -1,0 +1,10 @@
+CDP Release 7.1 2016
+hilite pluck infile outfile gain
+
+EMPHASISE SPECTRAL CHANGES (USE e.g. WITH spec arpeg)
+
+gain   amplitude gain applied to newly prominent spectral components.
+
+gain may vary over time.
+
+

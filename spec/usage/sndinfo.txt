@@ -1,0 +1,12 @@
+CDP Release 7.1 2016
+USAGE: sndreport NAME (mode) infile(s) (outfile) (parameters)
+
+where NAME can be any one of
+
+props     len        lens      sumlen      timediff
+smptime   timesmp    maxsamp   maxsamp2    loudchan    findhole
+diff      chandiff   prntsnd   units       maxi        zcross
+
+Type 'sndreport timediff'  for more info on info timediff option... ETC.
+
+

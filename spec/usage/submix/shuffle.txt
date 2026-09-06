@@ -1,0 +1,23 @@
+CDP Release 7.1 2016
+SHUFFLE THE DATA IN A MIXFILE
+
+USAGE: submix shuffle 1-6 inmixfile outmixfile         [-sstartl] [-eendl]
+OR:    submix shuffle 7   inmixfile outmixfile newname [-sstartl] [-eendl] [-x]
+
+STARTL: line at which shuffling begins (default: 1st in file)
+ENDL  : line at which shuffling ends  (default: last in file).
+MODES ARE....
+1)  DUPLICATE EACH LINE.
+2)  REVERSE ORDER OF FILENAMES.
+3)  SCATTER ORDER OF FILENAMES.
+4)  REPLACE SOUNDS IN SELECTED LINES WITH SOUND IN STARTLINE.
+5)  OMIT LINES           (closing up timegaps appropriately)
+6)  OMIT ALTERNATE LINES (closing up timegaps appropriately)
+                         In modes 5 & 6 mix must be in correct time-order.
+                         mixfiles can be time-ordered using timewarp mode 1
+7)  DUPLICATE AND RENAME: duplicate each line with new sound, newname.
+
+                         Program checks 'newname' is compatible sndfile, BUT,
+-x  flag TURNS OFF 'newname' checking in mode 7.
+
+

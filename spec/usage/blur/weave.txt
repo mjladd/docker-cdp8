@@ -1,0 +1,19 @@
+CDP Release 7.1 2016
+blur weave infile outfile weavfile
+
+MODIFY SOUND BY WEAVING AMONGST ANALYSIS WINDOWS.
+
+WEAVFILE contains a list of integers which define successive steps (in windows)
+through the input file. Steps may be forward or backwards.
+The step sequence is repeated until end of infile is reached.
+
+Weave must obey the following rules....
+
+RULE 1:  NO step can exceed the length of the file, in windows, forwards or backwards.
+RULE 2:  NO window reached in a weave can be BEFORE startwindow of the weave.
+RULE 3:  FINAL window must be AFTER the weave startwindow.
+
+Otherwise, weave may be forward or backward, or remain at same window.
+
+
+

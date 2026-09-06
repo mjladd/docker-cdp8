@@ -1,0 +1,6 @@
+
+MATRIX MANIPULATION OF SPECTRUM OF SOUND
+
+USAGE: matrix matrix (matrix-data) infile outfile(s).
+
+Type 'matrix matrix' for more info

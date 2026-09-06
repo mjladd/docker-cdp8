@@ -1,0 +1,13 @@
+CDP Release 7.1 2016
+formants get infile outfile -fN|-pN
+
+EXTRACT EVOLVING FORMANT ENVELOPE FROM AN ANALYSIS FILE.
+
+OUTFILE is a formant file, which can be used in other formant applications.
+
+-f     extract formant envelope linear frqwise,
+       using 1 point for every N equally-spaced frequency-channels.
+-p     extract formant envelope linear pitchwise,
+       using N equally-spaced pitch-bands per octave.
+
+

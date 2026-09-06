@@ -1,0 +1,11 @@
+USAGE: smooth datafile outdatafile pointcnt srate [-s]
+
+Generate smoothed curve from input data re spectrum.
+
+DATAFILE     textfile of frq/amp pairs.
+OUTDATAFILE  textfile of smoothed data.
+POINTCNT     no of analysis points required in handling data.
+SRATE        samplerate of eventual sound output.
+-s           if spectral amp falls to zero before the nyquist,
+             keep zeroed end of spectrum at zero.
+.

@@ -1,0 +1,12 @@
+CDP Release 7.1 2016
+specinfo print infile outtextfile time [-wwindowcnt]
+
+PRINT DATA IN ANALYSIS FILE AS TEXT TO FILE.
+
+TIME      in file at which printout begins.
+WINDOWCNT number of windows to print.
+OUTFILE   textfile to accept data.
+
+WARNING:  using more than a few windows will generate a huge textfile.
+
+

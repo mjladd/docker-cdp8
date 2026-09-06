@@ -1,0 +1,9 @@
+
+OPERATIONS USING PITCH-SYNCHRONOUS GRAINS (FOFS) TO (RE)CONSTRUCT SOUNDFILES
+
+USAGE: fofex NAME (mode) infile outfile parameters: 
+
+where NAME can be any one of
+
+extract construct
+Type 'fofex extract' for more info on fofex extract..ETC.

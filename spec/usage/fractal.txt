@@ -1,0 +1,7 @@
+USAGE: fractal NAME (mode) infile outfile parameters
+
+where NAME can be any one of
+
+wave  spectrum
+
+Type 'fractal wave'  for more info on fractal wave option... ETC.

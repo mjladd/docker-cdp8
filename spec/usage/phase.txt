@@ -1,0 +1,9 @@
+USAGE:
+phase phase 1 infile outfile
+phase phase 2 infile outfile [-ttransfer]
+
+Mode 1: Invert phase of a sound.
+Mode 2: Enhance stereo separation by phase shifting. Input file must be stereo.
+
+TRANSFER Amount of signal to be used in phase-cancellation (0-1: default 1 = all).
+

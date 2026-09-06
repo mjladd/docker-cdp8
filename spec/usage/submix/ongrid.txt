@@ -1,0 +1,16 @@
+CDP Release 7.1 2016
+CONVERT LISTED SNDFILES TO BASIC MIXFILE ON TIMED GRID (FOR EDITING)
+
+USAGE: submix ongrid infil1 infil2 [infil3..] outmixfile gridfile
+
+GRIDFILE a list of times (one for each input sound) of sounds in mix
+         OR a list with some times preceded by 'x' (no space after 'x')
+         where 'x' marks a time to actually use 
+         (other grid times being ignored).
+
+Numbers, or gridpoint names, may follow times (on same line ONLY)
+
+IF NO SOUND USED AT TIME ZERO, mix will skip to first snd actually used.
+To avoid this, use a SILENT FILE at time zero.
+
+

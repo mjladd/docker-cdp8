@@ -1,0 +1,13 @@
+USAGE: psow replace infile1 infile2 outfile pbrk1 pbrk2 grpcnt
+
+Combine fofs of first sound with pitch of 2nd.
+
+PBRK1  a breakpoint file with time & frq info about infile1.
+       File may contain zeros (indicating moments of no-signal)
+       but NOT pitch-zeros (indicating moments of no-pitch).
+       It must contain SOME significant frequency information.
+PBRK2  Similar file for infile 2.
+GRPCNT Number of FOFS in a chunk.
+
+This process assumes that BOTH the input files have pitched-grains
+

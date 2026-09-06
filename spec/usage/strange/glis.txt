@@ -1,0 +1,26 @@
+CDP Release 7.1 2016
+strange glis 1 infile outfile -fN|-pN [-i] glisrate        [-ttopfrq] 
+strange glis 2 infile outfile -fN|-pN [-i] glisrate hzstep [-ttopfrq] 
+strange glis 3 infile outfile -fN|-pN [-i] glisrate        [-ttopfrq] 
+
+CREATE GLISSANDI INSIDE THE (CHANGING) SPECTRAL ENVELOPE OF ORIGINAL SOUND
+
+MODES :-
+1   shepard tones.
+2   inharmonic glide.
+3   self-glissando.
+
+-f     extract formant envelope linear frqwise,
+       using 1 point for every N equally-spaced frequency-channels.
+-p     extract formant envelope linear pitchwise,
+       using N equally-spaced pitch-bands per octave.
+-i     quicksearch for formants (less accurate).
+
+glisrate rate of glissing in semitones per second (-ve val for downward gliss).
+hzstep   partials-spacing in inharmonic glide.
+         Range: FROM channel-frq-width TO nyquist/2.
+topfrq   top of spectrum: must be > 2*chanwidth of analysis (default:nyquist)
+
+glisrate may vary over time.
+
+

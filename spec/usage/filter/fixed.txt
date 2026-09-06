@@ -1,0 +1,18 @@
+CDP Release 7.1 2016
+CUT OR BOOST, ABOVE, BELOW OR AROUND A GIVEN FRQ
+
+USAGE: filter fixed 1-2  infile outfile        boost/cut freq [-ttail] [-sprescale]
+OR:    filter fixed 3    infile outfile bwidth boost/cut freq [-ttail] [-sprescale]
+
+MODES ARE...
+1) BOOST OR CUT BELOW GIVEN FRQ
+2) BOOST OR CUT ABOVE GIVEN FRQ
+3) BOOST OR CUT A BAND CENTERED ON GIVEN FRQ
+
+BWIDTH     is the filter bandwidth in Hz for Mode 3 only
+BOOST/CUT  is the boost or cut, in dB
+FREQ       is the filter frequency in Hz
+TAIL       decay tail duration
+PRESCALE   scales the INPUT to the filter.
+
+

@@ -1,0 +1,20 @@
+USAGE:
+tweet tweet 1 infile outfile exclude pitchdata minlevel pkcnt chirp [-w]
+tweet tweet 2 infile outfile exclude pitchdata minlevel frq chirp [-w]
+tweet tweet 3 infile outfile exclude pitchdata minlevel [-w]
+
+Replace FOFs in vocal sound by synthetic tweets or (mode 3) noise.
+
+PITCHDATA   A breakpoint file with time and frq information.
+            (Use "repitch getpitch 2").
+            May contain zeros (indicating moments of no-signal)
+            but it must contain SOME significant frequency information.
+EXCLUDE     Areas in src from which FOFs will NOT be extracted.
+            If not wanted, enter "0". Otherwise pairs of times in textfile.
+MINLEVEL    A level in dBs below level of loudest FOF found,
+            FOFs below this level rejected. NB Zero = NO FOFS rejected.
+PKCNT       Number of peaks in impulse. (1-200) (frq changes with FOF size)
+FRQ         Freq of peaks in impulse.   (1-200) (frq fixed).
+CHIRP       Glissing of impulse. (Range 0 to 30) (Care, output may clip).
+
+-w    FOFs are windowed (cosine smooth of edges)

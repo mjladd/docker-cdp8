@@ -1,0 +1,15 @@
+USAGE:
+bounce bounce inf outf count startgap shorten endlevel ewarp [-smin] [-e] [-c]
+
+"Bounce" a sound (Accelerating repeats, decaying in level).
+
+COUNT    Number of bounces.
+STARTGAP Gap between src start and 1st bounce. (0.04 to 10)
+SHORTEN  Bounce gap reduction (multiplier) from 1 bounce to next.
+ENDLEVEL Loudness of last bounce as fraction of src level. (0 to 1)
+EWARP    Decay warp.        Decresc at start : >1.0 greater : < 1.0 less.
+-sMIN    Shrink bounced elements in same proportion as accel. Min = min dur.
+         (Value of zero turns off shrinkage).
+-c       If repeating elements overlap, cut to avoid this overlap.
+-e       Shrink elements by trimming start. (Default, by trimming end).
+

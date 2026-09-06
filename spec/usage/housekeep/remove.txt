@@ -1,0 +1,14 @@
+CDP Release 7.1 2016
+REMOVE EXISTING COPIES OF A FILE 
+
+USAGE: housekeep remove filename [-a]
+
+         Deletes any copies of filename X, having names X_001,X_002...
+         No checks are made that these ARE COPIES of file X!!
+     -a  Program checks all names in numbered sequence.
+         In standard case, once a numbered file is missing,
+         program checks for 10 more named files before halting.
+         Setting -a flag forces program to search for all possible
+         duplicate filenames. This may take some time.
+
+

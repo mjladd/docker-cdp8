@@ -1,0 +1,12 @@
+CDP Release 7.1 2016
+JOIN FILES TOGETHER, ONE AFTER ANOTHER, IN A PATTERN
+
+USAGE: sfedit join infile1 [infile2 ....] outfile pattern [-wsplice] [-mmaxlen] [-b] [-e] 
+
+PATTERN file contains sequence of numbers = sequence of input files to use
+SPLICE duration of splices, in MS (default 15)
+MAXLEN maximum number of items in pattern to use
+-b     splices start of first file
+-e     splices end of last file
+
+

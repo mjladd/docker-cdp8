@@ -1,0 +1,44 @@
+USAGE:
+isolate isolate 1-2 inf outnam cutsfile [-ssplice] [-x] [-r]
+isolate isolate 3   inf outnam dBon dBoff [-ssplice] [-mmin] [-llen] [-x] [-r]
+isolate isolate 4   inf outnam slicefile [-ssplice] [-x] [-r]
+isolate isolate 5   inf outnam slicefile [-ssplice] [-ddovetail] [-x] [-r]
+
+Cut specified segments from input file, but retain silent surrounds
+so chunks occur at same time in the outfiles, as in the input file.
+Modes 1, 2 & 3 also generate file of all material left over after the cutting.
+Original file reconstructible by mixing all these components.
+INF       Input soundfile
+OUTNAM    Generic outfile name. Outfiles numbered from 0
+CUTSFILE/SLICEFILE  
+Mode 1    Creates SEVERAL output files each containing ONE segment of src. 
+          Cutsfile is list of time-pairs,(start and end of each segment)
+          in time order, and not time-overlapped.
+Mode 2    Can create output files each containing SEVERAL segment of src.
+          If a cutsfile line lists several time-pairs (start+end of segs),
+          ALL segments on that line will be output in a single file.
+          No time-pairs must overlap. Time-pairs on a line must be in time order.
+Mode 3    Creates ONE output file consisting of SEVERAL disjunct segments.
+          Segment starts and ends located using threshold-on and -off parameters.
+          if "len" set, only start portion of segment (length "len") is kept.
+
+          In modes 1-3, an EXTRA FILE OF REMNANTS (if any) is created.
+          Also, if cuts abutt or are so close that end+start splices overlap,
+          end of first cut moved back, and start of 2nd moved forward
+          so that they overlap by a single splicelength.
+
+Mode 4    Cuts the ENTIRE file into disjunct segments
+          Creating SEVERAL output files each containing ONE segment of src.
+          Slicefile is list of (increasing) times where sound is to be cut.
+Mode 5    As mode 4: segments overlapped slightly (separates speech syllables).
+
+SPLICE    Length of splice in mS (range 0 - 500 default 15)
+DBON      (Mode 3) dB level at which a segment is recognised to begin.
+DBOFF     (Mode 3) dB level where recognised seg triggered to end (less than DBON).
+MIN       (Mode 3) min duration in mS of segs to accept (> 2 * splicelen)
+LEN       (Mode 3) duration in mS of (part-)segment to actually keep (> 0)
+          If "len" not set, or set to zero, entire original segments are kept.
+DOVETAIL  (Mode 5) overlap of cut segments in mS (range 0 -20 default 5)
+-x        Add silence to ends of segments files, so they are same length as src
+-r        Reverse all cut-segment files (but not the remnant file)
+

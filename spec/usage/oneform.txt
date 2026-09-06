@@ -1,0 +1,10 @@
+
+OPERATIONS WITH SINGLE FORMANTS
+
+USAGE: oneform name (mode) infile(s) outfile params
+
+where NAME can be any one of
+
+get   put   combine
+
+Type 'oneform get' for more info on 'oneform get'..ETC.

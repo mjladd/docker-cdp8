@@ -1,0 +1,13 @@
+CDP Release 7.1 2016
+repitch insertzeros mode infile outfile zeros-data
+
+MARK AREAS AS UNPITCHED IN A PITCHDATA FILE
+
+MODES
+1  data as times.
+2  data as (grouped) sample count: Count samples in mono, pairs in stereo etc
+
+ZEROS-DATA
+is a list of pairs of times between which unpitched data to be indicated.
+
+

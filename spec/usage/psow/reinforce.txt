@@ -1,0 +1,22 @@
+USAGE:
+psow reinforce 1 infil outfil reinforcement-data pitch-brkpnt-data [-ddelay] [-s]
+psow reinforce 2 infil outfil reinforcement-data pitch-brkpnt-data [-wweight]
+
+MODE 1: Reinforce the harmonic content of the sound.
+MODE 2: Reinforce sound with inharmonic partials.
+
+REINFORCEMENT-DATA File of pairs of values, which represent
+     a harmonic number (2-256) + level relative to src (>0.0 - 16.0).
+     In MODE 2, the 'harmonics' may be fractional (range >1 - 256).
+
+PITCH-BRKPNT-DATA  a breakpoint file with time and frq information.
+                   File may contain zeros (indicating moments of no-signal)
+                   but NOT pitch-zeros (indicating moments of no-pitch).
+                   It must contain SOME significant frequency information.
+
+-s      FOFs generated for higher harmonics which coincide with
+        FOFs of lower harmonics, are omitted.
+delay   mS delay of onset of the added harmonics.
+weight  Sustain inharmonic components. Higher weight, longer sustain.
+        A very high weight may cause buffers to overflow. Default 4.0
+

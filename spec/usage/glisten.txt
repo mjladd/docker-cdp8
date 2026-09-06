@@ -1,0 +1,26 @@
+glisten glisten inf outf grpdiv setdur [-ppitchshift] [-ddurrand] [-vdivrand]
+
+RANDOM PARTITION SPECTRUM INTO BINS AND PLAY BACK IN ORDER
+
+inf and outf are input and output analysis files.
+
+All the channels of the analysis are partitioned into N mutually exclusive sets
+with channels assigned at random to each set. These sets form a complete group.
+Then channels in the first set are played, for "setdur" windows,
+at which point channels in the 2nd set are played for "setdur" windows and so on.
+(As this happens, we are progressing through the original files at its original rate
+the process determining merely which channels are used - the others being zeroed).
+Once all N sets are exhausted, a new group is made by random partition, and so on.
+
+GRPDIV     Number of sets to divide analysis-channels into
+           (e.g. for grpdiv = 4, process partitions chans randomly
+           among 4 sets with [totalchans/4] channels per set).
+           Must be an exact divisior of the channelcnt.
+SETDUR     Number of windows for which a set-of-channels persists
+           before we switch to next set-of-chans (Range 1-1024)
+PITCHSHIFT Max range of random +- pitch shifting of each chanset (in semitones)
+           (Range 0 to 12.0 : Default 0)
+DURRAND    Randomisation of setdur between 1 and setdur (Range 0 - 1).
+DIVRAND    Randomise number of channels in each set in a group (Range 0 - 1).
+           In the normal case, each set-of-chans has an equal number of chans.
+           With divrand > 0, a group has sets of different sizes.

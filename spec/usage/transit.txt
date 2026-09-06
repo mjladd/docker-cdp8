@@ -1,0 +1,10 @@
+
+CREATE MOTION CROSSING AN 8-CHANNEL RING
+
+USAGE: transit NAME mode infile(s) outfile parameters: 
+
+where NAME can be any one of
+
+simple    filtered    doppler    doplfilt    sequence    list
+
+Type 'transit simple' for more info on transit simple..ETC.

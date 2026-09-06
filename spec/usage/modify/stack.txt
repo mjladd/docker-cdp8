@@ -1,0 +1,16 @@
+CDP Release 7.1 2016
+CREATE A MIX WHICH STACKS TRANPOSED VERSIONS OF SOURCE ON ONE ANOTHER
+
+USAGE: modify stack infile outfile transpos count lean atk-offset gain dur [-s] [-n]
+
+TRANSPOS   when numeric, is (semitone) transposition between successive copies
+           or (as a file) a set of transposition values for each stack component.
+COUNT      is the number of copies in the stack.
+LEAN       is the loudness of the highest component, relative to the lowest.
+ATK_OFFSET is time at which attack of sound occurs.
+GAIN       is an overall amplifying factor on the ouptut sound.
+DUR        how much of the output to make (a proportion, from 0 to 1).
+-s         see the relative levels of the layers in the stack.
+-n         Normalise the output.
+
+

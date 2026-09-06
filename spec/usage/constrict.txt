@@ -1,0 +1,11 @@
+USAGE:
+constrict constrict infile outfile constriction
+
+Shorten duration of any zero-levels sections in sound.
+
+CONSTRICTION is the percentage deletion of zero-level areas.
+  Values 0 - 100 shorten zero-sections by that percentage.
+  Values > 100 (i.e. shrinking silence by more than 100%)
+  cause sound on either side of silence to be overlapped
+  by "constriction - 100.0".
+  Max value 200.

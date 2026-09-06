@@ -1,0 +1,7 @@
+USAGE:     brktopi brktopi pitch-textfile binary-outfile
+
+Converts text pitch data to binary pitch data
+
+CDP Release 7.1 2016
+
+

@@ -1,0 +1,24 @@
+USAGE:
+specenv specenv inanalfil1 inanalfil2 outanalfil windowsize [-bbal] [-p] [-i] [-k]
+
+Get the spectral envelope of file 2 and apply it to file 1.
+(File 2 must be at least as long as file 1).
+
+BAL  proportion of original files in output.
+     bal > 1 : balance of shaped-file to infile1 = (1-bal) : bal
+               (Higher balance keeps more of the original file1)
+     bal < 1 : balance of shaped-file to infile2 = (1+bal) : -bal
+               (Lower balance keeps more of the imposed file2)
+     default 0.0 (none of the original files in the output).
+
+-p : windowsize counted in octave steps.
+     Default: counted in analysis-channel-widths (srate/anal-chans).
+
+-i : IMPOSE spectral envelope (default, REPLACE spectral envelope)
+
+-k : KEEP the loudness contour of the imposed file.
+     Default: keep the loudness contour of the original file.
+
+Process equivalent to format extraction + formant impose/replace
+but allows for larger spectral windows.
+

@@ -1,0 +1,9 @@
+CDP Release 7.1 2016
+CUT FILE AT ZERO AMPLITUDE POINTS.
+
+USAGE: housekeep gate infile outfile [-zzerocnt]
+
+zerocnt: number of consecutive zero samples (per channel)
+         to indicate a silent gap in sound, where it can be cut.
+
+

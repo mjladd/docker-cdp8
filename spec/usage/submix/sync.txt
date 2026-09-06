@@ -1,0 +1,13 @@
+CDP Release 7.1 2016
+SYNCHRONISE SOUNDFILES IN A MIXFILE,
+OR GENERATE SUCH A MIXFILE FROM A LIST OF SNDFILES.
+
+USAGE: submix sync mode intextfile outmixfile
+
+INTEXTFILE is list of sndfiles OR an existing mixfile.
+
+MODES ARE....
+1) SYNC SNDFILE MIDTIMES.
+2) SYNC SNDFILE ENDTIMES.
+
+

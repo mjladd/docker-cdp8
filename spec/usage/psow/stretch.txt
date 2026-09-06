@@ -1,0 +1,14 @@
+USAGE:
+psow stretch infile outfile pitch-brkpnt-data timestretch segcnt
+
+Timestretch/transpose a sound by repositioning the pitch-syncd grains.
+The grains themselves are not time-stretched.
+
+PITCH-BRKPNT-DATA  a breakpoint file with time and frq information.
+                   File may contain zeros (indicating moments of no-signal)
+                   but NOT pitch-zeros (indicating moments of no-pitch).
+                   It must contain SOME significant frequency information.
+TIMESTRETCH        Proportion by which sound is stretched (or shrunk).
+SEGCNT             no of grains in a chunk retained as-is,
+                   while gaps between segments are stretched.
+

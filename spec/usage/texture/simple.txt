@@ -1,0 +1,30 @@
+CDP Release 7.1 2016
+USAGE:
+texture simple mode infile [infile2...] outfile notedata outdur packing scatter
+   tgrid sndfirst sndlast  mingain maxgain  mindur maxdur  minpich maxpich omit
+             [-aatten] [-pposition] [-sspread] [-rseed] [-w -c -p]
+MODES:-
+1)  ON A GIVEN HARMONIC-FIELD        3)  ON A GIVEN HARMONIC-SET
+2)  ON CHANGING HARMONIC-FIELDS      4)  ON CHANGING HARMONIC-SETS
+5)  NONE
+notedata: infofile, insnd 'pitches',harmonic fields pitches etc.
+outdur:           (min) duration of outfile
+packing:          (average) time between event onsets.
+scatter:          randomisation of event-onsets (0 - 10)
+tgrid:            minstep(MS) quantised timegrid(for grp starttimes)(default 0)
+sndfirst,sndlast: 1st,last snd to use,from list of insnds(range:1 - no.of snds)
+mingain,maxgain:  minimum & maximum level of input events (1-127:default 64,64)
+mindur,maxdur:    minimum & maximum duration of events in texture
+minpich,maxpich:  minimum & maximum pitch (MIDI VALUE):
+omit:             1 in "omit" events are silent.
+                  less and less silent events as param increases.
+                  at 64 (as at zero) NO events are silent.
+atten:            overall attenuation of the output
+position:         centre of output sound-image (0(Left) 1(Right): default 0.5)
+spread:           spatial-spread of texture events (0 - 1(full-spread))
+seed:             same seed-no: same output on rerun(dflt 0: differs each time)
+-w:               always play whole input-sound (ignoring duration values).
+-c:               Choose files cyclically in listed order (ignore 'sndfirst','last').
+-p:               Random permute each cycle (only when -c flag set).
+
+
