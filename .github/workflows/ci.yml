@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  rust:
+    name: Rust (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      # The workspace has no members until Phase 1 (see
+      # docs/migration/PLAN.md) adds the first crate under crates/.
+      # `cargo fmt`/`clippy`/`test` all hard-error on a workspace with
+      # zero members (verified locally: "Failed to find targets" /
+      # "the workspace has no members"), so these steps skip cleanly
+      # rather than fail until there is something to check.
+      - name: Check for workspace members
+        id: members
+        run: |
+          n=$(cargo metadata --no-deps --format-version 1 | python3 -c "import json,sys; print(len(json.load(sys.stdin)['packages']))")
+          echo "count=$n" >> "$GITHUB_OUTPUT"
+          echo "Workspace has $n member(s)"
+      - name: Check formatting
+        if: steps.members.outputs.count != '0'
+        run: cargo fmt --all -- --check
+      - name: Clippy
+        if: steps.members.outputs.count != '0'
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Test
+        if: steps.members.outputs.count != '0'
+        run: cargo test --workspace
+
+  legacy-build:
+    name: Legacy C reference build (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the legacy Docker image
+        run: docker build -f docker-cdp8/Dockerfile -t cdp8-legacy .
+      - name: Sanity check the binary set
+        run: |
+          count=$(docker run --rm cdp8-legacy ls /opt/cdp/bin | wc -l)
+          echo "Built $count legacy binaries"
+          test "$count" -ge 200
+      - name: Smoke test core commands
+        run: |
+          mkdir -p /tmp/cdp-smoke
+          docker run --rm -v /tmp/cdp-smoke:/w cdp8-legacy bash -c '
+            cd /w
+            synth wave 1 sine.wav 44100 1 2 440
+            sndinfo props sine.wav
+            pvoc anal 1 sine.wav sine.ana
+          '
+      - name: Save the image for the golden-test job
+        run: docker save cdp8-legacy -o /tmp/cdp8-legacy.tar
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cdp8-legacy-image
+          path: /tmp/cdp8-legacy.tar
+          retention-days: 1
+
+  golden-tests:
+    name: Golden tests against the legacy oracle
+    needs: [rust, legacy-build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/download-artifact@v4
+        with:
+          name: cdp8-legacy-image
+          path: /tmp
+      - name: Load the legacy image
+        run: docker load -i /tmp/cdp8-legacy.tar
+      - name: Run the golden suite
+        # tools/oracle and the cdp-programs golden test harness are
+        # added in WP-1.7 (see docs/migration/PLAN.md, Phase 1). Until
+        # then this step is a placeholder that always succeeds, so the
+        # workflow shape is in place before there is anything to run.
+        run: |
+          if [ -f tools/oracle/run.sh ]; then
+            bash tools/oracle/run.sh cdp8-legacy
+          else
+            echo "tools/oracle not yet added (WP-1.7) -- skipping golden tests"
+          fi
