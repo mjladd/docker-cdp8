@@ -1,0 +1,6 @@
+CDP Release 7.1 2016
+DISPLAY DURATION OF A SNDFILING-SYSTEM FILE
+
+USAGE: sndreport len infile
+
+

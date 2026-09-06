@@ -1,0 +1,15 @@
+CDP Release 7.1 2016
+
+HIGHLIGHTING OPERATIONS ON A SPECTRAL FILE
+
+USAGE: hilite NAME (mode) infile outfile parameters: 
+
+where NAME can be any one of
+
+filter   greq    band    arpeg    pluck	trace    bltr
+
+vowels
+
+Type 'hilite filter' for more info on hilite filter..ETC.
+
+

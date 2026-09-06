@@ -1,0 +1,22 @@
+
+*********  ROOMRESP.EXE: by Tom Zudock  CDP build 1998,1999 ******
+  GENERATE ROOM-RESPONSE EARLY REFLECTIONS DATAFILE
+
+usage: roomresp [-aMAXAMP][-rRES] txtout.dat liveness nrefs 
+                          roomL roomW roomH
+                             sourceL sourceW sourceH
+                                listenerL listenerW listenerH
+txtout.dat: text outfile containing early reflections in brkpoint format
+             suitable for input to rmverb, reverb or tdelay
+MAXAMP   : peak amp for data (0.0 < MAXAMP <= 1.0; default 1.0)
+RES      : time resolution for reflections in msecs
+             (0.1 <= RES <= 2; default 0.1)
+liveness : degree of reflection from each surface (0 to 1; typ: 0.95)
+nrefs    : number of reflections from each surface(nrefs > 0; typ: 2 to 5)
+           (WARNING: high values will create extremely long data files!)
+ROOM PARAMETERS:
+roomL roomW roomH            : room size: (Length, Width, Height)
+sourceL sourceW ourceH       : position of sound source (as above)
+listenerL listenerW listenerH: position of listener (as above)
+                               all dimensions are in metres
+NB: first output time is non-zero.

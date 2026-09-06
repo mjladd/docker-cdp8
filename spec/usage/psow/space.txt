@@ -1,0 +1,21 @@
+USAGE: psow space infile1 outfile
+          pitch-brkpnt-data subno separation balance hisuppress
+
+Split alternating FOFs between different spatial locations.
+
+PITCH-BRKPNT-DATA  a breakpoint file with time and frq information.
+                   File may contain zeros (indicating moments of no-signal)
+                   but NOT pitch-zeros (indicating moments of no-pitch).
+                   It must contain SOME significant frequency information.
+SUBNO       Subharmonic number (divides frequency of source) (Range 2-5).
+SEPARATION  spatial separation of alternate FOFs (range -1 to 1).
+     0:  no separation, all output is stereo-centred.
+     1:  alternate FOFS to widest spread, starting with far right position.
+     -1: alternate FOFS to widest spread, starting with far left position.
+     intermediate vals give intermediate degrees of spatial separation.
+BALANCE    of left:right components (0-8).
+     1.0:  leftward & rightward levels equal.
+     >1:   leftward signal divided by balance. (Bias to right)
+     <1:   rightward signal multiplied by balance. (Bias to left)
+HISUPPRESS Suppression of high-frequency components (0-1).
+

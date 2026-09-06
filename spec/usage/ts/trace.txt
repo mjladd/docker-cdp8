@@ -1,0 +1,20 @@
+USAGE: ts trace indata outsnd harmdata tstr frq hrange [-dmaxdur] [-c] [-f]
+
+Treat data in time-series format (list of numbers) as the pitch-trace
+of some defined waveform.
+
+INDATA     text data as a list of numerical values.
+OUTSOUND   sound output file.
+HARMDATA   textfile: list of number pairs = 'harmonic-number amplitude'
+           for each harmonic in waveform. 
+           Fractional values (> 1) will generate inharmonic spectra.
+           '0' (zero), instead of a filename, will output a pure sinetone.
+TSTR       time stretch of data (range 1 - 10000).
+           Can vary over time (time values are times in output sound).
+FRQ        frequency of the mean pitch of the output (range 16 - 11025).
+HRANGE     pitch range upwards (or down) from mean, in semitones (range 0 - 48).
+MAXDUR     max duration of output (range 1 - 600).
+-c         Interpolate time-stretched data using cubic spline (default linear).
+-f         Force duration to 'maxdur' (if ness) by looping input data.
+           (invalid flag if no 'maxdur' specified).
+

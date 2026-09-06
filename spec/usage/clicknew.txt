@@ -1,0 +1,4 @@
+USAGE: clicknew clicks outfile clicktimes_datafile srate
+
+      make clicktrack using times listed in textfile.
+      LEGAL SRATES are 16000, 22050, 32000, 44100, 88200, 48000, 88200 and 96000

@@ -1,0 +1,29 @@
+CDP Release 7.1 2016
+FILTER WHOSE FOCUS-FREQUENCY SWEEPS OVER A RANGE OF FREQUENCIES
+
+USAGE:
+filter sweeping mode infile outfile acuity gain lofrq hifrq sweepfrq [-ttail] [-pphase]
+
+MODES ARE...
+1) NOTCH (Band-reject). 3) LOW-PASS
+2) BAND-PASS            4) HIGH-PASS  
+
+ACUITY   Acuity of filter:  Range(0.000100 to 1.0)
+         Smaller vals give tighter filter.
+GAIN     overall gain on output:   Range(0.001000 to 10000.0)
+         Rule of thumb:
+         if acuity = (1/3)to-power-n: gain = (2/3)-to-power-n
+LOFRQ    lowest frq to sweep to:   Range(0.1 to srate/2)
+HIFRQ    highest frq to sweep to:  Range(0.1 to srate/2)
+SWEEPFRQ frq of the sweep itself:  Range(0.0 to 200.0)
+         e.g. to sweep once over range, set sweepfrq to infiledur/2 (default)
+         and set phase to 0 (upsweep) or .5(downsweep)
+TAIL      decay tail duration
+PHASE    start of sweep: Range(0-1)
+         vals are: 0 = (lofrq) rising to .5 = (hifrq) falling to 1 = (lofrq).
+         Default value is .25 (midfrq,rising)
+
+ACUITY, LOFRQ, HIFRQ and SWEEPFRQ may all vary over time.
+This filter is most effective in BAND-PASS or LOW-PASS mode, at low ACUITY.
+
+

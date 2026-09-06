@@ -1,0 +1,22 @@
+CDP Release 7.1 2016
+PHASESHIFT SOUND, OR PRODUCE 'PHASING' EFFECT
+
+USAGE: filter phasing mode infile outfile gain delay [-ttail] [-sprescale] [-l]
+
+MODES ARE..
+1) ALLPASS FILTER (PHASE-SHIFTED)
+2) PHASING EFFECT
+
+GAIN      Range (-1.0 to 1.0)
+          In MODE 2, phasing effect increases as gain increases from -1
+          BUT a gain of 1.0 will produce complete phase cancellation
+          and the output signal will be zero.
+DELAY     >0.0 MS
+TAIL      decay tail duration
+PRESCALE  gain on the INPUT to the filtering process.
+          Range (0.0 - 1.0) Default 1.0
+-l        linear interpolation of changing delay vals (default: logarithmic)
+
+DELAY may vary over time.
+
+

@@ -1,0 +1,13 @@
+CDP Release 7.1 2016
+focus hold infile outfile datafile
+
+HOLD SOUND SPECTRUM, AT GIVEN TIMES 
+
+Datafile contains times at which spectrum is held, & hold-duration.
+These data items must be paired correctly.
+The process expands each hold window to the duration given,
+before proceeding to the next window. The output file is therefore longer
+than the input file.
+
+
+

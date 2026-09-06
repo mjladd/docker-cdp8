@@ -1,0 +1,11 @@
+CDP Release 7.1 2016
+combine make2 pitchfile formantfile envfile outfile
+
+GENERATE SPECTRUM FROM PITCH, FORMANT AND ENVELOPE DATA ONLY.
+
+pitchfile   is a binary pitchdata file
+formantfile is a binary formantdata file
+envfile     is a binary envelope file derived from an ANALYSIS file
+outfile     is an analysis file which can be resynthesized with PVOC
+
+

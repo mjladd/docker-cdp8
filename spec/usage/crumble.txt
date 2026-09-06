@@ -1,0 +1,41 @@
+USAGE: crumble sound 1 inf outf stt dur1 dur2      params
+OR:    crumble sound 2 inf outf stt dur1 dur2 dur3 params
+
+where PARAMS are
+orient size rand iscat oscat ostrch pscat seed [-ssplice] [-ttail]
+
+Project a MONO source on all channels of multichan output, then segment it,
+and distribute the segments over smaller and smaller groups of channels.
+
+Mode 1 gives 8-channel output  (ochans = 8)
+Mode 2 gives 16-channel output (ochans = 16)
+
+STT     Start time of crumbling.
+DUR1    Duration of section where signal split into 2 images.
+DUR2    Duration of section where signal split into 4 images.
+DUR3    (Mode 2) Duration of section where signal split into 8 images.
+ORIENT  Input image first splits onto 2 blocks each of ochans/2 adjacent chans.
+        (1) chan "ori" with adjacent clockwise channels,
+        (2) remaining channels.
+SIZE*   (Average) duration of cut segments.
+RAND*   Randomisation of segment size. (Range 0 - 1)
+        Max(1) modifies "siz" randomly between siz/2 and (3*siz)/2
+ISCAT*  Scattering (in source) of start-time of next segment cut. (Range 0 - 1)
+        Cut-time in source always advances.
+        With no scatter, step to next cut-time = length of previous segment cut.
+        With max "isct"(1) step  by random time between 0 and previous-seglen.
+OSCAT*  Scattering (in output) of time-placement of segment used.(Range 0 - 1)
+        Time in output always advances.
+        With no scatter, step to next output-time = length of last segment cut.
+        With max "osct"(1) step by random time between >0 and previous-seglen.
+OSTRCH* Stretching of time-placement in output. (Range 1 - 64)
+        Step to next sgement-placement in output, is multiplied by ostr.
+        ostr > 1 should generate silent gaps in the output.
+PSCAT*  Pitch variation of output segments (Semitones).
+        for e.g. psct=3, pitch varies at random between +3 and -3 semitones.
+SEED    Same seed value gives identical output on successive process runs.
+SPLICE  Length of splices which cut the segments (in millseconds).
+TAIL*   Length of any exponential tail on segments (in millseconds).
+
+Parameters marked with "*" can vary over time (i.e. time in the outfile).
+

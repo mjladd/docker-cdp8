@@ -1,0 +1,19 @@
+CDP Release 7.1 2016
+WARP THE ENVELOPE OF AN SOUNDFILE
+
+envel warp 1-12  sndfile outsndfile          wsize various_params
+envel warp 13    sndfile outsndfile rampfile wsize various_params
+envel warp 14-15 sndfile outsndfile          wsize various_params
+
+where MODE NUMBERS stand for are....
+1 NORMALISE       5 LIFT            9  INVERT       13 TRIGGER
+2 REVERSE         6 TIMESTRETCH     10 LIMIT        14 CEILING
+3 EXAGGERATE      7 FLATTEN         11 CORRUGATE    15 DUCKED
+4 ATTENUATE       8 GATE            12 EXPAND 
+
+WSIZE is duration of enveloping window, in MS.
+
+for more info on MODES, and their 'various_params', type e.g.:
+      'envel warp normalise' for more info on 'normalise' option... etc
+
+

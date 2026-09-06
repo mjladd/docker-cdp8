@@ -1,0 +1,14 @@
+CDP Release 7.1 2016
+CREATE A SINUSOIDAL SPATIAL DISTRIBUTION DATA FILE
+
+USAGE: modify spaceform outpanfile cyclelen width dur quantisation phase
+
+CYCLELEN     is the duration of one complete sinusoidal pan cycle
+WIDTH        is the width of the pan (from 0 to full width,1)
+DUR          is the duration of the output file.
+QUANTISATION is time step between successive space-position specifications.
+PHASE        is the angular position at which the pan starts.
+             0 is full left, 360 is full right.
+cyclelen and width may vary over time
+
+

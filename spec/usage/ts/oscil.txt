@@ -1,0 +1,14 @@
+USAGE: ts oscil indata outsnd downsample [-dmaxdur] [-c] [-f]
+
+Treat data in time-series format (list of numbers) as a soundwave plot.
+
+INDATA     text data as a list of numerical values.
+OUTSOUND   sound output file.
+DOWNSAMPLE downward transposition of data in octaves (0 - 16)
+           (= timestretch as a power of two)
+           Can vary over time (time values are times in output sound).
+MAXDUR     max duration of output (range 1 - 600).
+-c         Interpolate downsampled data using cubic spline (default linear).
+-f         Force duration to 'maxdur' (if ness) by looping input data.
+           (invalid flag if no 'maxdur' specified).
+

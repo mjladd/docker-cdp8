@@ -1,0 +1,22 @@
+CDP Release 7.1 2016
+SYNCHRONISE GRAIN-ONSETS IN 2nd GRAINY-SOUND
+            WITH THOSE IN THE 1st.
+USAGE:
+grain align infile1 infile2 outfile offset gate2
+		[-blen] [-lgate] [-hminhole] [-twinsize] [-x]
+
+INFILE1 provides grain-onset times.
+INFILE2 provides the actual grains to be retimed.
+OFFSET  add this value (secs) to ALL grain timings.
+GATE2   min signal level to register grain in File2: Range 0-1: default 1
+LEN     maximum time between grains
+GATE    min signal level to register grain in File1: Range 0-1: default 1
+MINHOLE min duration of inter-grain holes:
+        Min value (default) 0.032
+-t      Gate level tracks signal level,found with windowsize winsize(msecs)
+        Range(0.0 - infiledur): 0.0 turns off tracking)
+-x      ignore the last grain in the source.
+
+Gate and Gate2 may vary over time.
+
+

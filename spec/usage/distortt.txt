@@ -1,0 +1,13 @@
+USAGE:
+distortt repeat infile outfile gpcnt rpt offset dur [-t]
+
+Skip initial 'offset', then each group of 'gpcnt' wavesets repeats 'rpt' times,
+until duration 'dur' is exceeded (or waveset data is exhausted).
+
+GPCNT  Number of wavesets in the group to be repeated.
+RPT    Number of repetitions of each waveset group.
+OFFSET Time, in mS, to skip, before starting waveset process.
+       (sound in offset is suffixed before the output snd).
+DUR    Required duration of output.
+-t     Telescope: skip wavesets so output is similar size to input.
+

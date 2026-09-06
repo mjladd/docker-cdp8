@@ -1,0 +1,9 @@
+CDP Release 7.1 2016
+stretch time 1 infile outfile timestretch
+stretch time 2 infile timestretch
+
+TIME-STRETCHING OF INFILE.
+In mode 2, program calculates length of output, only.
+Timestretch may itself vary over time.
+
+

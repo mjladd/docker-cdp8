@@ -1,0 +1,21 @@
+CDP Release 7.1 2016
+ANALYSE THEN RESYNTHESIZE SOUND WITH VARIOUS OPTIONS
+
+USAGE: pvoc extract infile outfile
+       [-cpoints] [-ooverlap] [-ddochans] [-llochan] [-hhichan]
+
+POINTS   No of analysis points (2-32768 (power of 2)): default 1024
+         More points give better freq resolution
+         but worse time-resolution (e.g. rapidly changing spectrum).
+OVERLAP  Filter overlap factor (1-4): default 3
+DOCHANS  resynthesize odd (1) or even (2) channels only.
+LOCHAN   ignore analysis channels below this in resynth (default: 0)
+HICHAN   ignore analysis channels above this in resynth (dflt: highest channel)
+LOCHAN and HICHAN refer to channels rather than analysis points.
+         There is 1 channel for every 2 points.
+         HICHAN should therefore not be > ANALYSIS POINTS/2
+         To default to topmost chan, set at ZERO.
+
+NB If no flags are set, the output sound will be the same as the input.
+
+

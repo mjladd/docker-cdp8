@@ -1,0 +1,26 @@
+CDP Release 7.1 2016
+EXTRACT OR CONVERT CHANNELS OF SOUNDFILE.
+
+USAGE: housekeep chans 1 infile channo
+OR:    housekeep chans 2 infile 
+OR:    housekeep chans 3 infile outfile channo
+OR:    housekeep chans 4 infile outfile [-p]
+OR:    housekeep chans 5 infile outfile
+
+MODES ARE
+1) EXTRACT A CHANNEL
+         channo is channel to extract
+         outfile is named inname_c1 (for channel 1) etc.
+2) EXTRACT ALL CHANNELS
+         outfiles are named inname_c1 (for channel 1) etc.
+3) ZERO ONE CHANNEL
+         channo is channel to zero
+         mono file goes to just one side of stereo outfile.
+         multichannel files have one channel zeroed out.
+4) MIX DOWN TO MONO
+         -p inverts phase of 2nd stereo channel before mixing.
+         (phase inversion has no effect with non-stereo files).
+5) MONO TO STEREO
+         Creates a 2-channel equivalent of mono infile.
+
+

@@ -1,0 +1,13 @@
+CDP Release 7.1 2016
+specinfo octvu infile outtextfile time_step [-ffundamental]
+
+DISPLAY TIMEVARYING AMPLITUDE OF SPECTRUM, WITHIN OCTAVE BANDS.
+
+timestep is in MILLIsecs.
+Band-energy is totalled over each timestep duration.
+-f Octaves are centered on octave transpositions of fundamental.
+
+The reported values are RELATIVE levels only
+and the lowest band includes all energy down to '0Hz'.
+
+

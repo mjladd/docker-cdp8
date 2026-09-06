@@ -1,0 +1,13 @@
+USAGE:     ptobrk withzeros binary-pitchfile outtextfile min-pitch-dur
+
+Converts binary pitch data to time-frq pairs in a breakpoint textfile.
+
+This process should be used instead of 'repitch pchtotext'
+for files containing no-pitch and no-sound markers.
+
+MIN-PITCH-DUR    gives minimum time (in milliseconds) any stretch of pitchdata
+                 must persist to be regarded as valid data.
+                 (range 1 ms to 1000 ms: suggest 20 ms).
+CDP Release 7.1 2016
+
+

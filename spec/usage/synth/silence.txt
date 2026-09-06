@@ -1,0 +1,10 @@
+CDP Release 7.1 2016
+MAKE SILENT SOUNDFILE
+
+USAGE: synth silence outfile sr chans dur
+
+SR      (sample rate) can be 48000, 24000, 44100, 22050, 32000, or 16000
+CHANS   can be 1, 2 or 4
+DUR     is duration of output snd, in seconds.
+
+

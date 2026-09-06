@@ -1,0 +1,21 @@
+CDP Release 7.1 2016
+
+USAGE: distort NAME (mode) infile (infile2) outfile parameters: 
+
+where NAME can be any one of
+
+    DISTORT OPERATIONS ON A SINGLE SOUND FILE
+
+average   divide    fractal      multiply  repeat    replim     reverse
+cyclecnt  envel     harmonic     omit      replace    shuffle
+delete    filter    interpolate  pitch     reform     telescope
+overload  pulsed    repeat2
+    DISTORT OPERATIONS ON TWO SOUND FILES
+
+interact
+
+Type 'distort reform' for more info on reform option.. ETC.
+
+DISTORT PROCESSES WORK ONLY ON mono FILES.
+
+

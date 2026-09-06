@@ -1,0 +1,25 @@
+USAGE: transit list 1-5 intextfile outfile focus dur max dec [-l]
+
+Position a sequence of (at least 3) mono sounds, listed in a textfile,
+(there must be an odd number of sounds)
+on tangent path to & from 8-channel array.
+Lspkrs equidistant in a ring, numbered clockwise, Output is a mixfile.
+
+MODES:
+      1                2                3               4               5
+   (glancing)      (edgewise)      (crossing)         (close)        (central)
+->>---O->>      ->>--O---O->>           O             O   O             O
+  O       O                    ->>--O-------O->>                    O       O
+                  O         O                  ->>-O---------O->>
+ O         O                       O         O                 ->>-O---------O->>
+                  O         O                      O         O
+  O       O                         O       O                       O       O
+      O              O   O              O             O   O             O
+
+FOCUS  Centre of motion. Integer for odd modes, 1.5 ; 2.5 etc for even modes.
+DUR    Duration of motion from edge to centre (ONLY).
+MAXA   (Modes 1-4) Maxangle from centreline reached( < 90).
+MAXD   (Mode 5) Max distance from centre reached, where halfradius = 1.
+DEC    Gain decrement (>0 <1) on passing from one event to the next.
+
+-l     Motion towards left of focal position (Default: motion towards right).

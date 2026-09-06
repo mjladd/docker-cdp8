@@ -1,0 +1,7 @@
+USAGE: dvdwind dvdwind infile outfile contraction clipsize
+
+Shorten a sound by read, skip, read, skip procedure. 
+
+CONTRACTION  Time-contraction of the input (> 1).
+CLIPSIZE     Duration of each retained clip (mS).
+

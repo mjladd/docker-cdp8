@@ -1,0 +1,14 @@
+CDP Release 7.1 2016
+MAKE COPIES OF THE INFILE
+
+USAGE: housekeep copy 1 infile outfile
+OR:    housekeep copy 2 infile count [-i]
+MODES ARE
+1) COPY ONCE
+2) COPY MANY
+         Produces N copies of infile X, with names X_001,X_002...
+         COUNT is number of duplicates to produce.
+     -i  ignore existing duplicates (don't overwrite them).
+         default, process halts on discovering a pre-existing file.
+
+

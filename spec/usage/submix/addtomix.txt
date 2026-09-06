@@ -1,0 +1,6 @@
+CDP Release 7.1 2016
+ADD SOUNDFILES (at max level and time end-of-file) TO EXISTING MIXFILE.
+
+USAGE: submix addtomix mixfile sndfile1 [sndfile2 ........] outfile
+
+

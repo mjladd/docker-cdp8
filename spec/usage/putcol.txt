@@ -1,0 +1,23 @@
+USAGE : putcol columnfile intofile outfile colno -r|-i [[-]skiplines] [-e]
+
+COLUMNFILE  File with NEW column.
+INTOFILE    File INTO which the new column goes.
+OUTFILE     Resultant file.
+COLNO       POSITION of the column to be added.
+-r          REPLACE original column.
+-i          INSERT new column amongst original columns.
+SKIPLINES   SKIP OVER skiplines before inserting column.
+-SKIPLINES  THROW AWAY skiplines: then insert column.
+-e          Ignore lines which contain only 'e' or 's'.
+            and comment lines starting with ';'
+            (skipped lines should still be counted).
+	    ***************************************************
+	    *           COMPOSERS DESKTOP PROJECT             *
+	                    PUTCOL $Revision: 1.3 $       
+	    *                                                 *
+	    *    Insert a column of figures, in a textfile,   *
+	    *              into an existing file.             *
+	    *                                                 *
+	    *                by TREVOR WISHART                *
+	    ***************************************************
+

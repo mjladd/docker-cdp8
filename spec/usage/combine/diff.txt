@@ -1,0 +1,11 @@
+CDP Release 7.1 2016
+combine diff infile infile2 outfile [-ccrossover] [-a]
+
+FIND DIFFERENCE OF TWO SPECTRA.
+
+-c  CROSSOVER is amount of 2nd spectrum subtracted from 1st (range 0 to 1)
+-a  retains any subzero amplitudes produced (Default: sets these to zero).
+
+crossover may vary over time.
+
+

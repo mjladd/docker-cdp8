@@ -1,0 +1,8 @@
+TREMOLO A SOUND, WIDTH NARROWED, AFTER PEAK
+
+USAGE: tremenv tremenv infile outfile frq depth winsize fineness
+
+FRQ          frequency of tremenv (0 - 500) 
+DEPTH        depth of tremenv: Range(0 to 1: default 1)
+WINSIZE      Size of window for envelope extraction (mS) (Range 1 - 40)
+FINENESS     Squeeze width of tremenv (integer value >= 1).

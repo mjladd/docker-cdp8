@@ -1,0 +1,36 @@
+USAGE: newmorph newmorph 1-6 analfile1 analfile2 outanalfile
+           stagger  startmorph  endmorph  exponent  peaks  [-e] [-n] [-f]
+OR:    newmorph newmorph 7 analfile1 analfile2 outanalfile
+           peaks  outcnt  [-e] [-n] [-f]
+
+MORPH BETWEEN DISSIMILAR SPECTRA
+
+STAGGER    Time before entry of file 2.
+STARTMORPH Time (in 1st file) at which morph starts.
+ENDMORPH   Time (in 1st file) at which morph ends.
+EXPONENT   Exponent of interpolation.
+PEAKS      Number of peaks to interpolate.
+OUTCNT     Mode 7 makes "outcnt" distinct output files.
+-e         Retain the loudness envelope of the first sound.
+           (in this case output cuts off when 1st sound reaches its end).
+-n         No interpolation of anything except the peaks.
+-f         Only frq is determined by peaks in sound 2.
+
+MODES
+1   interpolate linearly (exp 1) between the average peak channels
+    or over a curve of increasing (exp >1) or decreasing (exp <1) slope,
+    simultaneously moving spectral peaks, and interpolating all remaining channels.
+
+2   interpolate cosinusoidally (exp 1) between the average peak channels
+    or over a warped cosinusoidal spline (exp not equal to 1),
+    simultaneously moving spectral peaks, and interpolating all remaining channels.
+
+3   As mode 1, using channel-by-channel calculation of peaks.
+4   As mode 2, using channel-by-channel calculation of peaks.
+5   Sound 1 (gradually) tuned to (averaged) harmonic field sound 2. Linear.
+6   Sound 1 (gradually) tuned to (averaged) harmonic field sound 2. Cosinusoidal.
+7   Sound 1 morphed towards sound2 in "outcnt" steps, each step a new output file.
+
+CDP Release 7.1 2016
+
+

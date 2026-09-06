@@ -1,0 +1,10 @@
+USAGE: psow locate infil pitch-brkpnt-data time
+
+Gives exact time of grain-start nearest to specified time.
+
+PITCH-BRKPNT-DATA  a breakpoint file with time and frq information.
+                   File may contain zeros (indicating moments of no-signal)
+                   but NOT pitch-zeros (indicating moments of no-pitch).
+                   It must contain SOME significant frequency information.
+TIME           Time at which find grain.
+

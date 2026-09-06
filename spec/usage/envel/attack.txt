@@ -1,0 +1,22 @@
+CDP Release 7.1 2016
+EMPHASIZE THE ATTACK OF A SOUND
+
+envel attack 1 infile outfile gate gain onset decay [-tenvtype]
+envel attack 2 infile outfile time gain onset decay [-tenvtype]
+envel attack 3 infile outfile time gain onset decay [-tenvtype]
+envel attack 4 infile outfile      gain onset decay [-tenvtype]
+
+MODES ARE:
+1) Set attack point where snd level first exceeds gate-level.
+2) attack point at max level around your approx-time (+- 200 MS)
+3) attack point at your exact-time.
+4) attack point at maxlevel in sndfile.
+
+GAIN:    Amplification of attack point
+GATE:    Level for attack point to be recognised: Range(0 - 1)
+TIME:    Time (approx or exact) of attack point,in secs.
+ONSET:   Attack onset duration (MS): Range(5 to 32767)
+DECAY:   Attack decay duration (MS): Range(5 to <infiledur)
+ENVTYPE: 0 linear: 1 exponential(default).
+
+

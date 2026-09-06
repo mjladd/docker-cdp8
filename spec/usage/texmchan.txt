@@ -1,0 +1,28 @@
+USAGE:
+texmchan texmchan mode infile [infile2...] outfile notedata outdur packing scatter
+  tgrid sndfirst sndlast  mingain maxgain  mindur maxdur  minpich maxpich outchans
+ [-aatten] [-pposition] [-sspread] [-rseed] [-w -c -p -f]
+MODES:-
+1)  ON A GIVEN HARMONIC-FIELD        3)  ON A GIVEN HARMONIC-SET
+2)  ON CHANGING HARMONIC-FIELDS      4)  ON CHANGING HARMONIC-SETS
+5)  NONE
+notedata: infofile, insnd 'pitches',harmonic fields pitches etc.
+outdur:           (min) duration of outfile
+packing:          (average) time between event onsets.
+scatter:          randomisation of event-onsets (0 - 10)
+tgrid:            minstep(MS) quantised timegrid(for grp starttimes)(default 0)
+sndfirst,sndlast: 1st,last snd to use,from list of insnds(range:1 - no.of snds)
+mingain,maxgain:  minimum & maximum level of input events (1-127:default 64,64)
+mindur,maxdur:    minimum & maximum duration of events in texture
+minpich,maxpich:  minimum & maximum pitch (MIDI VALUE):
+outchans:         number of output channels
+atten:            overall attenuation of the output
+position:         centre of output sound-image (from 1 to outchans)
+spread:           spatial-spread of texture events (1 - outchans)
+seed:             same seed-no: same output on rerun(dflt 0: differs each time)
+-w:               always play whole input-sound (ignoring duration values).
+-c:               Choose files cyclically in listed order (ignore 'sndfirst','last').
+-p:               Random permute each cycle (only when -c flag set).
+-f:               Fixes positions around space in order of files in command list.
+                  in this case, "spread" is degree of randomisation of these positions
+                  and values can range from 0 to 1 (values above 1 will be truncated)

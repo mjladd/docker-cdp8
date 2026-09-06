@@ -1,0 +1,11 @@
+USAGE:
+peakfind peakfind infile outfile windowsize [-tthreshold]
+
+Find times of peaks in a sound. Output as a textfile list if times.
+
+WINDOWSIZE windowsize in mS for locating succesive peaks.
+THRESHOLD  level (range 0-1) below which peaks are ignored in any window.
+
+If threshold is not set (or is set to zero)
+peak windows below 1/5 of the local maximum are ignored,
+where local max is measured over 10 windows.

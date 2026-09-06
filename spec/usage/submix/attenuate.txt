@@ -1,0 +1,11 @@
+CDP Release 7.1 2016
+ALTER THE OVERALL LEVEL OF A MIXFILE.
+
+USAGE:  submix attenuate inmixfile outmixfile gainval [-sstartline] [-eendline]
+
+GAINVAL must be > 0.0
+STARTLINE: line at which attenuation begins (default: 1st in file)
+ENDLINE  : line at which attenuation ends  (default: last in file).
+You can test the overall level of a mix with 'submix getlevel'
+
+

@@ -1,0 +1,33 @@
+CDP Release 7.1 2016
+CREATE REVERB, ECHO, OR RESONANCE AROUND SOUND
+
+USAGE: modify revecho 1 infl outfl delay mix feedback tail [-pprescale] [-i]
+OR:    modify revecho 2 infl outfl delay mix feedback
+                                   lfomod lfofreq lfophase lfodelay
+                                   tail [-pprescale] [-sseed]
+OR:    modify revecho 3 infl outfl [-ggain] [-rroll_off] [-ssize] [-ecount] [-n]
+
+WHERE MODES ARE
+1) STANDARD DELAY with feedback, & mix (0=dry) of original & delayed signal.
+2) VARYING DELAY  with low frequency oscillator varying delay time.
+3) STADIUM ECHO   create stadium P.A. type echos.
+
+DELAY     Delay time, in milliseconds.
+MIX       amount of delayed signal in final mix: 0 gives 'dry' result.
+FEEDBACK  produces resonance related to delay time (with short times).
+TAIL      is time to allow delayed signal to decay to zero.
+PRESCALE  prescales input level, to avoid overload.
+-i        inverts the dry signal (for phasing effects).
+LFOMOD    is the depth of delay-variation sweep.
+LFOFREQ   is the freq of the sweep: -ve vals give random oscillations.
+LFOPHASE  is the start phase of the sweep.
+LFODELAY  is the time before the seep begins.
+SEED      Nonzero value gives reproducible output (with same seed)
+          where random oscillations are used.
+GAIN      to apply to input signal: Default is 0.645654
+SIZE      multiplies average time between echoes: (Default time 0.1 secs).
+ROLL_OFF  rate of loss of level across stadium (default 1)
+COUNT     number of stadium echoes: Default (max) is 1000
+-n        Normalise the output, preventing overload,
+
+

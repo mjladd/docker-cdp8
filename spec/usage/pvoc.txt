@@ -1,0 +1,10 @@
+CDP Release 7.1 2016
+USAGE: pvoc NAME (mode) infile outfile (parameters)
+
+where NAME can be any one of
+
+anal   synth 	extract
+
+Type 'pvoc anal'  for more info on pvoc anal option... ETC.
+
+

@@ -1,0 +1,10 @@
+
+FURTHER OPERATIONS ON ANALYSIS FILES
+
+USAGE: speclean NAME infile(s) outfile parameters: 
+
+where NAME can be any one of
+
+clean
+
+Type 'speclean clean' for more info on speclean clean..ETC.

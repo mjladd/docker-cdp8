@@ -1,0 +1,10 @@
+
+FURTHER OPERATIONS ON ANALYSIS FILES
+
+USAGE: specnu NAME (mode) infile(s) outfile parameters: 
+
+where NAME can be any one of
+
+remove    clean    subtract    slice    rand    squeeze
+
+Type 'specnu remove' for more info on specnu remove..ETC.

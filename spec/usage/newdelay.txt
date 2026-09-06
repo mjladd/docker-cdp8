@@ -1,0 +1,8 @@
+USAGE: newdelay newdelay infile outfile midipitch mix feedback
+
+MIDIPITCH Pitch of output.
+MIX       amount of delayed signal in final mix: 0 gives 'dry' result.
+FEEDBACK  produces resonance related to delay time (with short times).
+
+Delay may vary over time.
+

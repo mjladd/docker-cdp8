@@ -1,0 +1,16 @@
+USAGE:
+verges verges inf outf times [-ttransp] [-eexp] [-ddur] [-n] [-b|-s]
+
+Play source, with specified brief moments glissing up or down.
+
+TIMES  Textfile listing times of verge-attacks.
+
+TRANS  Semitone transposition at start of verge. (Defuault 5).
+EXP    slope of glissi (1(dflt) to 8) : higher vals gliss faster.
+DUR    duration of glissi, in mS. (default 100)
+
+-n     Use times given (default looks for peak closest to time in src).
+-b     Boost the level of the verges.
+-s     Suppress all input except verges. (Boost verges)
+
+"TRANSP", "EXP" and "DUR" can vary through time.

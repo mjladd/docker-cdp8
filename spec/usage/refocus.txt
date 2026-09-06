@@ -1,0 +1,26 @@
+USAGE: refocus refocus 1-5 outname dur bandcnt focratio tstep trand
+[-ooffset] [-eend] [-nnot] [-sseed]
+
+For a set of sounds to be mixed, generate corresponding set of envelopes
+which bring each sound in turn into focus (louder than others)
+at a specified timestep.
+These envelopes can them be applied to the sounds before the final mix is made.
+
+OUTNAME   Generic name for output envelope textfiles.
+DUR       Duration of output envelopes.
+BANDCNT   Number of envelopes to generate.
+FOCRATIO  How much louder then the others is the in-focus sound.
+TSTEP     Time step between refocusings.
+TRAND     Randomisation of time steps (Range 0 - 1);
+OFFSET    Time at start before envelopes begin to change levels.
+END       Time after which envelopes no longer change levels.
+NOT       No focus on upper (1), or lower (-1) band.
+SEED      Random seed: same (non-zero) value produces identical random-outputs.
+
+MODES
+1  Streams Refocus in a randomly permuted order.
+2  Ordered Refocus, from lowest to highest band.
+3  Ordered Refocus, from highest to lowest band.
+4  Ordered Refocus, cycling lowest to highest to lowest etc.
+5  Ordered Refocus, cycling highest to lowest to highest etc.
+

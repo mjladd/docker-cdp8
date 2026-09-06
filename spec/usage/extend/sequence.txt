@@ -1,0 +1,10 @@
+CDP Release 7.1 2016
+PRODUCE SEQUENCE OF INPUT SOUND PLAYED AT TRANSPOSITIONS & TIMES SPECIFIED.
+USAGE:  extend sequence infile outfile sequence-file attenuation
+
+SEQUENCE-FILE  contains output-time, semitone-transposition, loudness triples.
+               (one for each event in the sequence)
+               where loudness is a loudness multiplier
+ATTENUATION    overall attenuation on source, should output overload.
+
+

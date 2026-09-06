@@ -1,0 +1,15 @@
+CDP Release 7.1 2016
+repitch quantise mode pitchfile outfile q-set [-o]
+
+QUANTISE PITCHES IN A PITCH DATA FILE.
+
+q_set   a file of (possibly fractional) MIDI pitchvals
+        over which pitch to be quantised.
+-o		 duplicates q_set in all octave transpositions
+
+MODES....
+(1) Gives a pitchfile as ouput.
+(2) Gives a transposition file as output.
+
+
+

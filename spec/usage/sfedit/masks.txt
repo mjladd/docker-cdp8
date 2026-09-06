@@ -1,0 +1,15 @@
+CDP Release 7.1 2016
+MASK SPECIFIED CHUNKS OF A SOUND, WITH SILENCE.
+
+USAGE: sfedit masks mode infile outfile excisefile [-wsplice]
+
+MODES ARE
+1) Time in seconds.
+2) Time as sample count (rounded to multiples of channel-cnt).
+3) Time as grouped-sample count (e.g. 3 = 3 stereo-pairs).
+
+EXCISEFILE is a texfile with (paired) start & end times of chunks
+           to be masked. These must be in increasing time order.
+SPLICE  splice window in milliseconds (default: 15)
+
+

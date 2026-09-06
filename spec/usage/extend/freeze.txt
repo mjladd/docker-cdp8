@@ -1,0 +1,19 @@
+CDP Release 7.1 2016
+FREEZE A SEGMENT OF A SOUND BY ITERATION IN A FLUID MANNER
+
+USAGE: extend freeze 1 infil outfil outduration
+     delay rand pshift ampcut start_of_freeze end gain [-sseed]
+OR:    extend freeze 2 infil outfil repetitions
+     delay rand pshift ampcut starttime_of_freeze endtime gain [-sseed]
+delay   (average) delay between iterations: <= length of frozen segment.
+rand    delaytime-randomisation: Range 0 - 1
+pshift  max of random pitchshift of each iter: Range 0 - 12 semitones
+        e.g.  2.5 =  2.5 semitones up or down.
+ampcut  max of random amp-reduction on each iter: Range 0-1
+start_of_freeze    Time where frozen segment begins in original sound.
+end                Time where frozen segment ends in original sound.
+gain				Adjustment to gain of frozen segment (range 0.25 to 4).
+seed	 the same seed-number will produce identical output on rerun,
+        (Default: (0) random sequence is different every time).
+
+

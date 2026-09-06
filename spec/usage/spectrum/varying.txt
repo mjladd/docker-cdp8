@@ -1,0 +1,24 @@
+USAGE: spectrum variable outanalfile datafile pointcnt srate dur
+                [-hH] [-bB] [-fF] [-rR] [-aA] [-zZ] [-v]
+Generate time-varying spectrum, from input data.
+
+DATAFILE  Is a textfile with a series of spectra as text data
+          listed as "frq amp" pairs, showing peaks, troughs
+          and amplitude envelope.
+          Local peaks indicated by peak frq and amplitude.
+          Local troughs indicated by -(frq) and amplitude.
+          Elsewhere frq = zero (i.e. unspecific frq within channel)
+                    amp = amplitude at channel centre frq.
+POINTCNT  Number of analysis points per window.
+SRATE     Samplerate of sound which would be generated from anal output data.
+DURATION  Duration of sound output.
+H    Number of HARMONICS of peaks to be emphasized.
+B    BRIGHTNESS: relative loudness of successive harmonics.
+F    FRACTION of analchans whose level falls below amp contour of spectrum.
+R    Max RANDOM attenuation excursion of amplitude in those channels..
+A    ATTENUATION applied to the spectrum.
+Z    Rate of ZOOM to new peak, if peak-chan changes.
+     1 = linear: more than 1 zooms most rapidly near to peakwindow time:
+     less than 1 zooms least rapidly near to peakwindow time:
+-v   Minimal dovetailing of output sound.
+

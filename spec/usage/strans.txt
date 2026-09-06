@@ -1,0 +1,17 @@
+CHANGE SPEED & PITCH OF (MULTICHANNEL) SRC SOUND, OR ADD VIBRATO.
+
+USAGE: strans multi 1 infile outfile     speed             [-o]
+OR:    strans multi 2 infile outfile     semitone-transpos [-o]
+OR:    strans multi 3 infile outfile accel goaltime [-sstarttime]
+OR:    strans multi 4 infile outfile vibfrq vibdepth
+
+SPEED             is a speed-multiplier
+SEMITONE-TRANSPOS is transposition in semitones
+    -o  brkpnt times read as outfile times (default: as infile times).
+
+ACCEL     (a speed multiplier) is the speed reached at the goaltime.
+GOALTIME  is the time at which the full acceleration is achieved.
+STARTTIME is the time at which acceleration begins (default 0.0).
+
+VIBFRQ    is the vibrato frequency in Hz (can vary over time).
+VIBDEPTH  is pitch-depth of vibrato (in semitones) (can vary over time).

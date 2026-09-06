@@ -1,0 +1,13 @@
+USAGE:
+flatten flatten infile outfile elementsize shoulder [-ttail]
+
+Equalise level of sound elements in mono src.
+
+ELEMENTSIZE Approx size of elements (e.g. syllables) in src.
+            (Range 0.001 to 100).
+SHOULDER    Risetime in segment to changed level (mS).
+            (Range 20 to ELEMENTSIZE/2).
+            Will never be longer than distance from seg edge to peak.
+TAIL        Portion of end of sound to be treated as a whole segment.
+            (Range 0 to < duration).
+

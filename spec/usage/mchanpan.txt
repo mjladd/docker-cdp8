@@ -1,0 +1,78 @@
+USAGE: mchanpan mchanpan 1 inf outf panfile outchans [-ffocus]
+USAGE: mchanpan mchanpan 2 inf outf switchdata outchans [-ffocus -mminsil]
+USAGE: mchanpan mchanpan 3 inf outf outchans centre spread depth rolloff minsil [-s]
+USAGE: mchanpan mchanpan 4 inf outf outchans centre spread depth rolloff
+USAGE: mchanpan mchanpan 5 inf outf antiphon outchans minsil
+USAGE: mchanpan mchanpan 6 inf1 [inf2 ..] outf antiphon outchans eventdur gap splice
+USAGE: mchanpan mchanpan 7 inf outf pandata rolloff
+USAGE: mchanpan mchanpan 9 inf outf outchans startchan speed focus [-a]
+USAGE: mchanpan mchanpan 10 inf outf outchans [-ffocus -mminsil -ggrouping] [-a] [-r]
+
+Mode 1: Move a mono sound file around a multichannel space.
+Mode 2: Switch (silence-separated) mono events in file from one chan to another.
+Mode 3: Spread (s-s) mono events stepwise from one set of chans, to another set.
+Mode 4: Spread source gradually from a centre, across several channels.
+Mode 5: Switch events antiphonally between 2 specified sets of channels.
+Mode 6: Switch sounds antiphonally between 2 specified sets of channels.
+                  Mode 6 can take 1 or more inputfiles.
+Mode 7: Pan from one channel configuration to another, passing through centre.
+Mode 9: Rotate a mono sound file around a multichannel space.
+Mode 10: Switch (silence-separated) mono events randomly from one chan to another.
+
+PANFILE  Output pan-data in triples: time  pan-position  pantype
+         Pan-position vals lie between (channel) 1 and a max no-of-channels >= 3.
+         positions between 0 and 1 are also possible (see below).
+
+         Pantype values can be
+         0  = direct pan: pan from 1 to 4 goes directly between lspkrs 1->4
+         1  = clockwise rotation: pan 1 to 4 goes around lspkrs 1->2->3->4
+         -1 = anticlock rotation: pan 1 to 4 (with 8 chans) goes 1->8->7->6->5->4
+
+         Direct pans must start at single lspkr:
+         and position vals must be non-zero integers.
+
+         Rotations can start/stop anywhere, so position values can be fractional.
+         Vals between 0 & 1 are positions between max lspkr (e.g. 8) and lspkr 1
+
+SWITCHDATA list of outchans, in a textfile. Sound switches from one outchan to next.
+         If end of list reached, it starts again from its beginning.
+
+PANDATA  Output pan-data in lines, each having: time  pan-positions
+         Pan-positions is a list of ALL the input channels, in any order.
+         Each input channel in turn is mapped to each numbered channel in the list.
+         Passing from one mapping to next, sound in all chans spreads out until it's
+         output equally from all chans, then contracts to its next outchan position.
+         To force this maximal spread elsewehere,
+         enter time & list of zeros (1 for each chan).
+
+ANTIPHON two strings of letters, with separator ('-') represents antiphonal chans.
+         e.g. abcd-efgh = antiphon between chans 1,2,3,4 and chans 5,6,7,8.
+
+OUTCHANS number of channels in the output file.
+
+STARTCHAN mode 8: Channel from which rotation begins.
+
+SPEED    mode 8: Speed of rotation (cycles per sec): can vary through time.
+
+FOCUS    If focus = 1.0, position (e.g.) '2' puts all signal in lspkr 2
+         If focus = 0.9, position '2' puts 0.9 of signal in lspkr 2
+         and the remainder in the 2 adjacent lspkrs (1 and 3).
+
+MINSIL   min duration (mS) of zero-value samps to count as silence between peaks.
+CENTRE   centre of spreading. Time-variable.
+SPREAD   Chan-spread of output (far left to far right of centre). Time-variable.
+         Minimum is 1 in Mode 3 and 0 in Mode 4.
+DEPTH    max no of chans (to left, and to right) utilised, behind leading edges.
+         Signal always reaches maximum spread, but may have hole in middle. 
+ROLLOFF  level fall as signal spread over several chans. Range 0-1.
+         0 = no fall in level, 1 = level divided by number of chans in use.
+EVENTDUR Time before switching to next outchannel set(can timevary).
+GAP      Time gap between switching events (can timevary).
+SPLICE   Duration (in mS) of splices cutting events.
+GROUPING (Max) number of events at outchan, before switch to next outchan.
+-s       Output steps wider by 1 channel (to both L & R) on every event,
+         as far as the spread value given (must be integer).
+         Depth value must also be integer.
+-a       Mode 8: ANTICLOCKWISE rotation (default clockwise).
+         Mode 10: no steps allowed between ADJACENT output channels.
+-r       Mode 10: Randomise number of grouped events at each outchan.

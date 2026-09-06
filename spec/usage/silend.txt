@@ -1,0 +1,10 @@
+USAGE:
+silend silend 1 infile outfile sildur
+silend silend 2 infile outfile outdur
+
+Add silence to end of file.
+
+SILDUR   Duration of silence to add.
+OUTDUR   Total Duration of output after silence added.
+
+

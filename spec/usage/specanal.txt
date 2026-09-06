@@ -1,0 +1,55 @@
+Generate various types of analysis data, or filter data from sound.
+
+USAGE:
+specanal specanal 1  inf analofil chs ovlp
+specanal specanal 2,4,5 inf txtofils chs ovlp [-n]
+specanal specanal 3  inf txtofils chs ovlp [-n] [-f]
+specanal specanal 6  inf txtofils chs ovlp fbands [-n]
+specanal specanal 7  inf txtofil  chs ovlp
+specanal specanal 8  inf txtofil  chs ovlp pkcnt [-a] [-h] [-c] [-m] [-d|-D]
+specanal specanal 9  inf txtofil  chs ovlp       tstep [-bbot] [-ttop] [-ggate]
+specanal specanal 10 inf txtofil  chs ovlp pkcnt tstep [-bbot] [-ttop] [-ggate] [-d|-D]
+
+INF         A Mono soundfile.
+TXTOFIL(S)  (Generic) name for text output file(s).
+ANALOFIL    Analysis output file.
+CHS         Number of analysis points : a multiple of 4 (4 - 32768).
+OVLP        analysis window overlap (1-4), for PVOC analysis.
+FBANDS      Number of formant peaks to find.
+-n          Normalise output display.
+-f          Force frequencies into ascending order.
+
+Mode 1:  PVOC anal output as analfile.
+
+Modes 2-6 generate sets of text outfiles, 1 for each analysis window from input
+          (except first - zeroed - window).
+          These can be used to run a "movie" of the data in Soundloom.
+
+Mode 2:  FFT data as magnitude and channel centre frequency.
+Mode 3:  PVOC data as amplitude and frequency.
+Mode 4:  LOG of FFT magnitudes (output always noremalised).
+Mode 5:  Cepstrum (FFT of log FFT) (output always normalised).
+Mode 6:  Generate Formant Envelope.
+
+Modes 7-10 generate 1 textfile, a MIDI list, or a MIDI varibank filterdata file.
+
+Mode 7:  Signal level, at each semitone bin, averaged over entire sound.
+Mode 8:  Derived Harmonic Field (HF) of entire sound
+         converted to varibank-filter data, or a list of MIDI values.
+Mode 9:  (Changing) Pitch, in tempered scale: output as MIDI-type varibank file.
+             NB Pitch of most prominent partial, not necessarily of fundamental.
+Mode 10: (Changing) HF in tempered scale: output as MIDI-type varibank file.
+
+PKCNT   Number of peaks to use as filter frequencies.
+        (Run Mode 7 first to view the spectral envelope as a brkfile).
+TSTEP   Time step, in mS, between pitch-assessments.
+BOT     Minimum acceptable pitch (MIDI).
+TOP     Maximum acceptable pitch (MIDI).
+GATE    Level (relative to max) at which signal ignored (no pitch assigned).
+-a      Ignore relative amp of peaks (dflt, use relative amps) in filter definition.
+-h      Eliminate any peaks which are harmonics of others.
+-c      Dechromaticise: remove quieter pitch of any pair at semitone interval.
+-m      Outputs list of MIDI values (default: MIDI-type varibank filter file).
+-d      Transpose entire filter down by an octave.
+-D      Transpose entire filter down by two octaves.
+

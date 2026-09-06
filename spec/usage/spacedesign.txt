@@ -1,0 +1,10 @@
+ERROR: USAGE: spacedesign mode outfile params
+
+MODE     stom, mtos, rotate
+STOM     collapses stereo image to mono, gradually
+MTOS     spreads from mono image to stereo
+ROTATE   rotates the source
+
+Outputs are various control files for enveloping or mixing the source.
+
+This program is usually accessed through an interface on the Sound Loom.

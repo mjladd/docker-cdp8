@@ -1,0 +1,28 @@
+
+CDP MCTOOLS: FMDCODE v 1.0beta: RWD,CDP 2009
+Plain multi-layout decoder for .amb files.
+Regular layouts use standard Furse-Malham in-phase coefficients.
+5.x surround coefficients (maxre) from David Moore.
+usage: fmdcode [-x][-w] infile outfile layout
+       -w    :   write plain WAVE outfile format
+                (.wav default - use generic wavex format).
+       -x    : write std WAVEX speaker positions to header
+               (applies to compatible layouts only; requires .wav extension).
+   layout    : one of the choices below.
+       Output channel order is anticlockwise from centre front
+            except where indicated.
+   Layouts indicated with * are compatible with WAVEX speaker position order. 
+   Available speaker layouts:
+   1    :  *  mono (= W signal only)
+   2    :  *  stereo (quasi mid/side, = W +- Y)
+   3    :     square
+   4    :  *  quad FL,FR,RL,RR order
+   5    :     pentagon
+   6    :  *  5.0 surround (WAVEX order)
+   7    :  *  5.1 surround (WAVEX order, silent LFE)
+   8    :     hexagon
+   9    :     octagon 1 (front pair, 45deg)
+   10   :     octagon 2 (front centre speaker)
+   11   :     cube (as 3, low-high interleaved. Csound-compatible.)
+   12   :  *  cube (as 4, low quad followed by high quad).
+ NOTE: no shelf filters or NF compensation used.

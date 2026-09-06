@@ -1,0 +1,8 @@
+CDP Release 7.1 2016
+DISPLAY AVAILABLE SPACE ON DISK.
+
+USAGE: housekeep disk anyinfile
+
+If a sndfile is used, its samplerate will govern space calculations.
+
+

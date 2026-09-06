@@ -1,0 +1,10 @@
+FIND GRAINS IN A SOUND, AND EXTEND AREA THAT CONTAINS THEM
+
+USAGE:
+grainex extend inf outf wsiz trof plus stt end
+
+WSIZ    sizeof window in ms, determines size of grains to find.
+TROF    acceptable trough height, relative to adjacent peaks (range >0 - <1)
+PLUS    how much duration to add to source.
+STT     Time of start of grain material within source.
+END     Time of end of grain material within source.

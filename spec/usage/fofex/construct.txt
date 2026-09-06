@@ -1,0 +1,28 @@
+USAGE:
+fofex construct 1 fofbank outf fofinf pbrk env gain f1
+fofex construct 2-5 fofbank outf fofinf pbrk env gain [-n]
+fofex construct 6
+     fofbank outf fofinf pbrk env gain f1 f2 minf maxf [-n]
+fofex construct 7
+     fofbank outf fofinf pbrk env gain f1 f2 f3 minf maxk minl maxl [-n]
+
+MODES: 1  Use 1 FOF only.
+       2  All FOFs superimposed to make output FOF.
+       3  Low FOFs superimposed to make output FOF.
+       4  Midrange FOFs superimposed to make output FOF.
+       5  High FOFs superimposed to make output FOF.
+       6  Use 2 FOFs,varying weighting with pitch of output.
+       7  Use 3 FOFs,vary weighting with pitch & level of output.
+
+FOFBANK    Soundfile of extracted FOFS created by 'fofex extract'.
+PBRK       Brkpnt file of time/frq info. May contain zeros (no-signal)
+           but NOT pitch-zeros (no-pitch). Must have SOME frq info.
+ENV        Brkpoint-Envelope file, as text.
+FOFINF     A textfile with position of pitchsteps in soundfile,
+           also created by the 'fofex extract' process.
+GAIN       Output gain.
+F1(2,3)    In mode 1, FOF to use, (lowest=1).n           In modes 6,7 use specifically numbered FOFs.
+MINF MAXF  Min and max freqs for variation of internal FOF balance.
+MINL MAXL  Min and max levels(0-1) for variation internal FOF balance.
+-n    Set all FOFs to same level before synthesis.
+

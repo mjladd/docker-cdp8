@@ -1,0 +1,8 @@
+USAGE: suppress partials inanal outanal timeslots lofrq hifrq chancnt
+
+SUPPRESS THE MOST PROMINENT PARTIALS IN THE FRQ BAND INDICATED
+
+TIMESLOTS File with time-pairs between which bands are suppressed.
+LOFRQ     Low frequency limit of band where partials to be suppressed.
+HIFRQ     High frequency limit of band where partials to be suppressed.
+CHANCNT   Number of most prominent channels in band, to be suppressed.

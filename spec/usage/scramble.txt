@@ -1,0 +1,34 @@
+USAGE:
+scramble scramble 1-2   infile outfile dur  seed [-ccnt] [-ttrns] [-aatten]
+scramble scramble 3-4   infile outfile      seed [-ccnt] [-ttrns] [-aatten]
+scramble scramble 5-8   infile outfile cuts seed [-ccnt] [-ttrns] [-aatten]
+scramble scramble 9-10  infile outfile      seed [-ccnt] [-ttrns] [-aatten]
+scramble scramble 11-14 infile outfile cuts seed [-ccnt] [-ttrns] [-aatten]
+
+Scramble order of waveset in src.
+
+DUR   Duration of output file.
+SEED  Random seed (0-256). Same seed with same rand-params gives same output.
+CNT   Number of wavesets in waveset-groups to be scrambled. (Range 1 to 256)
+TRNS  Range of any random transposition of wavesets (semitones) (Range 0 to 12).
+ATTEN Range of any random attenuation of wavesets (Range 0 to 1).
+CUTS  Textfile of (increasing) times in src: process in each separate segment.
+
+"TRNS" and "ATTEN" can vary through (output) time.
+
+Reassembly is ....
+Mode 1:  in random order.
+Mode 2:  in permuted random order (all wavesets used before any reused).
+Mode 3:  in order of increasing size (falling pitch).
+Mode 4:  in order of decreasing size (rising pitch).
+Mode 5:  in order of increasing size, in each segment.
+Mode 6:  in order of decreasing size, in each segment.
+Mode 7:  in order of increasing then decreasing size.
+Mode 8:  in order of decreasing then increasing size.
+Mode 9:  in order of increasing level.
+Mode 10: in order of decreasing level.
+Mode 11: in order of increasing level, in each segment.
+Mode 12: in order of decreasing level, in each segment.
+Mode 13: in order of increasing then decreasing level.
+Mode 14: in order of decreasing then increasing level.
+

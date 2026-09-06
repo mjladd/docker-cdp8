@@ -1,0 +1,45 @@
+GRANULAR RECONSTITUTION OF ONE OR MORE SOUNDFILES OVER MULTICHANNEL SPACE.
+
+USAGE       (name of outfile must NOT end with a '1')
+wrappage wrappage infile [infile2 ...] outfile centre outchans spread depth
+veloc hveloc dens hdens gsize hgsize pshift hpshift amp hamp bsplice hbsplice
+esplice hesplice  range jitter outlength [-bmult] [-e] [-o]
+
+CENTRE:    central position of output image in outputfile. (Range 0-outchans).
+           Centre values below 1 are positions between last chan and 1st chan.
+           Numeric, or a file of triples "time   centre   direction". Direction 
+           (1 clockwise, -1 anticlock) is of centre's move from previous position.
+OUTCHANS:  Number of channels in output file.
+SPREAD:    Width (from far left to far right) of spatialisation around centre.
+DEPTH:     No of channels with sound, behind leading edges of spread.
+           (Will always be forced to <= half the spread value).
+VELOC:     speed of advance in infiles, relative to outfile. (>=0)
+           inverse of timestretch, (permits infinite timestretch).
+DENS:      grain overlap (>0 : <1 leaves intergrain silence)
+           Extremely small values don't perform predictably.
+GSIZE:     grainsize in MS (must be > 2 * splicelen) (Default 50)
+PSHIFT:    pitchshift in +|- (fractions of) semitones.
+AMP:       gain on grains (range 0-1) (Default 1.0)
+           use if amp variation required (over a range &/or in time)
+BSPLICE:   grain-startsplice length,in MS (Default 5)
+ESPLICE:   grain-endsplice length,in MS (Default 5)
+RANGE:     of search for nextgrain (in mS), before infile 'now'  (Default 0).
+JITTER:    Randomisation of grain position (Range 0-1) Default (0.50).
+OUTLENGTH: max outfile length (if end of data not reached).
+           Set to zero (Default) to ignore.
+           BUT if VELOCITY is ANYWHERE 0: OUTLENGTH must be given.
+
+HVELOC,HDENS,HGSIZE,HPSHIFT,HAMP,HBSPLICE,HESPLICE
+allow a range of values to be specified for any of these params. e.g. With
+PSHIFT & HPSHIFT set, random pitchshift chosen between these limits.
+AND NB PSHIFT & HPSHIFT can both vary through time.
+
+All params, except OUTLENGTH, OUTCHANS, can vary through time.
+
+MULT      Long silences in output may require larger buffers to be used
+          "Mult" enlarges output buffers "mult" times. 
+-e        Use exponential splices. Default, linear.
+-o        Velocity params ALWAYS read relative to time in INPUT file.
+          Other params normally read relative to time in INPUT file.
+          Flag forces them to be read relative to time in OUTPUT file.
+          

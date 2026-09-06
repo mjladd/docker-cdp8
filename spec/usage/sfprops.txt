@@ -1,0 +1,8 @@
+CDP MCTOOLS: SFPROPS v2.2.1 (c) RWD,CDP,1999,2009,2010,2013,2023
+Display soundfile details, with WAVE-EX speaker positions
+
+	usage: sfprops [-c | -d | -r] infile
+	flag options for single data report
+	-c: print number of channels in file
+	-d: print duration (secs) of file
+	-r: print sample rate of file

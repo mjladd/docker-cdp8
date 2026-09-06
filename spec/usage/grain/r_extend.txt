@@ -1,0 +1,39 @@
+CDP Release 7.1 2016
+TIME-STRETCH' NATURAL ITERATIVE SOUNDS LIKE THE ROLLED 'rrr' IN SPEECH.
+IN MODE 1 you mark where iterative part of sound is.
+USAGE: 
+grain r_extend 1 inf outf stt end te pr rep get asc psc rit reg [-s] [-e]
+     STT      Time of start of iterated material within source.
+     END      Time of end of iterated material within source.
+
+IN MODE 2 process attempts to find it, using envelope tracing.
+USAGE: 
+grain r_extend 2 inf outf gate usz te pr rep get asc psc skp rit reg [-s] [-e]
+     GATE     min level in src for env tracing to kick in (0-1).
+     USZ      size of unit searched for, in ms (15 for rolled rr).
+     SKP      number of found units to skip before processing.
+
+TE       How much to time-extend the marked (or found) material.
+PR       Guesstimate pitch-range of iteration in src - in octaves (try 1).
+REP      Iterated material extended by reusing individual segments
+         'repets' is no. of adjacent copies of any seg you allow (try 1-2)
+GET      Guesstimate no. of iterations expected: listen to snd (range 2-1000).
+         In MODE 2, MINIMUM no of repeats you expect to find.
+ASC      Ouput segs made to vary randomly in amplitude. (Range 0-1)
+         Value multiplies orig seg amp by rand val in range 1 to (1-N).
+PSC      Output segs made to vary randomly in pitch (Range 0-24)
+         Val transposes pitch by randval in range -N to +N semitones.
+RIT      Slowing factor (grain-turnover rate slowed by inserting silence).
+         1.0 = no slowing. Otherwise vals MUST BE IN A BRKPOINT FILE.
+         Brkpoint times refer to time RELATIVE TO START OF ITERATED SEG.
+         When used, number of interations will be extended (or curtailed)
+         to allow the rit(s) to play out.
+REG      Force grain rate to regular. (Only where grains slowed by "rit").
+         1 = completely regular. But only happens once intest grain
+         shorter than average separation caused by "rit".
+-s       Don't keep start of sound before the iterative-extension.
+-e       Don't keep end of sound after the iterative-extension.
+IN MODE 3 Sound is edited into its start, each iterate unit, and its end.
+using params  STT  END  and PR
+
+

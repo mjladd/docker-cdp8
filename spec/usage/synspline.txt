@@ -1,0 +1,20 @@
+USAGE: synspline synspline outfile srate dur frq splinecnt interpval seed
+       [-smaxspline] [-imaxinterp] [-dpdrift -vdriftrate] [-n]
+
+Synthesis from waveforms made by smoothly joining randomly generated points.
+
+SRATE     Sample rate of synthesized sound.
+DUR       Duration of synthesized sound.
+FRQ       Fundamental frq of output (Range 0.001 to 10000 Hz) (PTR).
+SPLINECNT No. of rand vals (to smooth between) per half-wavecycle (0-64) (PTR).
+INTERPVAL No. of wavecycles over which 1 waveshape morphs to next (0 - 4096) (PTR).
+SEED      Same seed value produces identical output with same parameters.
+MAXSPLINE Max splinecnt: (PTR) Causes random vals of "splinecnt" to be generated,
+          in range "SPLINECNT" to "MAXSPLINE" (Ignored if set to zero).
+MAXINTERP Max interpval: (PTR) Causes random vals of "interpval" to be generated,
+          in range "INTERPVAL" to "MAXINTERP" (Ignored if set to zero).
+PDRIFT    Semitone (half)range of random drift in frequency. (0 - 12).
+DRIFTRATE Average time (mS) to next drift offset (True time 1/2 to 3/2 of this) (1-1000).
+-n        Normalise every cycle (default: cycles retain random valued amplitudes).
+
+(PTR = possibly time-varying).

@@ -1,0 +1,16 @@
+CDP Release 7.1 2016
+USAGE: hfperm NAME (mode) outfile parameters
+
+where NAME can be any one of
+
+hfchords hfchords2 delperm
+
+OR: hfperm NAME (mode) infile outfile parameters
+
+where NAME can be any one of
+
+delperm2
+
+Type 'hfperm hfchords'  for more info on hfperm hfchords option... ETC.
+
+

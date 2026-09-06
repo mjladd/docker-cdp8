@@ -1,0 +1,40 @@
+USAGE: peak extract
+1   analfile outf winsiz peak floor lo hi [-htune] [-a] [-m] [-q] [-z]
+2-4 analfile outf winsiz peak floor lo hi [-htune] [-a] [-m] [-q] [-z] [-f]
+
+MODE 1 Output time and frq:amp for peaks in each window.
+          Number of peaks may vary from window to window.
+MODE 2 Assign peaks to max number of pitch-streams.
+          Number of streams = max number of peaks found in any of windows.
+          Where windows have too few peaks to fit all these streams,
+          frq vals (at zero amplitude) at the (current) best-fit frq 
+          are set in the stream. All peaks will lie in some stream.
+MODE 3 Assign peaks to most prominent pitch-streams.
+          This mode assumes spectrum is relatively constant.
+          It parses entire file, counting peaks in every semitone interval.
+          Then uses most visited semitones as stream centres.
+          Time-varying pitch(amp) data then assigned to those streams.
+          Peaks may be discarded where insufficient streams available.
+MODE 4 Find streams as mode 3, then get average pitch + relative amp
+          of each stream. Output does not vary through time.
+
+winsiz semitone width of window used to search for peaks in spectrum.
+       (Range 1 - 96)
+peak   To retain as peak, channel amp must be 'peak' times louder than
+       median amp of all channels in window (Range 1 - 1000)
+floor  Peaks must exceed a floor amplitude to be retained (Range 0.0001 - 1).
+       Entered val is multiplied by max channel amp found anywhere in file.
+lo     Minimum frq to accept as a peak (Range analchanwidth - nyquist)
+hi     Maximum frq to accept as a peak (Range analchanwidth - nyquist)
+tune   If non-zero, any peak which is a harmonic of another peak
+       (to within 'tune' semitones accuracy) is discarded (Range 0 - 6).
+       If set to zero, all peaks are retained.
+-a  Lose the amplitude information:
+       If set, amps information discarded.
+-m  Output frq information as midi:
+-q  Output frq quantised to tempered scale (in quarter-tones):
+-z  Mark peak-free segments:
+       start/end of peak-free areas marked by (timed) zeros in output.
+-f  Output in filter varibank format: This flag cancels the -z flag.
+       If -a flag also set, all outputs amps are set to 1.0.
+

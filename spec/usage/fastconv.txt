@@ -1,0 +1,24 @@
+
+
+fastconv v1.2 RWD,CDP July 2010,2013
+Multi-channel FFT-based convolver
+Usage: 
+    fastconv [-aX][-f] infile impulsefile outfile [dry]
+   -aX        : scale output amplitude by X
+   -f         : write output as floats (no clipping)
+  infile      : input soundfile to be processed.
+  impulsefile : m/c soundfile or mono text file containing impulse response,
+                  e.g. reverb or FIR filter.
+                Text file name must have extension .txt.
+                  File must contain 1 column of floating point values,
+                  typically in the range -1.0 to 1.0.
+              Supported channel combinations:
+               (a) mono infile, N-channel impulsefile;
+               (b) channels are the same;
+               (c) mono impulsefile, N-channel infile.
+  [dry]       :  set dry/wet mix (e.g. for reverb)
+                 Range: 0.0 - 1.0,  default = 0.0
+                 (uses sin/cos law for constant power mix)
+Note: some recorded reverb impulses effectively include the direct signal.
+In such cases  <dry>  need not be used
+Where impulsefile is filter response (FIR), optimum length is power-of-two - 1.

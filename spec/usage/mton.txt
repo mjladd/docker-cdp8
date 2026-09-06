@@ -1,0 +1,7 @@
+USAGE:
+mton mton infile outfile outchans
+
+Convert mono snd to multichan snd with identical signal in all chans.
+
+OUTCHANS   number of output channels.
+

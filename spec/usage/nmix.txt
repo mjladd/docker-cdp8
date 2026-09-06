@@ -1,0 +1,11 @@
+
+CDP MCTOOLS: NMIX V2.0.1 (c) RWD,CDP 1999,2009
+mix two multi-channel files
+usage:
+nmix [-d][-f][-oOFFSET] infile1 infile2 outfile
+     -d      : apply TPDF dither (16bit format output only).
+     -f      : set output sample type to floats.
+                Default: outfile type is that of infile 1
+     -oOFFSET:  start infile2 at OFFSET seconds.
+Files must have the same channel count.
+WAVE-EX files must have the same speaker layout

@@ -1,0 +1,35 @@
+USAGE: pulser multi 1   infile1 [infile2 ......] outfile dur pitch
+OR:    pulser multi 2-3 infile1 [infile2 ......] infile outfile dur
+minrise maxrise minsus maxsus mindecay maxdecay speed scatter
+[-eexpr] [-Eexpd] [-ppscat] [-aascat] [-ooctav] [-bbend] [-sseed] [-r]
+
+ITERATE AN INPUT AND ENVELOPE THE SOUND GENERATED
+TO PRODUCE PITCHED PACKETS WHICH ARE OUTPUT IN A STREAM.
+INPUT SOURCE FILES ARE USED IN RANDOMLY PERMUTED SEQUENCES
+
+MODE 1 : packets take spectral brightness (only) from sources,
+         and pitch from pitch parameter.
+MODE 2 : packets derived from (start of) sources.
+MODE 3 : packets derived from random startpoints within sources.
+
+DUR          Duration of output stream.
+PITCH        (Mode 1) Midipitch of packets, Range 24 to 96 (may vary over time).
+MIN,MAXRISE  Min and max risetime of packet envelope (Range 0.002 to 0.2 secs).
+             (Risetime set as random value between the 2 limits)
+MIN,MAXSUS   Min and max sustain of packet envelope (Range 0.0 to 0.2 secs).
+             (Sustain set as random value between the 2 limits)
+MIN,MAXDECAY Min and max decaytime of packet envelope (Range 0.02 to 2 secs).
+             (Decaytime set as random value between the 2 limits)
+SPEED        (Average) time between packets in output (Range 0.05 to 1sec).
+SCATTER      Randomisation of speed (0-1)
+EXPR         Rise slope (1 linear: >1 steeper: <1 shallower) (Range .25 to 4)
+EXPD         Decay slope (1 linear: >1 steeper: <1 shallower) (Range .25 to 4)
+PSCAT        Random jitter of pitch of packets: Range 0 - 1 semitones.
+ASCAT        Random jitter of amplitude of packets: Range 0 (no jitter) to 1.
+OCTAV        Amount of lower octave reinforcement : Range 0 - 1
+BEND         Amount of upward pitchbend of packets : Range 0 - 1 semitones.
+SEED         Same seed-number produces identical output on rerun (Integer >=1).
+-r           Selection of source file used for next packet, entirely random.             (Default, all files used once, in random order, then new randorder).
+
+All params except DUR, SEED and MIN/MAX RISE,SUSTAIN,DECAY can vary over time.
+

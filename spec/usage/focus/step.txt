@@ -1,0 +1,13 @@
+CDP Release 7.1 2016
+focus step infile outfile timestep
+
+STEP-FRAME THROUGH SOUND BY FREEZING SPECTRUM AT REGULAR TIME INTERVALS
+
+Once a freeze window is reached, the following windows are given the spectrum
+of that window, until the freeze end is reached. The output is the same duration
+as the input.
+
+timestep   duration of steps. Must be >= duration of 2 analysis frames.
+           (Rounded internally to a multiple of analysis-frame time.)
+
+

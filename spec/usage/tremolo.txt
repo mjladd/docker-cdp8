@@ -1,0 +1,14 @@
+TREMOLO A SOUND, WITH WIDTH NARROWING
+
+USAGE: tremolo tremolo mode infile outfile frq depth gain fineness
+
+MODES:
+1) Interpolate linearly between frqs in any frq brktable (default).
+2) Interpolate logarithmically (like pitch). (Care with zero frqs).
+
+FRQ          frequency of tremolo (0 - 500) 
+DEPTH        depth of tremolo: Range(0 to 1: default 1)
+GAIN         Overall signal gain, or envelope: Range(0 to 1: default 1)
+FINENESS     Squeeze width of tremolo (integer value >= 1).
+
+Frq, Depth and Gain may vary over time.

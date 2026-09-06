@@ -1,0 +1,34 @@
+NOISE FILTERED BY TIME_VARYING FILTERBANK,WITH TIME-VARIABLE Q
+
+USAGE: synfilt synfilt
+mode outfile data dur srate chans Q gain hcnt rolloff seed [-d] [-o] [-n]
+
+
+MODES ARE...
+1)  Single (varying) pitch : Enter filter-pitch as time MIDI-value pairs.
+2)  Simultaneous pitches : Enter filter-pitches as varibank style datafile.
+
+          Datafile has lines of data for filter bands at successive times.
+          Each line contains the following items
+                Time:   MIDIPitch1 Amp1   [MIDIPitch2 Amp2    etc....].
+          Pitch and Amp values must be paired:
+          any number of pairs can be used in a line,
+          BUT each line must have SAME number of pairs on it.
+          (To eliminate a band in any line(s), set its amplitude to 0.0).
+          Time values (in secs) must be in ascending order (and >=0.0)
+          and the MAXIMUM TIME must be greater than 0.03 secs (30mS).
+          Amp values may be numeric, or dB values (e.g. -4.1dB).
+          Comment-lines may be used: start these with ';'.
+
+          Im both modes, duration of output set by last entry in datafile.
+
+Q         Q (tightness) of filter : Range(0.001000 to 10000.0).
+SRATE     Sample rate of output file.
+CHANS     Output mono (1) or stereo (2).
+HCNT      No of harmonics of each pitch to use: Default 1.
+          High harmonics of high pitches may be beyond nyquist.
+          (No-of-pitches times no-of-harmonics determines program speed).
+ROLLOFF   Level drop (in dB) from one harmonic to next. Range(0 to -96.0)
+SEED      Initialises random-noise generation.
+-d        double filtering.
+-o        Drop out if filter overflows.

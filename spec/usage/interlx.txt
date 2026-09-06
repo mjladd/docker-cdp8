@@ -1,0 +1,31 @@
+interlx: insufficient arguments
+
+CDP MCTOOLS: INTERLX v2.1.0 (c) RWD,CDP 2009,2013
+Interleave mono or stereo files into a multi-channel file
+Usage: interlx [-tN] outfile infile1 infile2 [infile3...]
+       Up to 16 files may be interleaved.
+       Output format is taken from infile1.
+       Files must match sample rate and number of channels,
+          but can have different sample types.
+       To create a silent channel, for infile2 onwards,
+          use 0 (zero) as filename. Infile1 must be a soundfile.
+       NB: Speaker-positions in WAVE_EX infiles are ignored
+       Note that the same infile can be listed multiple times,
+          for example, to write a mono file as stereo, quad, etc.
+       The .amb B-Format extension is supported: 
+          the program warns if channel count is anomalous.
+       recognised Bformat channel counts: 3,4,5,6,7,8,9,11,16.
+   -tN  : write outfile format as type N
+    Available formats:
+    0   : (default) standard soundfile (.wav, .aif, .afc, .aifc)
+    1   : generic WAVE_EX (no speaker assignments)
+    2   : WAVE_EX mono/stereo/quad(LF,RF,LR,RR)   - total chans must match.
+    3   : WAVE_EX quad surround (L,C,R,S)         - total chans must be 4.
+    4   : WAVE_EX 5.1 format surround             - total chans must be 6.
+    5   : WAVE_EX Ambisonic B-format (W,X,Y,Z...) - extension .amb recommended.
+    6   : WAVE_EX 5.0 surround                    - total chans must be 5.
+    7   : WAVE_EX 7.1 Surround                    - total chans must be 8.
+    8   : WAVE_EX Cube Surround                   - total chans must be 8.
+    9   : WAVE_EX 6.1 surround (new in v 2.1.0)   - total chans must be 7.
+          in all cases: outfile has sample format of infile1
+          NB: types 1 to 9 are for WAV format only

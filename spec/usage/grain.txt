@@ -1,0 +1,20 @@
+CDP Release 7.1 2016
+
+USAGE: grain NAME (mode) infile (infile2) outfile parameters:
+
+where NAME can be any one of
+
+    GRAIN OPERATIONS ON A SINGLE SOUND FILE
+
+count       omit        repitch     timewarp
+find        duplicate   rerhythm    reverse
+reposition  reorder     remotif     assess
+r_extend         grev        noise_extend
+
+    GRAIN OPERATIONS ON TWO SOUND FILES
+
+align
+
+Type 'grain count' for more info on count option.. ETC.
+
+

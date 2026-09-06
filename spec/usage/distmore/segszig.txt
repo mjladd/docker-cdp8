@@ -1,0 +1,23 @@
+USAGE:  distmore segszig 1 infil outfil marklist repets [-sshrinkto] [-pprop] [-l]
+OR:     distmore segszig 2 infil outfil          repets [-sshrinkto] [-pprop] [-l]
+OR:     distmore segszig 3 infil outfil          repets dur [-sshrinkto] [-pprop]
+
+MODE1     Zigzags across tail segments of a soundfile while playing it.
+MODES 2&3 Zigzag across entire soundfile.
+
+MARKLIST A list of timemarks in source, marking (paired) Heads and Tails.
+         e.g. consonant onsets, and vowel continuations in source.
+         (First mark is assumed to be a Head segment).
+         In Mode 2, the whole file is processed.
+
+REPETS   Number of zigzags (timevariable).
+
+SHRINKTO If set to zero, has no effect.
+         Otherwize Zigzags contract to minimum size 'minsiz' mS (Range 31 upwards).
+
+DUR      Duration of zigged output.
+
+PROP     Proportion of Tail to use. Default, all of it. (timevariable).
+         CARE: If length of used-portion of any particular tail too short,
+         (less than "SHRINKTO" size) zigs for that tail will not shrink.
+-l       Shrink zigs logarithmically (default, linear shrink).

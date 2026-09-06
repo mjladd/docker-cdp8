@@ -1,0 +1,40 @@
+USAGE:
+multisynth synth outfile score MM [-jjitter] [-oochans] [-b]
+
+Synthesize several sound-streams from a score.
+
+SCORE  Text file with each line in the form:.
+       "Insname" followed by any number of sets-of-4-values representing
+       "Time"  "Pitch"  "Loudness"  and  "Duration".
+       e.g.  (with two 4-sets) "trumpet 0 62 .7 2 8 64 .9 12"
+
+Insname    name of instrument: one of the following.
+           "flute"   "clarinet"  "trumpet"  "violin"  "cello"
+           "pianoRH" "pianoLH" (LH must immediately follow RH in score file).
+
+Time       Note onset time, measured in thirds-of-semiquavers from time 0 (integer).
+           "Cello" & "violin" & and "piano" (LH and RH)
+           may play up to 4 different notes simultaneously,
+           so long as the note-combinations are possible on the real instrument.
+
+Pitch      Pitch of the note, as a MIDI value (integer).
+Loudness   A positive number no bigger than 1.
+Duration   Duration of the note, measured in thirds-of-semiquavers (integer).
+           "Piano" notes may overlay one another (sustained resonance)
+           but other instruments may not, so their duration values must not
+           create a note sustained beyond the start of the following note.
+           Simultaneously sounding notes must have the same duration.
+
+MM     Metronome mark determining tempo of sound output.
+JITTER Max random divergence from regular note placement in mS (default 15).
+OCHANS Number of output channels (2-8): default stereo.
+       The sounds in successive lines will be spaced in the output-space
+       from line-1, at the far left, to the last-line, at far right.
+       (single-line score output will be placed at front centre).
+
+-b     If "ochans" is greater than stereo, lspkr array assumed to be surround.
+       To force a bounded array (with a left extreme and right extreme)
+       use the "-b" flag.
+       For surround, outputs numbered in order clockwise from front-centre.
+       For bounded, outputs numbered in order from far-left to far-right.
+

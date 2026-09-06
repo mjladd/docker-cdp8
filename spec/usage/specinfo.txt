@@ -1,0 +1,13 @@
+CDP Release 7.1 2016
+
+INFORMATION ON A SPECTRAL FILE
+
+USAGE: specinfo NAME (mode) infile outfile parameters: 
+
+where NAME can be any one of
+
+windowcnt  channel  frequency  level   octvu   peak   report   print
+
+Type 'specinfo windowcnt' for more info on specinfo windowcnt..ETC.
+
+

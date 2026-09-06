@@ -1,0 +1,12 @@
+CDP Release 7.1 2016
+USAGE: sfedit NAME (mode) infile(s) outfile (parameters)
+
+where NAME can be any one of
+
+cut    cutend   zcut   zcuts   excise   excises   insert   replace
+insil  join     masks     randcuts   randchunks    cutmany
+noisecut   syllables   joinseq    joindyn  twixt  sphinx  noisecut
+
+Type 'sfedit excise'  for more info on sfedit excise option... ETC.
+
+

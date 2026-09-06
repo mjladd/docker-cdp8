@@ -1,0 +1,17 @@
+USAGE:
+multiosc multiosc 1 outfile dur frq1 frq2 amp2 srate dovesplice
+multiosc multiosc 2 outfile dur frq1 frq2 amp2 frq3 amp3 srate dovesplice
+multiosc multiosc 3 outfile dur frq1 frq2 amp2 frq3 amp3 frq4 amp4 srate dovesplice
+
+
+MODE 1 Oscillation of oscillation.
+MODE 2 Oscillation of oscillation of oscillation.
+MODE 3 Oscillation of oscillation of oscillation of oscillation.
+
+DUR        Duration of synthesized sound, or textfile output.
+FRQ1       (Possibly time-varying) driving frequency of output.
+FRQ2 etc   Nested (possibly time-varying) oscillations of table read.
+AMP2 etc   Amplitude of suboscillations (Range 0 - 1).
+SRATE      Sample rate of synthesized sound.
+DOVESPLICE Length of splice of start and end of output sound (mS).
+

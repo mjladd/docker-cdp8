@@ -1,0 +1,6 @@
+USAGE:
+clip clip mode infile outfile params
+
+Mode 1: Clip signal at specified level.
+Mode 2: Clip half-waveforms at specified fraction.
+

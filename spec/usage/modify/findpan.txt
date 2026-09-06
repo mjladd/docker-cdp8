@@ -1,0 +1,9 @@
+CDP Release 7.1 2016
+FIND STEREO-PAN POSITION OF A SOUND IN A STEREO FILE
+
+USAGE: modify findpan infile time
+
+Process assumes file contains a sound which has previously been panned to a position
+in the stereo field. The process will give misleading results if this is not the case.
+
+

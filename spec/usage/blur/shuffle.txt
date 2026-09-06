@@ -1,0 +1,27 @@
+CDP Release 7.1 2016
+blur shuffle infile outfile domain-image grpsize
+
+SHUFFLE ORDER OF ANALYSIS WINDOWS IN FILE
+
+domain-image is 2 strings of letters, separated by a '-'
+The first string is the DOMAIN, and the 2nd, the IMAGE.
+
+e.g. 'abc-abbabcc'
+
+The DOMAIN letters represent a group of consecutive inputfile analysis_windows.
+
+e.g. 'abcd'
+
+The IMAGE is any permutation of, or selection from, these domain letters.
+(domain letters may be omitted or repeated in the image string).
+
+e.g. 'aaaaaaadaaa'
+
+Inputfile windows are shuffled according to this same mapping.
+
+grpsize Windows may be grouped in sets of GRPSIZE
+        before being shuffled (as groups).
+        In this case,each domain-letter represents a group of GRPSIZE windows.
+
+
+

@@ -1,0 +1,16 @@
+USAGE : getcol infile outfile colno [skiplines] [-e]
+
+skiplines  Ignores this number of lines at start of file.
+-e         Ignores lines with a single 'e' or 's' (as in CSound scores)
+           and comment lines starting with ';'
+           (skipped lines should still be counted).
+	    ***************************************************
+	    *            COMPOSERS DESKTOP PROJECT            *
+	                    GETCOL $Revision: 1.2 $
+	    *                                                 *
+	    *   get Nth column from a file of columned data   *
+	    *      (skipping M lines at start of file).       *
+	    *                                                 *
+	    *                by TREVOR WISHART                *
+	    ***************************************************
+

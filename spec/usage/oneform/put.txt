@@ -1,0 +1,15 @@
+USAGE:
+oneform put 1-2 inanalfile 1f-infile outanalfile [-llolim] [-hhighlim] [-ggain]
+
+Impose formant in a single-moment-formants datafile on an analysis file.
+
+In mode 1: the single-moment-formant is imposed on the analysis file.
+In mode 2: attempts to replace analysis file formants with single-moment-formant.
+
+INANALFILE   An analysis file.
+1F-INFILE    A single-moment-formant datafile.
+OUTANALFILE  The new analysis file generated.
+LOLIM        Low frequency limit, set spectrum to zero below this limit.
+HILIM        High frequency limit, set spectrum to zero above this limit.
+GAIN         Overall gain on output.
+

@@ -1,0 +1,25 @@
+USAGE: mchzig zag 1 infile outfile start end dur minzig outchans
+     [-ssplicelen] [-mmaxzig] [-rseed] [-a]
+OR:    mchzig zag 2 infile outfile timefile outchans [-ssplicelen] [-a]
+
+READ SOUNDFILE BACK AND FORTH, PANNING RANDOMLY BETWEEN OUTPUT CHANS
+
+MODES
+1: random zigzags: starts at file start, ends at file end.
+2: zigzagging follows times supplied by user.
+
+PARAMETERS
+start:     together with...
+end:       define interval in which times zigzag.
+dur:       is total duration of output sound required.
+minzig:    is min acceptable time between successive zigzag timepoints.
+outchans:  number of channels in output file.
+splicelen: in MILLIsecs (Default 25ms).
+maxzig:    is max acceptable time between successive zigzag timepoints
+seed:      number to generate a replicable random sequence. (>0)
+           entering same number on next program run, generates same sequence.
+           (Default: (0) random sequence is different every time).
+timefile:  text file containing sequence of times to zigzag between.
+           Each step-between-times must be > (3 * splicelen).
+           zigsteps moving in the same (time-)direction will be concatenated.
+-a         Avoid zigs between adjacent channels (5 or more outchans only).

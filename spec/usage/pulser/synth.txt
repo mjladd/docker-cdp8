@@ -1,0 +1,43 @@
+USAGE: pulser synth 1-3 outfile partials-data dur pitch
+minrise maxrise minsus maxsus mindecay maxdecay speed scatter
+[-eexpr] [-Eexpd] [-ppscat] [-aascat] [-ooctav] [-bbend] [-sseed] [-Ssrate]
+[-ccount]
+
+ITERATE SYNTHESIZED WAVE-PACKETS DEFINED BY PARTIALS-DATA.
+
+PARTIALS DATA (pno = partial-number)
+
+MODE 1 : packets all have the same spectrum.
+   Partials data is pairs of "pno level"
+MODE 2 : spectrum changes through time from one packet to next.
+MODE 3 : spectrum changes at random from one packet to next (times ignored).
+   Partials data is lines of format "time pno1 level1 [ pno2 level2 ...]" 
+   pno range 1-64 : level range -1 to 1 (-ve vals invert the phase).
+   Times must begin at zero and increase.
+
+DUR          Duration of output stream.
+PITCH        Midipitch of packets, Range 24 to 96 (may vary over time).
+MIN,MAXRISE  Min and max risetime of packet envelope (Range 0.002 to 0.2 secs).
+             (Risetime set as random value between the 2 limits)
+MIN,MAXSUS   Min and max sustain of packet envelope (Range 0.0 to 0.2 secs).
+             (Sustain set as random value between the 2 limits)
+MIN,MAXDECAY Min and max decaytime of packet envelope (Range 0.02 to 2 secs).
+             (Decaytime set as random value between the 2 limits)
+SPEED        (Average) time between packets in output (Range 0.05 to 1sec).
+SCATTER      Randomisation of speed (0-1)
+EXPR         Rise slope (1 linear: >1 steeper: <1 shallower) (Range .25 to 4)
+EXPD         Decay slope (1 linear: >1 steeper: <1 shallower) (Range .25 to 4)
+PSCAT        Random jitter of pitch of packets: Range 0 - 1 semitones.
+ASCAT        Random jitter of amplitude of packets: Range 0 (no jitter) to 1.
+OCTAV        Amount of lower octave reinforcement : Range 0 - 1
+BEND         Amount of upward pitchbend of packets : Range 0 - 1 semitones.
+SEED         Same seed-number produces identical output on rerun (Integer >=1).
+SRATE        Sampling rate for synthesis (44100 to 96000).
+COUNT        Number of partials to use in synthesis.
+             Count must lie between 1 and 64 (maximum partials)
+             Fractional vals: e.g. 2.4 uses partials 1 & 2 at specified level,
+             and partial 3 at 0.4 of specified level
+             Zero (default) means (ignore this param and) use ALL partials.
+
+All params except DUR,SEED,SRATE and MIN/MAX RISE,SUS,DECAY can vary over time.
+

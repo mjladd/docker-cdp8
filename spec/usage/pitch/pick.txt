@@ -1,0 +1,21 @@
+CDP Release 7.1 2016
+pitch pick 1-3 infile outfile fundamental         [-cclarity]
+pitch pick 4-5 infile outfile fundamental frqstep [-cclarity]
+
+ONLY RETAIN CHANNELS WHICH MIGHT HOLD SPECIFIED PARTIALS
+
+MODES :-
+1   Harmonic Series.
+2   Octaves.
+3   Odd partials of harmonic series only.
+4   Partials are successive linear steps (each of frqstep) from 'fundamental'.
+5   Add linear displacement (frqstep) to harmonic partials over fundamental.
+
+fundamental  Fundamental frequency of harmonic series, (or of calculation).
+frqstep      Frequency step to be added to another frequency.
+clarity      extent to which data in other channels is suppressed.
+             Range 0-1: Default 1.
+
+clarity may vary over time.
+
+

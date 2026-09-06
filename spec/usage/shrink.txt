@@ -1,0 +1,43 @@
+USAGE: shrink shrink 1-3 infile outfile shrinkage
+gap contract dur spl [-ssmall] [-mmin] [-rrnd] [-n] [-i]
+USAGE: shrink shrink 4   infile outfile time shrinkage
+gap contract dur spl [-ssmall] [-mmin] [-rrnd] [-n] [-i]
+USAGE: shrink shrink 5 infil generic-outfile-name shrinkage
+wsiz contract aft spl [-ssmall] [-mmin] [-rrnd] [-llen] [-ggate] [-qskew]
+                                               [-n] [-i] [-e] [-o]
+USAGE: shrink shrink 6 infil generic-outfile-name peaktimes shrinkage
+wsiz contract aft spl [-ssmall] [-mmin] [-rrnd] [-llen] [-ggate]
+                                               [-n] [-i] [-e] [-o]
+REPEAT SOUND, shortening it on each repetition.
+Mode 1: Shrink from end.            Mode 2: Shrink around midpoint.
+Mode 3: Shrink from start.          Mode 4: Shrink around specified time.
+OR, ISOLATE EVENTS IN SOUND, and shorten as we proceed from one to next.
+Mode 5: Shrink around found peaks and output each segment + mixfile.
+Mode 6: Shrink around specified peaks and output each segment + mixfile.
+TIME      Time around which shrinkage takes place.
+SHRINKAGE Shortening factor of sound from one repeat to next.
+          Shrinkage stops once events too short for splices.
+GAP       Initial timestep between output events (>= sound duration).
+CONTRACT  Shortening of gaps between output events.
+          1.0 = events equally spaced, < 1.0 events become closer
+          Events can't overlap, so minimum "contraction" = "shrinkage".
+DUR       (Minimum) duration of output.
+AFT       Time after which shrinkage begins.
+SPL       Splice length in mS.
+SMALL     Minimum sound length (after which sounds are of equal length).
+MIN       Minimum event separation (after which events are regular in time).
+RND       Randomisation of timings AFTER min event separation reached.
+PEAKTIMES Textfile list of times of peaks in sound.
+WSIZ      Windowsize (in mS) for extracting envelope (1-100 dflt 100)
+LEN       Minimum segment length before sound squeezing can begin (for -e flag)
+GATE      Level (relative to max) below which found peaks ignored (0-1 dflt 0)
+SKEW      How envelope centred on segment (0 to 1: dflt 0.25). 0.5 = central.
+          Zero value switches the flag off.
+-n        Equalise maximum level of output events (if possible).
+-i        Inverse: Reverse each segment in output.
+          Reversing outfile creates stream of unreversed segments
+          where segments expand/accelerate (rather than shrink/contract).
+-e        Even Squeeze: Sounds shorten in regular manner, from 1st squeezed segment.
+          (squeezed snd lengths not dependent on length of input segments).
+-o        Omit any too-quiet events once a fixed end tempo has been reached.
+

@@ -1,0 +1,24 @@
+USAGE: flutter flutter inf outf chanseq freq depth gain [-r]
+
+Distribute a loudness tremulation around a multichannel output
+CHANSEQ  is a textfile containing a list of "chansets".
+         A "chanset" is a list of any of the channels in the input file.
+         Level of every chan in 1st chanset varies for 1 cycle of flutter frq,
+                 then level of every chan in 2nd chanset varies for next cycle, etc.
+         around the sequence of chansets.
+         When end of chansets list is reached, begins again at start.
+         (but see '-r' flag).
+FREQ     Frequency (in Hz) of the loudness variation (tremulation).
+DEPTH    Depth (0-16) of the loudness variation.
+         As values approach 1, loudness troughs approach zero.
+         Values > 1 produce narrower peaks in the tremulation.
+GAIN     Overall gain (0-1) of the loudness variation.
+
+Both Freq and Depth may vary over time.
+
+-r       Randomisation of chanset order.
+         Once all the chansets have been used,
+         their order is randomly permuted before they are used again,
+         and once all have been used a 2nd time,
+         their order is permuted again, and so on.
+

@@ -1,0 +1,62 @@
+USAGE:fracture fracture 1
+infil outfil etab chns strms pulse edpth stkint [-hseed] [-mmin] [-imax] [-rrrnd]
+[-pprnd] [-ddisp] [-vlrnd] [-eernd] [-srnd] [-ttrnd] [-y] [-l]
+
+OR
+
+USAGE:fracture fracture 2
+infil outfil etab chns strms pulse edpth stkint cntre frnt depth rolloff [-hseed]
+[-mmin] [-imax] [-rrrnd] [-pprnd] [-ddisp] [-vlrnd] [-eernd] [-srnd] [-ttrnd]
+[-aatten] [-zzpoint] [-ccontract] [] [-llopnt] [-ffmix] [-jffrq] [-kup] [-wdn] [-y]
+
+DISPERSE MONO SIGNAL INTO FRAGMENTS SPREAD OVER N-CHANNEL SPACE.
+
+Mode 1: Output is N-channel dispersal in N-channel space.
+Mode 2: Output is stereo dispersal (posibly moving) in surround space.
+
+PRESS ANY KEY TO CONTINUE
+ETAB     Textfile: Each line is a TIME followed by 7 PAIRS of envelope-data.
+         envelope-data represented in form "etime lev"
+         where "etime" is relative time WITHIN envelope (values between 0 & 1)
+         and "lev" is level at etime (values 0-1). In each envelope-data set
+         "lev" must start and end at zero and rise to a max value of 1.0
+CHNS     Number of channels in output file (2-16). (Mode 2, multiples of 4 only).
+STRMS    No. of spatial positions (streams) for resulting fragments ( >=4 ).
+PULSE    Average gap btwn 1 set-of-frags (each in different strm) & next set.
+         Disp = 0: all frags in sync at each (possibly randomised) pulse.
+         Disp > 0: frags time-scattered around pulse centre. (see below).
+EDPTH    Envelope depth. 1: env cuts down to zero, 0.75: cuts 3/4 way to zero,
+(+STACK) 0.1: cuts only 1/10 way to zero,   0: env has no effect on source.
+         Once depth exceeds 1, fragments begin to stack (but NOT before)
+         (i.e. transposed copies added to fragment, synced at envelope peak).
+         Depth 2 -> Stack 1: 1st transposed element added at full level.
+         Depth 1.5 -> Stack 06.5: 1st transpd element added at 1/2 (0.5) level.
+         Depth 2.5 -> Stack 1.5: 1st added at full level, 2nd at 1/2 level etc
+STKINT   Interval of (upward) transposition in stack, in semitones (0-12).
+         Default(0) is read as octave(12). NO ZEROS in stack brkpoint files.
+SEED     If NOT zero, repeating process with same seed gives identical output.
+MIN/MAX  Minimum/maximum duration of fragments. If zero, no minimum/maximum.
+RRND     Randomisation of read-time in src. Range 0-1.
+PRND     Randomisation of pulse-time in output. Range 0-1.
+         In both cases, Max(1) scatters in range +- half-duration of pulse.
+DISP     Dispersal (scatter) of output timings between different streams.
+         If pulse(+prnd) gives time "P", then for disp 0: all frags are at "P"
+         for disp 1: frags scattered within max range (+- half-dur of pulse).
+LRND     Randomisation of levels (volume) of fragments. Range  0 - 1.
+         0: All frags full level.  1: Frags at random levels between 0 & full.
+ERND     Randomisation of envelope used. A time range (trange).
+         Event at "now" reads etable at randtime btwn "now" & now-minus-trange.
+SRND     Randomisation of stack. Range 0 - 1 (NB stack value (S) = DEPTH-1)
+         0: Stack value is S.   1: Stack val selected at random between 0 & S.
+TRND     Random tranpose of fragments. Range 0-1200 cents (1 octave upwards).
+         Event pitch randomised between pitch+trnd and pitch-trnd.
+-z       Permit stacking of very short events. Default = forbid, prevent clipping.
+-l       For more than 2 output chans, lspkrs assumed to encircle listeners,
+         with a single lspkr at centre front.
+         Setting -l flag assumes linear array, with leftmost+rightmost lspkrs.
+
+NB: STKINT, MAX, RRND, LRND, SRND and TRND are INACTIVE if depth < 1.
+All these params can timevary EXCEPT "chns", "strms" & "seed".
+
+PRESS KEY "2" TO SEE EXTRA OPTIONS AVAILABLE IN MODE 2
+OR ANY OTHER KEY TO FINISH.

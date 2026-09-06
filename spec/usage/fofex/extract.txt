@@ -1,0 +1,28 @@
+USAGE:
+fofex extract 1 infile outfiles 0 pitch-brkpnt-data minlevel fofcnt [-w]
+OR:
+fofex extract 1 infile outfiles excludefile pitch-brkpnt-data minlevel fofcnt [-w]
+OR:
+fofex extract 2 infile outfile pitch-brkpnt-data time
+OR:
+fofex extract 3 infile generic_outfile_name pitch-brkpnt-data minlevel fofcnt [-w]
+
+In Mode 1 All FOF(group)s extracted to special FOF-file, to use with 'fofex construct'
+In Mode 2 A single FOF(group) is extracted
+In Mode 3 All FOF(group)s are extracted to separate soundfiles
+
+PITCH-BRKPNT-DATA  a breakpoint file with time and frq information.
+                   File may contain zeros (indicating moments of no-signal)
+                   but NOT pitch-zeros (indicating moments of no-pitch).
+                   It must contain SOME significant frequency information.
+EXCLUDEFILE        Defines areas in source sound from which FOFs will NOT
+                   be extracted - info as pairs of times-as-samplecnts.
+MINLEVEL           Level in dBs below the level of loudest FOF found,
+                   below which FOFs are rejected.
+                   NB Zero means NO FOFS are rejected.
+FOFCNT             Size of FOF group to extract.
+TIME               Time in file at which to extract FOF(group)
+-w    FOFs are windowed (cosine smooth of edges)
+OUTPUT OF MODE 1 is
+1) a fofbank sndfile containing extracted FOFS in ascending pitch order
+2) a fofinfo textfile of position of (semitone) pitchsteps in soundfile

@@ -1,0 +1,10 @@
+
+GENERATE STREAMS OF PULSES
+
+USAGE: pulser NAME (mode) [infile] outfile parameters: 
+
+where NAME can be any one of
+
+pulser     multi     synth
+
+Type 'pulser pulser' for more info on pulser pulser..ETC.

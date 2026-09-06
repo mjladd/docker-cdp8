@@ -1,0 +1,32 @@
+CDP Release 7.1 2016
+TEXTURE WITH DECORATIONS:USAGE:texture decorated|predecor|postdecor mode infile
+[infile2..] outfile notedata outdur skiptime sndfirst sndlast mingain maxgain
+mindur maxdur phgrid gpspace gpsprange amprise contour gpsizlo gpsizhi
+gppaklo gppakhi gpranglo gpranghi centring
+              [-aatten] [-ppos] [-ssprd] [-rseed] [-w] [-d] [-i] [-h] [-e] [-k]
+MODES:-
+1)ON HARMONIC-FIELD 2)CHANGING HFLDS 3)HARMONIC-SET 4)CHANGING HSETS 5)NONE
+notedata:         infofile, 'pitch' of insnds, decoration shape etc.
+outdur:           (min) duration outfile
+skiptime:         time between repets of motif-to-decorate in notedata
+sndfirst,sndlast: 1st,last snd to use, from input snds (range 1 - all)
+mingain,maxgain:  min & max gain on input events (MIDI)
+mindur,maxdur:    min & max duration of events in texture
+phgrid:           timegrid (MS) applying WITHIN decors
+gpspace:          spatialisation decor-groups (Range 0-5: default 1)
+gpsprange:        spatial range decor-groups (Range 0-1: default 1)
+amprise:          amplitude change within decors: (0-127: default 0)
+contour:          amplitude contour of decors (Range 0-8: default 0)
+gpsizlo,gpsizhi:  smallest,largest no. events in decors
+gppaklo,gppakhi:  shortest,longest time between event-onsets in decors(MS)
+gpranglo,gpranghi:min,max pitchrange decors OR (hfields) no.of hf-notes range
+centring:         how decor pitches centre on line pitches(Range 0-7:default 0)
+atten:            overall attenuation of output
+pos:              centre of output sound-image (-1(Left) 1(Right): default 0)
+sprd:             spatial-spread of texture events (0 - 1(full-spread))
+seed:             same seed-no: same output on rerun(dflt 0: differs each time)
+-w: play all insnd(ignore min,maxdur) -h: dec TOPnote chord:(dflt:1st listed)
+-d: fixed timestep btwn decornotes    -e: dec all notes of chords
+-i: instrs vary in decor(dflt:fixed)  -k: discard orig line, after decor
+
+

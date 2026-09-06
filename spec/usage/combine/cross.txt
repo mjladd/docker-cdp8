@@ -1,0 +1,10 @@
+CDP Release 7.1 2016
+combine cross infile infile2 outfile [-iinterp]
+
+REPLACE SPECTRAL AMPLITUDES OF 1st FILE WITH THOSE OF 2nd.
+
+-i	INTERP is degree of replacement.
+
+    interp may vary over time.
+
+

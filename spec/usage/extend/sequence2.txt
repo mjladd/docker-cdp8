@@ -1,0 +1,15 @@
+CDP Release 7.1 2016
+PRODUCE SEQUENCE OF SEVERAL SOUNDS PLAYED AT TRANSPOSITIONS & TIMES SPECIFIED.
+USAGE:  extend sequence2 inf1 inf2 [inf3....] outfile sequence-file attenuation [-ssplice]
+        (Input files must all have same number of channels).
+SEQUENCE-FILE  1st line has (possibly notional) midi-pitch of each input snd.
+               All other lines have 5 values...
+               input-sound-number, output-time, midi-pitch, loudness, duration
+               (one for each event in the sequence)
+               Loudness is a loudness multiplier (value 0-1).
+               Duration val can curtail length of event, but cannot extend it.
+               (Max event length = (transposed) duration of sound chosen).
+ATTENUATION    overall attenuation on output.
+SPLICE         length, in mS, of splice to cutoff samples at correct duration, if necessary.
+
+

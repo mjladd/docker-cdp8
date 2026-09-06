@@ -1,0 +1,41 @@
+USAGE:
+madrid madrid 1 inf [inf2 ...] outf dur ochans strmcnt delfact step rand
+              [-sseed] [-l] [-e] [-r|-R]
+madrid madrid 2 inf inf2 [inf3...] seqfile outf dur ochans strmcnt delfact step rand
+              [-sseed] [-l] [-e]
+
+Spatially syncopate repetitions of src(s) 
+by randomly deleting items from the spatially-separated repetition streams.
+
+For each output event, source played at 1 or more spatial locations, SYNCHRONOUSLY.
+Depending on which/how many locations are used for an output event,
+the output appears differently located in space, and differently accented.
+"DELFACT" and "-e" are hence the crucial rhythmicising parameter here.
+
+SEQFILE   textfile containing list of numbers in range 1 to count-of-infiles.
+          Determines the order in which infiles are used in the output.
+
+DUR       Duration of output sound.
+OCHANS    Number of channels in output sound.
+STRMCNT   Number of spatially distinct streams.
+DELFACT   Proportion of items to (randomly) delete.
+          Vals from 0 to 1 delete that proportion of events in the various streams.
+          For vals > 1, proportion of events at single locations increases,
+          and, if the "-e" flag is set, the proportion of empty events increases.
+STEP      Time between event repetitions.
+RAND      Randomisation of step size (0-1).
+SEED      Value to initialise the randomisation OF DELETIONS.
+          With a non-zero value, re-running the process with the SAME parameters
+          will produce the same output. Otherwise deletions are always different.
+-e        allow Empty events i.e. sound absent at some of the repeat-steps.
+-l        For OCHANS > 2, lspkr array assumed to be circular.
+          -l flag forces array to be linear (with defined left and right ends).
+-r        Randomly permute the order of input sounds used in the output.
+          (ALL input sounds used ONCE before next order-permutation is generated).
+-R        Randomly select next input sound (selection unrelated to last selection).
+
+-r and -R cannot be used in combination.
+When only 1 input sound is used, neither flag has any effect.
+
+DELFACT, STEP and RAND can vary over time.
+

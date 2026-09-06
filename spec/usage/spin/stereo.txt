@@ -1,0 +1,35 @@
+USAGE:  spin stereo
+1 inf outf rate dopl xbuf [-bboost] [-aatten] [-eexpbuf]
+2 inf outf rate chns cntr dopl xbuf [-bboost] [-aatt] [-kcmn] [-ccmx]
+3 inf outf rate chns cntr dopl xbuf [-bboost] [-aatt] [-kcmn]
+
+Spin a wide stereo-image across the stereo space.
+(with possible doppler-shift on the moving edges).
+
+MODES 2 & 3 create 3-chan-wide output, centred on channel "centre",
+       in an "ochans"-channel outfile.
+
+When the spinning image crosses the centre ....
+MODE 2 uses outer channels to project stereo-at-centre image.
+MODE 3 uses ONLY central channel to project stereo-at-centre image.
+
+RATE  spin speed in cycles per second (can vary over time).
+      Positive values spin clockwise (as viewed from above).
+      Negative values spin anticlockwise (as viewed from above).
+BOOST Multiplicative level changes, as edges pass through centre.
+      gradually increase (*boost) as edge passes "FRONT" centre
+      and decreases (*1/boost) as edge passes "REAR" centre.
+      The two edges pass through centre simultaneously
+      so one edge gets louder and the other quieter.
+ATT   overall level attenuation (*att) as BOTH edges pass thro centre.
+DOPL  Max doppler pitchshift, in semitones (Range 0-12).
+XBUF  Expand buffers by this factor (may be ness for large doppler shift)
+
+Mode 2 & 3 only...
+CHNS  Number of channels in output file.
+CNTR  Output channel which carries the central channel of the output.
+CMN   Min level on centre lspkr (0-1).
+Mode 2 only...
+CMX   Max level on centre lspkr (0-1).
+
+

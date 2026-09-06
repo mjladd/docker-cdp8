@@ -1,0 +1,43 @@
+CDP Release 7.1 2016
+RADICAL CHANGES TO THE SOUND.
+
+USAGE: modify radical 1 infile outfile
+OR:    modify radical 2 infile outfile repeats chunklen [-sscatter] [-n]
+OR:    modify radical 3 infile outfile dur [-ldown] [-hup] [-sstart] [-eend] [-f]
+OR:    modify radical 4 infile outfile  bit_resolution  srate_division
+OR:    modify radical 5 infile outfile  modulating-frq
+OR:    modify radical 6 infile1 infile2 outfile
+
+OR:    modify radical 7 infile1 outfile bit_resolution
+
+MODES ARE
+1) REVERSE:         sound plays backwards.
+2) SHRED:           sound is shredded, within its existing duration.
+                    REPEATS   no. of repeats of shredding process.
+                    CHUNKLEN  average length of chunks to cut & permute.
+                    SCATTER   randomisation of cuts (0 to K): default 1.
+                    where K = total no. of chunks (snd-duration/chunklen).
+                    If scatter = 0, reorders without shredding.
+                    NB:  chunklen * scatter MUST be < program's snd buffer.
+                    NB2: If Input sound > internal buffer len,
+                    each buffer of sound shredded independently.
+                    -n flag gives a slightly smoother output
+3) SCRUB BACK & FORTH: as if handwinding over a tape-head.
+                    DUR       is minimum length of outfile required.
+                    DOWN      is lowest downward transposition (semitones).
+                    UP        is highest upward transposition (semitones).
+                    START     scrubs starts before time 'start' secs.
+                    END       scrubs end after time 'end' secs.
+                    -f        single forwards scrub only (ignores "DUR")
+4) LOSE RESOLUTION: sound converted to lower srate, or bit-resolution.
+                    BIT_RESOLUTION  range(1 - 16): default 16-bit.
+                    SRATE_DIVISION  range(1-256): default 1 (normal)
+                    entered value will be rounded to a power of 2.
+5) RING MODULATE:   against input modulating frequency, creating sidebands.
+6) CROSS MODULATE:  Two infiles are multiplied, creating complex sidebands.
+                    Any combo of mono & stereo files works but,
+                    files with more channels must have same channel count.
+7) QUANTISE:        sound converted to specific bit-resolution (mid-rise).
+                    BIT_RESOLUTION  range(1 - 16): default 16-bit.
+
+

@@ -1,0 +1,9 @@
+CDP Release 7.1 2016
+CONVERT A LIST OF SNDFILES INTO A BASIC MIXFILE (FOR EDITING)
+
+USAGE: submix dummy mode infile1 infile2 [infile3..] mixfile
+mode 1 - all files start at time zero.
+mode 2 - each file starts where previous file ends.
+mode 3 - (mono) files, first to left, remainder to right.
+
+

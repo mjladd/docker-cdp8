@@ -1,0 +1,19 @@
+CDP Release 7.1 2016
+USAGE:
+distort overload 1 infile outfile clip_level depth
+OR
+distort overload 2 infile outfile gate depth freq
+
+Clip the signal with noise or a (possibly timevarying) waveform.
+
+clip_level: Level at which the signal is clipped.
+            Range(0 - 1)
+depth:      Depth of distortion pattern on clipped stretches of signal.
+            (Range 0 - 1)
+freq:       Frequency of waveform imposed on clipped stretches of signal.
+
+clip_level, depth and freq may vary over time.
+
+Works on MONO files only
+
+

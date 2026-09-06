@@ -1,0 +1,39 @@
+USAGE: cascade cascade 1-5  inf outf clipsize  echos clipmax [-eechosmax] 
+OR:    cascade cascade 6-10 inf outf cuts echos [-eechosmax]
+
+AND:   [-rrand] [-sseed] [-Nshredno -Cshredcnt -a] [-l] [-n]
+
+Successive segments of src are repeat-echoed, and echosets superimposed on src.
+
+Modes
+1,6:  N-channels in -> N channels out: Every echo in same N-channels.
+2,7:  Mono (left in output)  ->stereo: Echosets pan to right.
+3,8:  Mono (centre in output)->stereo: Echosets pan alternately to L and R.
+4,9:  Mono (ch1 in output) -> 8chan: Every echo steps R, to next channel.
+5,10: Mono (ch1 in outout) -> 8chan: Echos of 1st echoset step R,next set step L,etc.
+
+CLIPSIZE (Modes 1-5)  Duration of segments to echo. Time-variable.
+or       (Range .005 to 60 secs)
+CUTS     (Modes 6-10) Textfile of (successive) src cut-times, creating segs to echo.
+
+ECHOS    Number of echos. Time-variable. (Range 1 to 64)
+
+CLIPMAX  Max duration of clips (time-variable). "CLIPSIZE" now read as minimum.
+         Actual clipsize is a random val between "clipsize" and "clipmax".
+         If "clipmax" is set to zero, it is ignored.
+
+ECHOSMAX Max number of echos (time-variable). "ECHOS" now read as minimum.
+         Actual number of echos is a random val between "echos" and "echosmax".
+         If "echosmax" is set to zero, it is ignored.
+
+RAND     Randomise timesteps between echos in echo-set: Range 0-1, time-variable.
+SEED     With same non-zero value, randomised vals are exactly same on new pass.
+
+SHREDNO  In each echo-stream, cut previous echo into "shredno" parts,
+         and random-shuffle parts to make next echo. Range 2-16,time-variable.
+SHREDCNT No of shreds to do, to create next echo element. Range 1-16,time-variable.
+         BOTH "shredno" and "shredcnt" must be set for shredding to take place.
+-a   Also shred original clip. Only valid if "shredno" & "shredcnt" set.
+
+-l   Echos decay linearly in level (default, log decay - initial decays faster).
+-n   If output low, normalise it. (high output is normalised by default).

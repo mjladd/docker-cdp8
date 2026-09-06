@@ -1,0 +1,27 @@
+CDP Release 7.1 2016
+STRETCH (OR SHRINK) DURATION OF GRAINY-SOUND
+    WITHOUT STRETCHING GRAINS THEMSELVES
+
+USAGE:
+grain timewarp infile outfile timestretch-ratio
+		[-blen] [-lgate] [-hminhole] [-twinsize] [-x]
+
+TIMESTRETCH-RATIO is degree of stretching/shrinking of intergrain time.
+                  a value of 2 doubles the intergrain time.
+                  a value of .5 halves the intergrain time.
+                  Max stretch is 1000 : Min shrink is 0.001000
+                  if any inter-grain time reduced below MINGRAINTIME (0.032)
+                  it will be set to MINGRAINTIME.
+
+LEN      maximum time between grains
+GATE     required signal level for grain to be seen: Range 0-1: default 1
+MINHOLE  min duration of inter-grain holes:
+         Min value (default) 0.032
+-t       Gate level tracks signal level,found with windowsize winsize(msecs)
+         Range(0.0 - infiledur): 0.0 turns off tracking)
+-x       ignore the last grain in the source.
+
+Timestretch-ratio and Gate may vary over time.
+Times in brkpnt files refer to INFILE time.
+
+

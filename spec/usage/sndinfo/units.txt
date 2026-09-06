@@ -1,0 +1,34 @@
+CDP Release 7.1 2016
+CONVERT BETWEEN DIFFERENT UNITS
+
+USAGE: sndreport units mode value
+
+                           MODES ARE
+
+       PITCH                  INTERVAL                       SPEED
+       -----                  --------                       -----
+(1) MIDI to FRQ   (7)  FRQ RATIO  to SEMITONES (16) FRQ RATIO  to TIME RATIO
+(2) FRQ  to MIDI  (8)  FRQ RATIO  to INTERVAL  (17) SEMITONES  to TIME RATIO
+(3) NOTE to FRQ   (9)  INTERVAL   to FRQ RATIO (18) OCTAVES    to TIME RATIO
+(4) NOTE to MIDI  (10) SEMITONES to FRQ RATIO  (19) INTERVAL   to TIME RATIO
+(5) FRQ to NOTE   (11) OCTAVES    to FRQ RATIO (20) TIME RATIO to FRQ RATIO
+(6) MIDI to NOTE  (12) OCTAVES   to SEMITONES  (21) TIME RATIO to SEMITONES
+                  (13) FRQ RATIO to OCTAVES    (22) TIME RATIO to OCTAVES
+                  (14) SEMITONES to OCTAVES    (23) TIME RATIO to INTERVAL
+                  (15) SEMITONES to INTERVAL
+
+                                LOUDNESS
+                                --------
+                  (24) GAIN FACTOR to DB GAIN
+                  (25) DB GAIN     to GAIN FACTOR
+
+NOTE REPRESENTATION ..... A1 = A in octave 1
+                          Ebu4 is E flat,   + (Up) quartertone  in octave 4
+                          F#d-2 is F sharp, - (Dn) quartertone, in octave -2
+
+INTERVAL REPRESENTATION.. 3 = a 3rd     -m3 = minor 3rd DOWN
+                          m3u = minor 3rd + (Up) quartertone
+                          #4d = tritone   - (Dn) quartertone
+                          15  = a fifteenth (max permissible interval)
+
+

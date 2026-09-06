@@ -1,0 +1,16 @@
+CDP Release 7.1 2016
+USAGE:
+distort fractal infile outfile scaling loudness [-ppre_attenuation]
+
+SUPERIMPOSE MINIATURE COPIES OF SRC 'WAVECYCLES' ONTO THEMSELVES.
+
+SCALING  = (integer) division of scale of src wave (range: 2 to 0.50*srate)
+LOUDNESS = loudness of scaled component, relative to src (loudness 1.0).
+
+PRE_ATTENUATION is applied to input sound before processing.
+
+scaling and loudness may vary over time
+
+Works on MONO files only
+
+

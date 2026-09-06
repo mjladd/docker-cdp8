@@ -1,0 +1,36 @@
+
+USAGE: specfnu specfnu 1-23 inanalfile outfile [params]
+
+Modify spectral shape in relation to formant peaks, or show formant data.
+
+MODE 1:  NARROW FORMANTS:     Steepen skirts of formant peaks by power factor.
+MODE 2:  SQUEEZE SPECTRUM:    Squeeze the spectrum around specified formant.
+MODE 3:  INVERT FORMANTS:     Formant peaks become troughs, and troughs peaks.
+MODE 4:  ROTATE FORMANTS:     Formant peaks & frqs move up (or down) spectrum
+                              reappearing at foot(top) on reaching fmnts edge.
+MODE 5:  SPECTRAL NEGATIVE:   Spectral values inverted for each channel.
+MODE 6:  SUPPRESS FORMANTS:   Suppresses the selected formant(s).
+MODE 7:  GENERATE FILTER:     Output Varibank filtdata based on formant peaks.
+MODE 8:  MOVE FORMANTS BY:    Displace individual formants by a Hz value.
+MODE 9:  MOVE FORMANTS TO:    Displace individual formants to specified frqs.
+MODE 10: ARPEGGIATE:          Arppegiate partials of sound, under formants.
+MODE 11: OCTAVE-SHIFT:        Octave-shift pitch of sound, under formants.
+MODE 12: TRANSPOSE:           Transpose pitch of sound, under formants.
+MODE 13: FREQ-SHIFT:          Frequency shift partials of src, under formants.
+MODE 14: RESPACE PARTIALS:    Respace partials of sound, under formants.
+MODE 15: PITCH-INVERT:        Invert pitch of sound, under formants.
+MODE 16: PITCH-EXAGG/SMOOTH:  Exaggerate/Smooth pitchline, under formants.
+MODE 17: PITCH-QUANTISE:      Force pitch onto pitch field, under formants.
+MODE 18: PITCH-RANDOMISE:     Randomise pitch of src, under formants.
+MODE 19: RANDOMISE PARTIALS:  Random shift partials of sound, under formants.
+MODE 20: SEE SPEC ENVELOPES:  Outputs viewable (not playable) sndfile.
+MODE 21: SEE SPEC PEAKS/TROFS:Print textfile of frqs of peaks+trofs per window.
+MODE 22: GET LOUDNESS TROFS:  Print textfile of times-of-trofs between syllabs.
+MODE 23: SINE SPEECH:         Single sine wave repesenting each formant.
+
+Type "specfnu specfnu 1" for more info on NARROW FORMANTS.... etc.
+
+Spectral window-size: Small window or Large window ???
+
+If process uses "Force fundamental" flag, Large window will find fundamental
+whereas Small window may not.

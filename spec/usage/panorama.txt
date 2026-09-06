@@ -1,0 +1,42 @@
+USAGE: panorama panorama 1 infile infile2 [infile3.....] outmixfile
+           lspk_cnt lspk_aw sounds_aw sounds_ao config [-rrand] [-p] [-q]
+OR:    panorama panorama 2 infile infile2 [infile3.....] outmixfile
+           lspk_positions   sounds_aw sounds_ao config [-rrand] [-p] [-q]
+
+Distribute (>1) mono files in spatial panorama, in multichannel mixfile.
+Lspkrs assumed to surround listening area from front outwards.
+Input sounds distributed in order from leftmost to rightmost position.
+
+LSPK_CNT  Number of lspkrs (mode 1 equally spaced: not ness so in mode 2).
+LSPK_AW   Angular width of loudspeaker array (190 - 360), front centre at 0.
+          Loudspeaker array assumed symmetrical around a centre-line
+          running through front-centre of lspkr array and centre of auditorium.
+          Thus, if front centre is at 0 then 
+          190 spread is from -95 to (+)95; 360 spread is from -180 to (+)180.
+
+SOUNDS_AW angular width of output sounds (equal to or less than LSPK_AW).
+
+SOUNDS_AO angular offset of output snds. (Only possible if SOUNDS_AW < LSPK_AW)
+          (angle between centre-line of snds and centre-line of lspkrs)
+
+CONFIG   Distribution of output sounds within output angle
+         config = 1: sounds equally spaced
+         config = 2: 2 sounds equally spaced, followed by gap, etc.
+         config = 3: 3 sounds equally spaced, followed by gap
+         and so on. CONFIG must be a divisor of the number of input sounds.
+
+RAND     Randomisation of sound positions (0-1).
+
+LSPK_POSITIONS (Mode 2) Textfile list of angular positions of (3-16) lspkrs.
+          Positions specified by +ve values from 0 (front centre) clockwise, so
+          vals to right of centre lie between 0 (front)and 180 (rear)
+          vals to left of centre lie between >180 (rear) and 360(=0) (front)
+
+-p       If angular width of lspkrs (LSPK_AW) < 360 :
+         Odd number of lspkrs gives 1 lspkr at centre front.
+         Even number of lspkrs gives pair of lspkrs centred on front.
+         If LSP_AW = 360, speaker orientation is ambiguous.
+         Default is 1 lspkr at centre front.
+         "-p" flag give PAIR of lspkrs at front (IGNORED if LSP_AW < 360 )
+-q       Same logic for SOUND positions ( ignored if SOUNDS_AW < 360 )
+

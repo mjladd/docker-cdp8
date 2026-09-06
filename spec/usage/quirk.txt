@@ -1,0 +1,12 @@
+USAGE:
+quirk quirk 1-2 infile outfile powfac
+
+Distort signal by raising sample values to a power.
+
+POWFAC  Range 0.01 to 100.
+             < 1: exaggerates signal contour.
+             > 1: smooths signal contour.
+
+MODE 1  Applies power factor over amplitude range of individual half-wavesets.
+MODE 2  Applies power factor over amplitude range of entire signal.
+

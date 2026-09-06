@@ -1,0 +1,20 @@
+CDP Release 7.1 2016
+hilite band infile outfile datafile
+
+SPLIT SPECTRUM INTO BANDS & PROCESS THESE INDIVIDUALLY
+ 
+Datafile contains a number of lines with the following info..
+
+lofrq   hifrq   bitflag   [amp1   amp2   [+]transpose]
+
+bitflag has 4 bits (e.g. '0101' or '1000')
+bit 1 set: amplitude change to band: put amp multiplier 'amp1' in line.
+bit 2 set: amplitude ramp: put 2nd amp multiplier 'amp2' in line.
+           (spectral band will change in amplitude from amp1 to amp2).
+bit 3 set: partials transpose: prog expects frq multiplier 'transpose' in line.
+           OR, if val preceeded by '+',val is frq in Hz ADDED to frq in band.
+bit 4 set: transposed partials ADDED to original spectrum (default: replace)
+
+amp1, amp2 &\or transpose MUST be present, as required by the bitflag options.
+
+

@@ -1,0 +1,11 @@
+CDP Release 7.1 2016
+focus fold infile outfile lofrq hifrq [-x]
+
+OCTAVE-TRANSPOSE SPECTRAL COMPONENTS INTO SPECIFIED RANGE
+
+lofrq & hifrq specify range into which spectrum is folded,
+-x            Fuller spectrum.
+
+lofrq & hifrq  may vary over time. 
+
+

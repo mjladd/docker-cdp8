@@ -1,0 +1,11 @@
+CDP Release 7.1 2016
+focus exag infile outfile exaggeration
+
+EXAGGERATE SPECTRAL CONTOUR
+
+exaggeration >0 will widen troughs: <0 will widen peaks.
+
+exaggeration may vary over time.
+
+
+

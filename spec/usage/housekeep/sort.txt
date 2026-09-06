@@ -1,0 +1,40 @@
+CDP Release 7.1 2016
+SORT FILES LISTED IN A TEXTFILE.
+
+USAGE: housekeep sort 1   listfile
+OR:    housekeep sort 2-3 listfile small large step [-l]
+OR:    housekeep sort 4   listfile [-l]
+OR:    housekeep sort 5   listfile
+LISTFILE is a textfile, a list of names of files to be sorted.
+
+MODES ARE
+1) SORT BY FILETYPE
+      Sorts files into different types.
+      Lists appropriate filenames in textfiles with extensions.. 
+      .mot  mono sndfiles           .stt  stereo sndfiles
+      .qtt  4-channel sndfiles      .ant  analysis files
+      .pct  binary pitchdata files  .fot  binary formant files
+      .ent  binary envelope files   .trt  binary transposition files
+      .ott  any other files
+2) SORT BY SRATE
+      Sorts any soundfiles to different sampling rates.
+      Lists appropriate filenames in textfiles with extensions.. 
+      .24  for 24000            .44  for 44100              ETC
+3) SORT BY DURATION
+      Sorts any soundfiles to different lengths.
+      If the listfile is 'list' or 'list.xxx' sorted file is 'list.len'.
+      SMALL is max size of smallest files. (secs)
+      LARGE is min size of largest files. (secs)
+      STEP  is size-steps between file types. (secs)
+      -l causes file durations not to be written to outfile.
+4) SORT BY LOG DURATION
+      The same, except STEP is duration ratio between file types.
+      -l causes file durations not to be written to outfile.
+5) SORT INTO DURATION ORDER
+      Sorts any sndfiles into duration order.
+      If the listfile is 'list' or 'list.xxx' sorted file is 'list.len'.
+      -l causes file durations not to be written to outfile.
+6) FIND ROGUES
+      Sort out any non- or invalid soundfiles.
+
+

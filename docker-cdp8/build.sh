@@ -18,7 +18,7 @@ if ! command -v docker >/dev/null 2>&1; then
 	echo ""
 	echo "Optional: build natively without Docker:"
 	echo "  sudo apt-get install -y build-essential cmake libasound2-dev libjack-jackd2-dev pkg-config"
-	echo "  mkdir -p build && cd build && cmake .. && make -j\$(nproc)"
+	echo "  mkdir -p build && cd build && cmake ../legacy && make -j\$(nproc)"
 	exit 1
 fi
 

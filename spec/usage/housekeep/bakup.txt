@@ -1,0 +1,7 @@
+CDP Release 7.1 2016
+CONCATENATE SOUNDFILES IN ONE BAKUP FILE, WITH SILENCES BETWEEN
+
+USAGE: housekeep bakup infile1 [infile2 ...] outfile
+
+
+

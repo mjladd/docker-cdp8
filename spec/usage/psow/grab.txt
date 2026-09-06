@@ -1,0 +1,21 @@
+USAGE:
+psow grab infil outfil pitch-brkpnt-data time dur segcnt spectrans density rand gain
+
+Grab a pitch-syncd grain from a file, and use it to create a new sound
+
+PITCH-BRKPNT-DATA  a breakpoint file with time and frq information.
+                   File may contain zeros (indicating moments of no-signal)
+                   but NOT pitch-zeros (indicating moments of no-pitch).
+                   It must contain SOME significant frequency information.
+TIME               Time at which to grab grain(s).
+DUR                Output file duration. Dur ZERO grabs SINGLE grain(chunk).
+SEGCNT             no of grains in a chunk.
+DENSITY            Rate at which the chunks in the outfile succeed one another.
+                   1: grains follow on, 2: grains overlap by 2, 3: by 3 etc
+                   0.5: grains separated by equivalent silence etc.
+                   overlap by 2 can transpose up by 8va, without changing spectrum.
+SPECTRANS          Transposition of spectrum (not fundamental) in semitones.
+RAND               Randomisation of position of grainchunks in output.
+                   Randomisation introduces noisiness into output sound.
+GAIN               Overall gain: may need to reduce this if density > 1 in output.
+

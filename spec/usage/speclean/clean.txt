@@ -1,0 +1,12 @@
+USAGE:
+speclean clean sigfile noisfile outanalfile persist noisgain
+
+Eliminate frqbands in 'sigfile' falling below maxlevels found in 'noisfile'
+
+PERSIST    min time channel signal must exceed noise-level, to be retained.
+NOISGAIN   multiplies noiselevels found in noisfile before they are used
+           for comparison with infile signal: (Default 2).
+
+Both input files are analysis files.
+'noisfil' is a sample of noise (only) from the 'sigfile'.
+

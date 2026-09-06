@@ -1,0 +1,13 @@
+USAGE:
+psow cutatgrain 1-2 infil outfil pitch-brkpnt-data time
+
+Cuts the file at the specified time.
+Mode 1: Retains file BEFORE (exact) specified grain time.
+Mode 2: Retains file AT AND AFTER (exact) specified grain.
+
+PITCH-BRKPNT-DATA  a breakpoint file with time and frq information.
+                   File may contain zeros (indicating moments of no-signal)
+                   but NOT pitch-zeros (indicating moments of no-pitch).
+                   It must contain SOME significant frequency information.
+TIME       time at which to cut the file.
+

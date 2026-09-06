@@ -1,0 +1,26 @@
+USAGE: newmorph newmorph2 1 analfileA outtextfile peakcnt
+
+Find frequencies of most prominent spectral peaks (in order of prominence).
+Ouput these as a textfile list, a "peaksfile".
+
+OR:    newmorph newmorph2 2-3 analfileB outanalfile peaksfile 
+           startmorph  endmorph  exponent  peakcnt  [-rrand]
+
+Morph between dissimilar spectra
+(Peaks of analfileB move towards peaks extracted from analfileA).
+
+PEAKCNT    Number of most-prominent source-peaks to find.
+PEAKSFILE  Textfile listing goal-peak frequencies: most prominent first.
+STARTMORPH Time at which morph starts.
+ENDMORPH   Time at which morph ends.
+EXPONENT   Exponent of interpolation.
+-r         Randomisation of the goal peak frequency. (Range 0 - 1)
+
+MODES
+
+2   Sound (gradually) tuned to harmonic field specified in textfile "peaksfile".
+3   Ditto, but interpolation is timewise-cosinusoidal.
+
+CDP Release 7.1 2016
+
+

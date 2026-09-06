@@ -1,0 +1,4 @@
+USAGE:
+search sigstart infile1 [infile2 infile3 .....]
+
+Find earlist time at which there is signal in any of the infiles.

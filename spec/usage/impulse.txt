@@ -1,0 +1,21 @@
+USAGE:
+impulse impulse outfile dur pitch chirp slope pkcnt level [-ggap] [-ssrate] [-cchans]
+
+Create a stream of impulses.
+
+DUR    Duration of output sound.
+       If set to zero, a single impulse is produced.
+PITCH  Pitch of impulse-stream (MIDI). (Determines stream-frq)
+CHIRP  Glissing of impulse. (Range 0 to 30) (Care, output may clip).
+SLOPE  How quickly impulse rises and falls in level. (Range 1 to 20)
+PKCNT  Number of peaks in impulse. (Range 1 - 200)
+       'Pkcnt' divided by stream-frq -> (unglissed) frq of impulses.
+LEVEL  Impulse level (Range 0-1).
+GAP    Relative size of any silent gap between impulses.
+       If > zero, lowers apparent pitch of stream.
+       IF < zero, chirps overlap, raises apparent pitch of stream.
+SRATE  Sample-rate of output file  (Default 44100).
+CHANS  Number of channels in output file. (Default 1).
+
+"PITCH","GLIS","SLOPE","CHIRP","LEVEL" and "GAP" can vary through time.
+

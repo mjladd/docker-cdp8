@@ -1,0 +1,13 @@
+CDP Release 7.1 2016
+COMPARE 2 SOUND,ANALYSIS,PITCH,TRANSPOSITION,ENVELOPE OR FORMANT FILES
+
+USAGE: sndreport diff infile1 infile2 [-tthreshold] [-ncnt] [-l] [-c]
+
+THRESHOLD  max permissible difference in data values:
+CNT        MAX NUMBER of differences to accept (default 1).
+-l         continue, even if files are not same LENGTH
+-c         continue, even if (snd)files don't have same no of CHANNELS
+
+This process works with binary (non-text) files only.
+
+

@@ -1,0 +1,44 @@
+USAGE:
+sorter sorter 1-4 inf outf esiz [-ssmooth] [-oopch] [-ppch] [-mmeta] [-f]
+sorter sorter 5   inf outf esiz seed [-ssmooth] [-oopch] [-ppch] [-mmeta] [-f]
+
+Chops mono source into elements then reorganises by loudness, or duration.
+
+ESIZ    Approximate size of elements to sort, in seconds.
+        If set to zero, individual wavesets are chosen as elements.
+SMOOTH  Fade in (and out) each segment, with a "SMOOTH" mS splice.
+        (If elementsize is zero, this is ignored).
+SEED    Mode 5 ("Order at Random"): Rerun with same non-zero seed value
+        outputs the SAME random ordering of elements.
+        (Zero seed-value gives different random ordering on each run).
+OPCH    Output elements with separation equivalent to MIDI pitch,"OPCH".
+        If "-f" flag used, value can be set to 128 to specify
+        the median pitch of the source.
+        If value is set to zero, parameter is ignored.
+
+-f      Elementsize read as frq value (= 1.0/duration)
+        and could be a frequency-trace of the pitch of the source.
+
+The following parameters can only be used if "-f" flag is set.
+
+PCH     Transpose input elements to MIDI pitch specified.
+        If value set to 128, the median pitch of the source is used.
+        If value is set to zero, parameter is ignored.
+
+The following parameter is only useful if "PCH" is set.
+
+METAGRP Size of meta-grouping, in seconds.
+        Allows larger units to be (approx) pitch-correlated.
+        Src 1st cut to pitch-wavelen-scale elements & transpositions calcd.
+        These elements are then further grouped to (approx) "METAGRP" size.
+        Must be larger than largest element (1/frq) from frq trace.
+        If "METAGRP" set to zero, it is ignored.
+
+If "PCH" is NOT set, larger groupings obtained by larger value of "ESIZ".
+
+Mode 1: Sort to Crescendo.
+Mode 2: Sort to Decrescendo.
+Mode 3: Sort to Accelerando. (With very small elements, may rise in pitch).
+Mode 4: Sort to Ritardando.  (With very small elements, may fall in pitch).
+Mode 5: Order at Random.
+

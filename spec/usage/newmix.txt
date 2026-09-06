@@ -1,0 +1,20 @@
+CDP Release 7.1 2016
+USAGE:     newmix multichan mixfile outsndfile [-sSTART] [-eEND] [-gATTENUATION]
+
+START       gives starttime START (to start mixing later than zero).
+END         gives output endtime END (to stop mix before its true end).
+Note that the START and END params are intended for mix TESTING purposes only.
+If you want to keep output from such a testmix, you should TOPNTAIL it.
+
+Mixfile for multichannel work is same as standard CDP mixfiles BUT...
+1) There is an extra initial line that states no. of output chans.
+2) On ensuing lines, input and output channels are numbered 1,2,3 etc
+3) Routing of input to output is indicated by inchan, colon, outchan
+   e.g. 1:4 sends input channel 1 to ouptut channel 4
+5) The levels on these channels are in the range -1 to 1
+6) An input channel must be routed to an output channel, with a level
+     e.g. 1:1 1.0 2:4 .5 (input 1 to output 1, input 2 to output 4)
+7) You can route an input to many outs e,g  1:1 .5 1:2 .3 1:4 .7 etc.
+8) You must take care with levels, where more than 1 input goes to same output.
+
+

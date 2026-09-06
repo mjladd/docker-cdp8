@@ -1,0 +1,12 @@
+CDP Release 7.1 2016
+JOIN FILES TOGETHER, ONE AFTER ANOTHER, IN A PATTERN, WITH LOUDNESS PATTERN
+
+USAGE: sfedit join inf1 [inf2...] outf pattern [-wsplice] [-b] [-e] 
+
+PATTERN  file of sequence of numbers = sequence of input files to use,
+         each paired with a gain value for that pattern item
+SPLICE duration of splices, in MS (default 15)
+-b     splices start of first file
+-e     splices end of last file
+
+

@@ -1,0 +1,21 @@
+CDP Release 7.1 2016
+CREATE OR ALTER DISTRIBUTION OF SOUND IN STEREO SPACE
+
+USAGE: modify space 1 infile outfile pan [-pprescale]
+OR:    modify space 2 infile outfile
+OR:    modify space 3 infile outfile
+OR:    modify space 4 infile outfile narrowing
+
+WHERE MODES ARE
+1) PAN:         Position or move mono sound in a stereo field.
+                Prescale reduces inlevel to avoid clipping (default 0.7)
+2) MIRROR:      Invert stereo positions in a stereo file.
+3) MIRRORPAN:   Invert stereo positions in a pan data file.
+4) NARROW:      Narrow the stereo image of a sound.
+                NARROWING range, -1 to 1
+                1   leaves stereo image as it is.
+                .5  narrows stereo image by half.
+                0   converts stereo image to mono.
+                -ve vals work similarly, but also invert stereo image.
+
+

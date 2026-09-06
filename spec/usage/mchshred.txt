@@ -1,0 +1,20 @@
+USAGE:
+mchshred shred 1 infile outfile repeats chunklen scatter outchans 
+mchshred shred 2 infile outfile repeats chunklen scatter
+
+Sound is cut into random segments, which are then reassembled
+in random order, within the original duration.
+Further shreds, shred the previously shredded output.
+
+The shredding process distributes the output segments over
+ a randopm permutation of the output channels.
+
+REPEATS   no. of repeats of shredding process.
+CHUNKLEN  average length of chunks to cut & permute.
+SCATTER   randomisation of cuts (0 to K): default 1.
+          where K = total no. of chunks (snd-duration/chunklen).
+          If scatter = 0, reorders without shredding.
+OUTCHAN   Mode 1 shreds a mono input to a multichannel output.
+          with 'outchan' channels.
+          Mode 2 shreds an already multichannel file.
+

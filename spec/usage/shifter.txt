@@ -1,0 +1,32 @@
+USAGE: shifter shifter 
+1 inf out cycles cycdur dur ochans subdiv linger transit boost [-z|-r] [-l]
+2 inf1 inf2 [inf3 ....] cycles cycdur dur ochans subdiv linger transit boost
+          [-z|-r] [-l]
+
+Generate simultaneous repetition cycles, shifting focus from one to another.
+
+Mode 1: Uses the same input sound for all cycles.
+Mode 2: In this mode the number of input files must equal the number of cycles.
+        Assigns the input files, in order, to the cycles, in order.
+CYCLES  Textfile listing the number of beats in each cycle.
+CYCDUR  Duration of 1 complete cycle.
+DUR     Required duration of the output sound.
+OCHANS  Number of channels in output.
+SUBDIV  Minimum division of the beat: > 4 and a multiple of 2 and or 3
+LINGER  Number of cycles to remain in a fixed focus.
+TRANSIT Number of cycles to make transition to next focus.
+        The sum of LINGER  & TRANSIT must be >= 1.
+BOOST   With standard stream level "L", add "boost * L" to focus stream level.
+
+        Normal procedure is to move focus through the list of cycles.
+        e.g. with cycles 11,12,13 focus moves 11,12,13,11,12,13,etc
+
+-z      Flag causes focus to ZIGZAG through the cycles.
+        e.g. with cycles 11,12,13 focus moves 11,12,13,12,11,12,13,12,etc
+
+-r      Flag causes focus to select a RANDOM order of the cycles
+        e.g. 12,11,13, move through those, then select another random order etc.
+
+        If number of output channels > 2, lspkr array assumed sound-surround.
+-l      Flag changes to a linear array, with a leftmost and rightmost lspkr.
+

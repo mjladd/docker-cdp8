@@ -1,0 +1,8 @@
+CDP Release 7.1 2016
+FIND MAXIMUM SAMPLE IN SOUNDFILE OR BINARY DATA FILE
+
+USAGE: sndreport maxsamp infile [-f]
+-f   Force file to be scanned
+     (Ignore any header info about max sample)
+
+

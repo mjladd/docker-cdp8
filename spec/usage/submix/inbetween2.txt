@@ -1,0 +1,16 @@
+CDP Release 7.1 2016
+GENERATE A SET OF SOUNDS IN-BETWEEN THE 2 INPUT SOUNDS
+      THROUGH INTERPOLATION PEGGED TO ZERO_CROSSINGS.
+
+USAGE: submix inbetween2 infile1  infile2  outname  count  cutoff
+OUTNAME  is your GENERIC name for the output sndfiles.
+         New soundfiles will be called outname001 outname002 etc
+
+COUNT    is the number of inbetween outfiles to produce.
+
+CUTOFF   Is the frquency above which 'cycles' are ignored: 
+         usually noise, they are incorporated into other cycles.
+
+Ensure NONE of the files to be created already exists!!
+
+

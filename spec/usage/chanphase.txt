@@ -1,0 +1,7 @@
+USAGE:
+chanphase chanphase infile outfile channel
+
+Invert phase of one channel of an input sound.
+
+CHANNEL  Channel to invert.
+

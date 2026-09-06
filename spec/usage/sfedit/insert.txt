@@ -1,0 +1,17 @@
+CDP Release 7.1 2016
+INSERT A 2nd SOUND INTO AN EXISTING SOUND.
+
+USAGE: sfedit insert mode infile insert outfile time [-wsplice] [-llevel] [-o]
+
+MODES ARE
+1) Time in seconds.
+2) Time as sample count (rounded to multiples of channel-cnt).
+3) Time as grouped-sample count (e.g. 3 = 3 stereo-pairs).
+
+TIME    at which 2nd file to be inserted in 1st file.
+SPLICE  splice window in milliseconds (default: 15)
+LEVEL   gain multiplier on inserted file. (default 1.0).
+-o      overwrite equivalent duration of original file with inserted file.
+        (default .. insertion pushes infile apart).
+
+

@@ -1,0 +1,9 @@
+CDP Release 7.1 2016
+USAGE:
+distort cyclecnt infile
+
+COUNT 'WAVECYCLES' IN SNDFILE.
+
+Works on MONO files only
+
+

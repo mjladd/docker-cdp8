@@ -1,0 +1,12 @@
+
+OPERATIONS ON PITCH-SYNCHRONOUS GRAINS (FOFS)
+
+USAGE: psow NAME (mode) infile(s) outfile parameters: 
+
+where NAME can be any one of
+
+stretch    dupl    delete    strtrans    features   grab    sustain   sustain2
+chop   interp    synth   impose    split    space    interleave   replace
+locate   cutatgrain   reinforce
+
+Type 'psow stretch' for more info on psow stretch..ETC.

@@ -1,0 +1,9 @@
+CDP Release 7.1 2016
+pitchinfo convert pitchfile outtextfile [-dI]
+
+CONVERT A BINARY PITCH-DATAFILE TO A TIME/FRQ BRKPNT TEXTFILE.
+
+-d  I = acceptable pitch error in brkpntfile data-reduction. (semitones)
+    (Range > 0.0 : Default = eighth_tone = 0.250000)
+
+

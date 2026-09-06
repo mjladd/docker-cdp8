@@ -1,0 +1,19 @@
+CDP Release 7.1 2016
+INSERT SILENCE INTO AN EXISTING SOUND.
+
+USAGE: sfedit insil mode infile outfile time duration [-wsplice] [-o] [-s]
+
+MODES ARE
+1) Time in seconds.
+2) Time as sample count (rounded to multiples of channel-cnt).
+3) Time as grouped-sample count (e.g. 3 = 3 stereo-pairs).
+
+TIME     at which silence to be inserted in infile.
+DURATION of inserted silence.
+SPLICE   splice window in milliseconds (default: 15)
+-o       overwrites original file with the silence.
+         (default .. silence pushes infile apart).
+-s       retains any silence written over file end.
+         (default .. rejects silence added at file end).
+
+

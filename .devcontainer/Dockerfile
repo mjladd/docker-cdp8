@@ -39,5 +39,5 @@ WORKDIR /workspaces
 RUN ln -s /workspaces/docker-cdp8 /workspace || true
 
 # Ensure CDP8 binaries are on PATH for all shells
-RUN printf 'export PATH="/workspaces/docker-cdp8/NewRelease:$PATH"\n' | tee /etc/profile.d/cdp8_path.sh >/dev/null \
-    && printf 'export PATH="/workspaces/docker-cdp8/NewRelease:$PATH"\n' >> /etc/zsh/zshenv || true
+RUN printf 'export PATH="/workspaces/docker-cdp8/legacy/NewRelease:$PATH"\n' | tee /etc/profile.d/cdp8_path.sh >/dev/null \
+    && printf 'export PATH="/workspaces/docker-cdp8/legacy/NewRelease:$PATH"\n' >> /etc/zsh/zshenv || true

@@ -1,0 +1,24 @@
+CDP Release 7.1 2016
+spec clean 1-2 infile nfile       outfile skiptime [-gnoisgain]
+spec clean 3   infile nfile       outfile freq     [-gnoisgain]
+spec clean 4   infile nfile gfile outfile          [-gnoisgain]
+
+REMOVE NOISE FROM PVOC ANALYSIS FILE.
+
+INFILE,NFILE and GFILE are all pvoc analysis files.
+NFILE and GFILE should be cut (spec cut) from INFILE
+to show typical noise (NFILE) and good signal (GFILE).
+SKIPTIME     (seconds) may be set to time at which
+             good src. signal level has been established.
+NOISGAIN     multiplies noiselevels found in NFILE before they are used
+             for comparison with infile signal: (Default 2).
+MODES
+(1) deletes a channel (after skiptime) FROM THE TIME its level falls below
+    the (noisgain adjusted) maximum level seen for that channel in NFILE.
+(2) deletes channel (after skiptime) ANYWHERE its level falls below
+    the (noisgain adjusted) maximum level seen for that channel in NFILE.
+(3) Deletes channel as in MODE 2 but ONLY for channels of frq > FREQ.
+(4) deletes channel EVERYWHERE, whose level in GFILE is ALWAYS below
+    the (noisgain adjusted) maximum level seen for that channel in NFILE.
+
+

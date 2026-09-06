@@ -1,0 +1,17 @@
+Use an anlysis file to find the MOST PROMINENT FEATURES in a sound source.
+
+Mode 1: Create data to cut best example of each prominent feature from sound source.
+
+Mode 2: Create data to cut out all examples of 1 (or more) prominent feature(s).
+        Creates 1 outfile per output feature.
+
+Mode 3: Create data-files to envelope the source so only 1 feature remains.
+        Creates 1 envelope file per extracted feature.
+
+Mode 4: Output peak data for 1 or more windows at a specified time in file.
+
+Mode 5: Output statistics showing most prominent peak frqs in time-slot selected.
+
+Mode 6: Output display spectrum + peaks, to check if peaks credible.
+
+Type 'features get' for more information.

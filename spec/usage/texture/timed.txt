@@ -1,0 +1,23 @@
+CDP Release 7.1 2016
+TIMED TEXTURE:  USAGE:
+texture timed mode infile [infile2...]  outfile  notedata     outdur skiptime
+             sndfirst sndlast mingain maxgain mindur maxdur minpitch maxpitch
+             [-aatten] [-pposition] [-sspread] [-rseed] [-w]
+MODES:-
+1)  ON A GIVEN HARMONIC-FIELD        3)  ON A GIVEN HARMONIC-SET
+2)  ON CHANGING HARMONIC-FIELDS      4)  ON CHANGING HARMONIC-SETS
+5)  NONE
+notedata: infofile, insnd 'pitches',texture timing,harmonic fields pitches etc.
+outdur:            (min) duration of outfile
+skiptime:          time between repetitions of timing motif in notedata
+sndfirst,sndlast:  1st,last snd to use,from list of insnds(range:1 - all)
+mingain,maxgain:   min & max level of input events (1-127:default 64,64)
+mindur,maxdur:     min & max duration of events in texture
+minpitch,maxpitch: min & max pitch (MIDI VALUE)
+atten:             overall attenuation of the output
+position:          centre of output sound-image (0(Left) 1(Right):default 0.5)
+spread:            spatial-spread of texture events (0 - 1(full-spread))
+seed:             same seed-no: same output on rerun(dflt 0: differs each time)
+-w:                always play whole input-sound (ignoring duration values).
+
+

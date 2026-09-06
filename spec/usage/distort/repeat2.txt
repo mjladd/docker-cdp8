@@ -1,0 +1,15 @@
+CDP Release 7.1 2016
+USAGE:
+distort repeat2 infile outfile multiplier [-ccyleccnt] [-sskipcycles]
+
+REPEATING 'WAVECYCLES' WITHOUT TIME STRETCHING
+
+MULTIPLIER: (integer) is no. of times each wavecycle(grp) repeats.
+CYCLECNT:   (integer) is no. wavecycles in repeated groups.
+SKIPCYCLES: (integer) is no. of wavecycles to skip at start of file
+
+multiplier and cyclecnt may vary over time.
+
+Works on MONO files only
+
+

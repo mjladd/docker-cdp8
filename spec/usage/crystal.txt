@@ -1,0 +1,37 @@
+crystal rotate 1-10 fi [fi2 fi3..] fo vdat rota rotb twidth tstep dur plo phi
+        [-ppass -sstop] [-afatt] [-Pfpresc] [-Ffslope] [-Ssslope]
+
+Generate N snd-events based on position of N vertices of a crystal,
+Then rotate crystal in 3-d space, and generate another group of N events, etc.
+X coord -> time &, if stereo, space-position; Y -> pitch; Z -> brightness..i.e.
+Z-far snds lopass-filtrd mixed to orig; Z-close snds, 8va up, stacked on orig.
+
+FI        One Mono infile, multiply-read (with delay), generating out-events.
+          OR N mono infiles, generating different events for N vertices.
+FO        Output file.
+VDAT      Data file contains
+          (1) Triples, being (initial) X,Y,Z, coords of CRYSTAL VERTICES.
+                 Range > -1 to <1. Xsquared + Ysqrd + Zsqrd < 1 for all vertices.
+          (2) Time-val pairs defining envelope imposed on sound events.
+                 Times start at 0 & increase. Final time = duration of events.
+                 Value range 0 to 1. First and last values must be zero.
+ROTA,ROTB Rotate speed in xy_plane, & xz_plane, revs per sec (Range -10.00 to 10.00)
+TWIDTH    Max time between onsets of 1st and last event in any N-events group.
+TSTEP     Time-step between each sampling of all N vertices of rotating-crystal.
+DUR       Total duration of output (must be greater than TSTEP and TWIDTH).
+PLO,PHI   Minimum and Maximum (MIDI) pitch of any event.
+PASS,STOP Pass+stop bands (Hz) for lopass filter.(stopfrq - passfrq >= 50 Hz).
+FATT      Max attenuation produced by filter-stop (dB) Range 0 to -96.
+FPRESC    Gain applied to attenuate source before applying filter (0-1).
+FSLOPE    Slope curve mixing filtered to unfilt snd (depth). (Range 0.10 to 10.00).
+SSLOPE    Slope curve mixing transposed snd to orig (close). (Range 0.10 to 10.00).
+          In both cases Linear slope = 1.0
+FOG       Generic name for output files.
+OUTCNT    Number of rotated-sets to output.
+MODES
+1  Mono output
+2  Stereo output
+3  Two chans of 8-chan output, spaced by single channel (here, chans 1 & 3).
+4,5,6  Ditto, chan-pair steps clockwise,anticlock or randomly btwn groups-of-events.
+7,8,9  Ditto, but pair of chans adjacent (e.g. 1,2 or 5,6).
+10     Stereo output: each set-of-vertices output as a separate soundfile.

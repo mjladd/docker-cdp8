@@ -1,0 +1,10 @@
+
+CDP MCTOOLS: ABFDCODE v 1.2.1: CDP 1999,2004,2005
+Horizontal B Format Decoder
+usage: abfdcode [-x] infile outfile
+       -x    :   write WAVE_EX (Quad) outfile format
+                (requires .wav extension)
+NB: infile must have 3 or 4 channels
+UPDATE 2009: This program is now replaced by FMDCODE, 
+and may be omitted in future updates to the Toolkit.
+For this task use fmdcode with e.g. layout 4.

@@ -1,0 +1,23 @@
+USAGE:
+hover2 hover2 infile outfile frq loc frqrand locrand dur [-s] [-n]
+
+move through a file, zigzag reading it at a given frequency,
+reading back and forth from a zero-crossing,
+then outputting same data inverted,
+to form symmetrical zero-centred waveforms at each read.
+
+FRQ      rate of reading source-samples (in Hz).
+         determines samplewidth of zigzag-read. e.g. at srate 44100,
+         frq 1 Hz, reads 22050 samps forward, & 22050 samps back.
+         frq 10 Hz, reads 2205 samps forward, & 2205 samps back.
+LOC      Time in sourcefile near which samples are read.
+FRQRAND  Random variation of frequency, (0-1).
+LOCRAND  Random variation of location, (0-1).
+DUR      total output duration.
+-s       STEP between locations at times specified in any brkpnt file
+         (rather than interpolating between the locations as time progresses).
+-n       NORMALISE the loudness of all wavecycles generated.
+
+frq and loc (frqrand and locrand) may vary through time.
+time in any brkpoint files is time in output-file.
+

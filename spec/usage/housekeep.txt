@@ -1,0 +1,11 @@
+CDP Release 7.1 2016
+USAGE: housekeep NAME (mode) infile(s) (outfile) (parameters)
+
+where NAME can be any one of
+
+extract  copy   remove   chans   respec   bundle   sort   disk
+bakup    gate    batchexpand    endclicks    deglitch
+
+Type 'housekeep chans'  for more info on housekeep chans option... ETC.
+
+

@@ -1,0 +1,20 @@
+CDP Release 7.1 2016
+FIXED LOW PASS OR HIGH PASS FILTER.
+
+USAGE:
+filter lohi mode infile outfile attenuation pass-band stop-band [-ttail] [-sprescale]
+
+MODES ARE
+1) Pass-band and stop-band as freq in Hz.
+2) Pass-band and stop-band as (possibly fractional) midi notes.
+
+ATTENUATION Gain reduction of filter, in dB. Range(0 to -96)
+            Greater attenuation, sharper filter, but longer to calculate.
+PASS-BAND   last pitch to be passed by the filter.
+STOP-BAND   first pitch to be stopped by the filter.
+            If stop-band is above pass-band, this is a lopass filter.
+            If stop-band is below pass-band, this is a hipass filter.
+TAIL       decay tail duration
+-s          Prescale input: Avoid overflows: Range(0.005 to 200.0)
+
+

@@ -1,0 +1,17 @@
+CDP Release 7.1 2016
+formants put 1 infile fmntfile outfile [-i] [-llof] [-hhif] [-ggain]
+formants put 2 infile fmntfile outfile      [-llof] [-hhif] [-ggain]
+
+IMPOSE SPECTRAL ENVELOPE IN A FORMANTFILE ON SPECTRUM IN A PVOC ANALYSIS FILE.
+
+MODES.
+(1) New formant envelope REPLACES sound's own formant envelope.
+(2) New formant envelope IMPOSED ON TOP OF sound's own formant envelope.
+
+INFILE and OUTFILE are PVOC analysis files. FMNTFILE is a formant data file.
+-l      LOF  = low frq,  below which spectrum is set to zero.
+-h      HIF  = high frq, above which spectrum is set to zero.
+-g      GAIN = adjustment to spectrum loudness (normally < 1.0).
+-i      quicksearch for formants (less accurate).
+
+

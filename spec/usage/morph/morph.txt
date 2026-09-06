@@ -1,0 +1,19 @@
+CDP Release 7.1 2016
+morph morph mode infile infile2 outfile as ae fs fe expa expf [-sstagger]
+
+MORPH ONE SPECTRUM INTO ANOTHER.
+
+as   is time(secs) when amplitude-interpolation starts.
+ae   is time(secs) when amplitude-interpolation ends.
+fs   is time(secs) when frequency-interpolation starts.
+fe   is time(secs) when frequency-interpolation ends.
+expa is exponent of amplitude interpolation.
+expf is exponent of frequency interpolation.
+stagger is time-delay of entry of 2nd file (defalut 0.0).
+
+MODES..
+(1) interpolate linearly (exp 1)
+    or over a curve of increasing (exp >1) or decreasing (exp <1) slope.
+(2) interpolate over a cosinusoidal spline.
+
+

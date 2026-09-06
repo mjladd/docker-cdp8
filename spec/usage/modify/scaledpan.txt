@@ -1,0 +1,10 @@
+CDP Release 7.1 2016
+DISTRIBUTE SOUND IN STEREO SPACE, SCALING PAN DATA TO SNDFILE DURATION
+
+USAGE: modify scaledpan infile outfile pan [-pprescale]
+
+PAN      breakpoint file of time, position pairs.
+         Positions sound in a stereo field, from -1 (Left) to 1 (Right) or beyond.
+PRESCALE reduces input level to avoid clipping (default 0.7)
+
+

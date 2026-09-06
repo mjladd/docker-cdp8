@@ -1,0 +1,9 @@
+USAGE:
+oneform get informantfile 1f-outfile time
+
+Extract formants at a specific time in a formant file.
+
+INFORMANTFILE  A formant data file.
+1F-OUTFILE     A single-moment-formants datafile.
+TIME           Time in inputfile where single-moment-formants are to be extracted.
+

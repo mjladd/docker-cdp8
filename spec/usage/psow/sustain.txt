@@ -1,0 +1,21 @@
+USAGE:
+psow sustain infil outfil pch-brkdata time dur segcnt
+      vibfrq vibdepth transpos gain [-s]
+
+Freeze and Sustain a sound on a specified pitch-syncd grain.
+
+PCH-BRKDATA  a breakpoint file with time and frq information.
+             File may contain zeros (indicating moments of no-signal)
+             but NOT pitch-zeros (indicating moments of no-pitch).
+             It must contain SOME significant frequency information.
+TIME         Time at which to freeze grain(s).
+DUR          Output file duration. (Greater than input file's duration).
+SEGCNT       no of grains in a chunk.
+VIBFRQ       Frequency of any added vibrato (added only to expanded grain).
+VIBDEPTH     Depth (semitones) of any added vibrato.
+TRANSPOS     Transposition (semitones) of grain.
+             Time zero in the brkpnt file for transposition parameter (ONLY)
+             = start of expanded grain, & NOT (necessarily) start of sound.
+GAIN         loudness contour of the entire output.
+-s           Smooth the grabbed fofs
+

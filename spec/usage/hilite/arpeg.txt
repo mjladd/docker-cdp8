@@ -1,0 +1,40 @@
+CDP Release 7.1 2016
+hilite arpeg 1-4 infile outfile wave rate [-pU] [-lX] [-hY] [-bZ] [-aA]
+                                              [-Nk] [-sS] [-T]  [-K]
+
+hilite arpeg 5-6 infile outfile wave rate [-pU] [-lX] [-hY] [-aA]
+
+hilite arpeg 7-8 infile outfile wave rate [-pU] [-lX] [-hY] [-bZ] [-aA]
+
+MODES:-                ARPEGGIATE THE SPECTRUM
+1 ON...........Play components inside arpeggiated band ONLY.
+2 BOOST........Amplify snds in band. Others play unamplified.
+3 BELOW_BOOST..INITIALLY Play components in & below band ONLY.
+               THEN amplify snds in band. Others play unamplified.
+               (NOT with downramp).
+4 ABOVE_BOOST..INITIALLY Play components in & above band ONLY.
+               THEN amplify snds in band. Others play unamplified.
+              (NOT with upramp: with sin/saw startphase>0.5)
+5 BELOW........Play components in & below arpeggiated band ONLY.
+6 ABOVE........Play components in & above arpeggiated band ONLY.
+7 ONCE_BELOW...INITIALLY Play components in and below band ONLY.
+               THEN play whole sound as normal.(NOT with downramp).
+8 ONCE_ABOVE...INITIALLY Play components in and above arpeggiated band ONLY.
+               THEN play whole sound as normal.
+               (NOT with upramp: with sin/saw startphase>0.5)
+wave  1 downramp : 2 sin : 3 saw : 4 upramp
+rate  sweeps per second.
+-p    U = start_phase: range 0-1: (limited range for some cases).
+-l    X = lowest  freq arpeg sweeps down to: default 0
+-h    Y = highest freq arpeg sweeps up to:   default nyquist
+-b    Z = bandwidth of sweep band (in Hz): default = nyquist/channel_cnt
+-a    A = amplification of arpegtones : default 10.0
+-N    k = Nonlinear decay arpegtones. >1 faster, <1 slower. Must be >0.
+-s    S = No. of windows over which arpegtones sustained: Default 3
+-T    In sustains, TRACK changing frq of src (default : retain start frq)
+-K    Let sustains run to zero before new arpegtone attack accepted
+     (Default:Re-attack once sustains fall below current input level)
+
+all parameters may vary over time, except for wavetype and startphase.
+
+

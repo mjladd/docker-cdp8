@@ -1,0 +1,20 @@
+tunevary tunevary infile outfile pitch_template
+               [-ffocus] [-cclarity] [-ttrace] [-bbcut] 
+
+REPLACE SPECTRAL FRQS BY HARMONICS OF SPECIFIED PITCH(ES)
+
+enter pitch_template data as a list of lines, each line having
+a time followed by (possibly fractional) MIDI values.
+
+Times must start at zero and increase from line to line.
+Lines must have equal numbers of entries, but entries can be duplicated.
+
+-f  FOCUS determines degree of focusing of partial pitches onto template.
+    (range 0-1: val or brkpnt file: default 1).
+-c  CLARITY determines degree to which non-template partials are suppressed.
+    (range 0-1: val or brkpnt file: default 0).
+-t  TRACE specifies no. of (window_by_window) most prominent channels
+    to be replaced by template frqs.
+-b  Ignore frqs below BCUT, Bass cutoff frq.
+
+All parameters may vary over time.

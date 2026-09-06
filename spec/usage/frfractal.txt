@@ -1,0 +1,17 @@
+USAGE:
+fractal fractal infile outfile layers [-ssplicelen]
+
+Create fractalised version of sound.
+
+SPLICELEN Length of splices in mS.
+
+LAYERS    Number of fractal layers in the output sound.
+          Note that the maximum number of layers possible
+          depends on the duration of the input sound
+          and the size of splices used
+          and cannot be easily predicted in advance
+
+WARNINGS
+(1) Specifying many layers will produce very long output sounds.
+(2) Don't use very long input sounds, or you will run out of memory,
+

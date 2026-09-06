@@ -1,0 +1,12 @@
+CDP Release 7.1 2016
+USAGE: modify NAME (mode) infile outfile (datafile) parameters
+
+where NAME can be any one of
+
+loudness   space     speed     revecho
+brassage     sausage     radical     spaceform
+scaledpan    findpan    convolve    stack       shudder
+
+Type 'modify  brassage'  for more info on modify  brassage option... ETC.
+
+

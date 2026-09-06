@@ -1,0 +1,23 @@
+CDP Release 7.1 2016
+USAGE: specsphinx specsphinx 1 analfile1 analfile2 outanalfile
+       [-aampbalance] [-ffrqbalance]
+
+IMPOSE CHANNEL AMPLITUDES OF FILE2 ON CHANNEL FRQS OF FILE 1
+
+AMPBALANCE  Proportion of File1 amps retained (Default 0)
+FRQBALANCE  Proportion of File2 frqs injected into output spectrum
+(Default 0)
+
+USAGE: specsphinx specsphinx 2 analfile1 analfile2 outanalfile
+       [-bbias] [-ggain]
+
+MULTIPLY THE SPECTRA
+
+BIAS    When non-zero, adds proportion of original files to output.
+
+      < 1 : add analfile1 to outanalfile in proportion (-bias)/(1+bias)
+      > 1 : add analfile2 to outanalfile in proportion (bias/(1-bias)
+GAIN   Overall gain on output.
+
+
+

@@ -1,0 +1,12 @@
+USAGE:
+psow dupl infile outfile pitch-brkpnt-data repeat-cnt segcnt
+
+Timestretch/transpose a sound by duplicating the pitch-syncd grains.
+
+PITCH-BRKPNT-DATA  a breakpoint file with time and frq information.
+                   File may contain zeros (indicating moments of no-signal)
+                   but NOT pitch-zeros (indicating moments of no-pitch).
+                   It must contain SOME significant frequency information.
+REPEAT-CNT         Number of repetitions of each chunk.
+SEGCNT             no of grains in a chunk .
+

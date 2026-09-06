@@ -1,0 +1,16 @@
+
+CDP MCTOOLS: CHORDER V1.2 (c) RWD,CDP 2009,2010
+Reorder soundfile channels.
+Usage:  chorder infile outfile orderstring
+  orderstring = any combination of characters a-z inclusive.
+  Infile channels are mapped in order as a=1,b=2...z=26
+  (For example: channels in a 4-channel file are represented by the
+    characters abcd; any other character is an error).
+  Characters must be lower case, and may be used more than once.
+  Duplicate characters duplicate the corresponding input channel.
+  The zero character (0) may be used to set a silent channel.
+  A maximum of 26 channels is supported for both input and output.
+  NB: infile (WAVEX) speaker positions are discarded.
+  The .amb extension is supported for the outfile.
+
+insufficient arguments.

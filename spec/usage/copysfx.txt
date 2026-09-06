@@ -1,0 +1,30 @@
+
+
+CDP MCTOOLS: COPYSFX  (c) RWD,CDP Revision: 2.1.1 2020 
+	copy/convert soundfiles
+usage: copysfx [-d][-h][-sN] [-tN] infile outfile
+-d   : apply TPDF dither to 16bit outfile.
+-s   : force output sample type to type N.
+      Available sample types:
+      1  : 16bit integers (shorts)
+      2  : 32bit integer  (longs)
+      3  : 32bit floating-point
+      4  : 24bit integer 'packed' 
+      Default: format of infile.
+-h   : write mimimum header (no extra data).
+       Default: include PEAK data.
+-tN  : write outfile format as type N
+Possible formats:
+0   : standard soundfile (.wav, .aif, .afc, .aifc)
+1   : generic WAVE_EX (no speaker assignments)
+2   : WAVE_EX mono/stereo/quad(LF,RF,LR,RR) - infile nchans must match
+3   : WAVE_EX quad surround (L,C,R,S)       - infile must be quad
+4   : WAVE_EX 5.1 format surround           - infile must be 6-channel
+5   : WAVE_EX Ambisonic B-format (W,X,Y,Z...) - file extension .amb supported 
+6   : WAVE_EX 5.0 Surround                  - infile must be 5-channel
+7   : WAVE_EX 7.1 Surround                  - infile must be 8-channel
+8   : WAVE_EX Cube Surround                 - infile must be 8-channel
+9   : WAVE_EX 6.1 Surround  (new in v2.1.0) - infile must be 7-channel
+default in all cases: outfile has format of infile
+NB: types 1 to 9 are for WAV format only
+See also CHXFORMAT: destructively change WAVE_EX GUID and/or speaker mask.

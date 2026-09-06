@@ -1,0 +1,8 @@
+CDP Release 7.1 2016
+CONVERT A (TEXT) BRKPNT FILE WITH VALS IN dB TO AN ENVELOPE FILE
+
+envel dbtoenv db_brkfile outenvfile  wsize
+
+WSIZE is duration of enveloping window, in MS.
+
+

@@ -1,0 +1,10 @@
+
+USAGE: distmore NAME (mode) infile outfile (parameters)
+
+MORE WAVESET DISTORTION PROGRAMS
+
+where NAME can be any one of
+
+bright   double   segsbkwd   segszig
+
+Type 'distmore bright' for more info on distmore bright.. ETC.

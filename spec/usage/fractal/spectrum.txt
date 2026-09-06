@@ -1,0 +1,25 @@
+USAGE:
+fractal spectrum inf outf shape [-mmaxfrac] [-tstr] [-iwarp] [-s] [-n]
+
+Fractally distort input spectrum by transposition.
+Transposition happens over total duration specified in "SHAPE"
+and is then repeated over every resulting sub-unit of pattern,
+over every sub-sub-unit, etc. until smallest time-unit reached.
+
+SHAPE   Breakpoint textfile of
+        Time-(semitone)transposition pairs, (Range -12 to 12)
+        defining pitch-time contour of the (largest) fractal shape.
+        Times must start at zero and increase,
+        with final time indicating duration of pattern.
+        (Value at final time will be ignored).
+
+MAXFRAC Max degree of fractalisation.  (Time-variable). If not set (or zero),
+        fractalisation proceeds until min possible wavelength reached.
+STR     Time stretch of fractal pattern (Time-variable : values >= 1).
+        If set to zero, no timestretching is done.
+WARP    Interval warping of fractal pattern (Time-variable).
+        If set to zero, no warping is done.
+
+-s      Shrink pitch-intervals as fractal time-scales shrink.
+-n      Transposition only (default, retain formant envelope).
+

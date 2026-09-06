@@ -1,0 +1,18 @@
+CDP Release 7.1 2016
+SYNCHRONISE ATTACKS OF SOUNDFILES, IN A MIXFILE,
+OR GENERATE SUCH A MIXFILE FROM A LIST OF SNDFILES.
+
+USAGE: submix syncattack intextfile outmixfile  [-wdiv] [-p]
+
+INTEXTFILE is a list of sndfiles OR an existing mixfile.
+           with a sndfilelist (only), each sndname MAY be followed by 2 times,
+           which limit the search area for the sound's attack.
+-w         DIV is factor shortening window which scans for the attack.
+           It can be 2,4,8,16, or 32 ONLY.
+-p         Program finds peak-power segment, before locating its max sample.
+           Default: program looks purely for maxsample.
+
+The program estimates output levels required to prevent clipping,
+But estimate may be over-cautiously low: adjust with 'submix attenuate'.
+
+

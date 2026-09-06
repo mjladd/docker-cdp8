@@ -1,0 +1,18 @@
+CDP Release 7.1 2016
+USAGE:
+distort delete mode infile outfile cyclecnt [-sskipcycles]
+
+TIMECONTRACT FILE BY DELETING 'WAVECYCLES'
+
+MODES:
+1:  1 in CYCLECNT wavecycles retained
+2:  Strongest 1 in CYCLECNT wavecycles retained
+
+3:  Weakest 1 in CYCLECNT wavecycles deleted
+SKIPCYCLES: (integer) is no. of wavecycles to skip at start of file
+
+cyclecnt may vary over time.
+
+Works on MONO files only
+
+

@@ -1,0 +1,27 @@
+CDP Release 7.1 2016
+GENERATE ALL CHORDS POSSIBLE FROM NOTES IN GIVEN SET.
+
+USAGE: hfperm hfchords2 1   ifil ofil sr nd gd pd min srt [-m -s -a -o]
+OR:    hfperm hfchords2 2   ifil ofil sr nd gd    min srt [-m -s -a -o]
+OR:    hfperm hfchords2 3-4 ifil ofil sr          min srt [-m -s -a -o]
+IFIL   text input file of midi note values
+MODES: 1 SOUND OUT...Outputs 1 soundfile of the chords.
+       2 SOUNDS OUT..Outputs several sndfiles, chords grouped by sort specified
+       3 TEXT OUT ...Outputs textfile listing chords described by note names.
+       4 MIDI OUT ...Outputs list of chords described by MIDI values.
+PARAMETERS ARE
+SRATE       sample rate of the sound output
+NOTE-DUR    duration of each chord generated (secs)
+GAP-DUR     duration of pauses between chords (secs)
+PAUSE-DUR   duration of pauses between groups of chords (secs)
+MINSET      minimum number of input notes to combine
+SORT BY     0 root:         1 topnote:         2 pitchclass set:
+            3 chord type:   4 chord type (keep 1 of each).
+-m  generate only chords of min number of notes specified
+-s  in each group, put smallest span chord first (otherwise it goes last).
+-a  do final sort by a method other than by chord density
+    For ROOT or TOP NOTE sort, sort by way intervals stacked inside chord.
+    For PITCHCLASS SET, sort by size of containing interval, then by density
+   -o  eliminate chords duplicating-as-a-whole any chord 1 or more 8vas distant
+
+

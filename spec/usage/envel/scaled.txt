@@ -1,0 +1,8 @@
+CDP Release 7.1 2016
+IMPOSE AN ENVELOPE ON AN INPUT SOUNDFILE, SCALING IT TIMEWISE TO SOUND'S DURATION.
+
+USAGE: envel  scaled  input_sndfile  imposed-brkfile  outsndfile
+
+Must have at least 2 brkpnt pairs.
+
+

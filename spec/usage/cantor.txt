@@ -1,0 +1,28 @@
+USAGE:
+cantor set infile outfile 1-2 holesize holedig depth-trig splicelen maxdur [-e]
+cantor set infile outfile 3   holelev  holedig layercnt layerdec maxdur
+
+Gradually cut hole in central 3rd of input sound.
+Cut holes in central 3rd of the remaining segments, and so on.
+Output is a sequence of sounds with more and more holes cut.
+Mode 3 uses superimposed vibrati envelopes
+
+MODES 1 and 2
+
+HOLESIZE   MODE 1: Percentage of current segment-time taken up by hole.
+           Size of hole depends on size of segment being cut.
+           MODE 2: (Fixed) Duration of holes.
+HOLEDIG    Depth of each cut as hole is gradually created (>0-1).
+DEPTH-TRIG Level-Depth of hole triggering next hole-cutting.
+SPLICELEN  Splicelength in mS.
+MAXDUR     Maximum total duration of all the output sound.
+-e         Extend sound beyond splicelen limits.
+
+MODES 3
+
+HOLELEV    Level of signal at base of holes.
+HOLEDIG    How many repets before full-depth reached.
+LAYERCNT   Number of vibrato layers used.
+LAYERDEC   Depth of next vibrato in relation to previous
+MAXDUR     Maximum total duration of all the output sound.
+

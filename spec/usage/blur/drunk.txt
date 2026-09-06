@@ -1,0 +1,12 @@
+CDP Release 7.1 2016
+blur drunk infile outfile range starttime duration [-z]
+
+MODIFY SOUND BY DRUNKEN WALK ALONG ANALYSIS WINDOWS.
+
+RANGE     is maximum step (in windows) for drunken walk.
+STARTTIME is time (in secs) in file to begin walk.
+DURATION  is required duration of outfile after resynthesis.
+-z        eliminates zero steps (window-repeats) in the drunken walk.
+
+
+

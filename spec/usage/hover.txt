@@ -1,0 +1,19 @@
+USAGE:
+hover hover infile outfile frq loc frqrand locrand splice dur
+
+move through a file, zigzag reading it at a given frequency.
+
+FRQ      rate of reading source-samples (in Hz).
+         determines samplewidth of zigzag-read. e.g. at srate 44100,
+         frq 1 Hz, reads 22050 samps forward, & 22050 samps back.
+         frq 10 Hz, reads 2205 samps forward, & 2205 samps back.
+LOC      Time in sourcefile from which samples are read.
+FRQRAND  Random variation of frequency, (0-1).
+LOCRAND  Random variation of location, (0-1).
+SPLICE   length of splices at zig (zag) ends (in mS).
+DUR      total output duration.
+
+frq and loc (frqrand and locrand) may vary through time.
+time in any brkpoint files is time in output-file.
+splicelen must be less than 1 over twice the max frq used.
+

@@ -1,0 +1,19 @@
+USAGE:
+phasor phasor infile outfile streams phasfrq shift ochans [-ooffset] [-s] [-e]
+
+Introduce phasing into signal : Takes a MONO input file.
+
+STREAMS  Number of output streams that phase-interact (Range 2 - 8)
+PHASFRQ  Frequency of packets (phase shifts forward then back in a single packet).
+SHIFT    Maximum phaseshift with packet: (Range 0 - 12 semitones).
+OCHANS   Number of output channels (not greater than number of streams).
+OFFSET   The streams may be time-offset from one another..
+        "Offset" is time-offset of the most-offset stream (Range 0 - 500 mS).
+         The other streams are offset by intermediate amounts.
+
+-s       Output chans (lspkrs) encircle audience : only with more than 2 ochans.
+-e       Prints warnings re rounding-errors in calculating time-shifted streams.
+
+"shift" and "phasfrq" can vary through time,
+but extreme phasfrq changes or reversals will produce anomalous output.
+

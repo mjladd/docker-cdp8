@@ -1,0 +1,9 @@
+USAGE:
+caltrain caltrain inanalfile outanalfile blurfact blurabov [-llocut]
+
+BLURFACT Time over which upper part of spectrum is blurred.
+BLURABOV frequency above which spectrum is blurred.
+LOCUT    bass cutoff frequency (defalut: no bass cutoff).
+
+Generates version of source with upper spectral channels time-blurred.
+

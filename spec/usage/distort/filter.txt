@@ -1,0 +1,21 @@
+CDP Release 7.1 2016
+USAGE:
+distort filter 1-2 infile outfile freq        [-sskipcycles]
+distort filter 3   infile outfile freq1 freq2 [-sskipcycles]
+
+TIMECONTRACT SOUND BY FILTERING OUT 'WAVECYCLES'
+
+MODES:
+1:  omit cycles below FREQ
+2:  omit cycles above FREQ
+3:  omit cycles below FREQ1 and above FREQ2
+
+skipcycles: (integer) is no. of wavecycles to skip at start of file
+
+freq, freq1 and freq2 may vary over time.
+
+N.B. timevarying freq1, freq2 may not cross each other, nor be equal.
+
+Works on MONO files only
+
+

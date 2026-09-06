@@ -1,0 +1,9 @@
+
+NEW ENVELOPING OPERATIONS
+
+USAGE: envnu NAME (mode) infile outfile parameters: 
+
+where NAME can be any one of
+
+expdecay  peakchop
+Type 'envnu expdecay' for more info on envnu expdecay..ETC.

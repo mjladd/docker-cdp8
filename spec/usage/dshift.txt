@@ -1,0 +1,13 @@
+CDP Release 5 2005
+USAGE:	dshift [-dN] infile outfile [distance between speakers]
+
+Calculates Doppler shift for a source moving between two speakers
+that are 10m apart and a listener that is at rest,
+5m from the line between them.
+infile is the pan breakpoint file, as used with modify:pan
+outfile is breakpoint file of semitone shifts
+to give to modify:speed, Mode 2(semitones).
+(NB: modify:pan range: -1 = full left, 1 = full right)
+-d is a flag setting the time it takes a sound to change direction.
+N is the time in milliseconds. Default: 10ms
+This is useful in order to avoid clicks.

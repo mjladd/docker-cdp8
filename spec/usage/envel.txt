@@ -1,0 +1,27 @@
+CDP Release 7.1 2016
+
+USAGE: envel NAME (mode) (infile) (infile2) outfile parameters:
+
+where NAME can be any one of
+
+    ENVELOPE GENERATION OPERATIONS
+create      cyclic
+
+    ENVELOPE OPERATION ON A SNDFILE
+extract     impose      replace      warp
+tremolo     swell       attack       pluck
+dovetail    curtail     scaled       timegrid
+
+    ENVELOPE OPERATION ON AN ENVELOPE-FILE
+reshape
+envtobrk    envtodb
+
+    ENVELOPE OPERATION ON A BRKPNT (TEXT) FILE
+
+replot
+dbtogain    gaintodb
+brktoenv    dbtoenv
+
+Type 'envel warp' for more info on envel warp.. ETC.
+
+

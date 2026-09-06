@@ -1,0 +1,7 @@
+USAGE:
+prefix silence infile outfile dur
+
+Add silence to start of sound.
+
+DUR     duration of silence to add.
+

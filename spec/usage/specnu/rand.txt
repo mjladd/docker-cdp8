@@ -1,0 +1,11 @@
+USAGE:
+specnu rand inanalfile outanalfile [-ttimescale] [-ggrouping]
+
+Randomise order of spectral windows.
+
+TIMESCALE determines no of windows locally-randomised. (dflt all windows)
+GROUPING  consecutive windows grouped into sets of size "grouping".
+          These sets are randomised (default grouping = 1 window per set).
+
+"Timescale" may vary over time
+

@@ -1,0 +1,32 @@
+
+*******  STEREO MULTI-TAPPED DELAY WITH PANNING v1.0 1998 : CDP Release 4 ******
+
+usage:
+	tapdelay [-f] infile outfile tapgain feedback mix taps.txt [trailtime]
+
+	-f		write floating-point outfile
+			(default: outfile has same format as infile)
+	tapgain		gain factor applied to output from delayline
+			(tapgain > 0.0, typ 0.25)
+	feedback	range: -1 <= feeedback <= 1.0
+	mix		proportion of source mixed with delay output.
+			range: 0.0 <= mix < 1.0
+	trailtime	extra time in seconds (beyond infile dur) 
+			  for delays to play out.
+	Stereo inputs are mixed to mono at input to the delay line.
+
+	taps.txt consists of list of taps in the format:
+	time amp [pan]
+
+	All values are floating-point, one tap per line.
+	Times (seconds) must be increasing. Duplicate times are ignored.
+	A zero time (no delay) overrides the mix parameter,
+	  and determines the level and pan of the (mono) input.
+	Amp values must be in the range 0.0 to 1.0
+	Empty lines are permitted, as are lines starting with  a semni-colon,
+	  which may be used for comments.
+	If a pan value is used in any line, outfile will be stereo.
+	Pan values are nominally in the range -1 to +1: 0 = centre (mono)
+	 within which constant-power panning is used.
+	Values beyond these limits result in attenuation according to the
+	   inverse-square law, to suggest distance beyond the speakers.

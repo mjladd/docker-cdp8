@@ -1,0 +1,9 @@
+CDP Release 7.1 2016
+spec gain infile outfile gain
+
+AMPLIFY OR ATTENUATE THE SPECTRUM
+
+gain may vary over time.
+
+
+

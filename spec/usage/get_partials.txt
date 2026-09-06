@@ -1,0 +1,16 @@
+USAGE: get_partials harmonic 1-2 inanalfile outfile fundamental threshold [-v]
+OR:    get_partials harmonic 3-4 inanalfile outfile fundamental threshold time [-v]
+
+Extract relative amplitudes of partials in a pitched source.
+
+MODE 1: Convert single analysis window to FRQ and amplitude list
+MODE 2: Convert single analysis window to MIDI and amplitude list
+MODE 3: Convert window at time TIME to FRQ and amplitude list
+MODE 4: Convert window at time TIME to MIDI and amplitude list
+
+INANALFILE    For Modes 1-2, file must have only a single analysis window.
+FUNDAMENTAL   Fundamental frequency of sound.
+THRESHOLD     (relative) level below which partials are ignored.
+TIME          (multiple window files only) Time of window to use.
+-v    Gives output in format for filter varibank2 file
+

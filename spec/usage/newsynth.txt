@@ -1,0 +1,20 @@
+USAGE:
+newsynth synthesis 1 outf spectrum srate dur frq
+newsynth synthesis 2 outf spectrum srate dur frq [-nnarrowing] [-ccentring]
+newsynth synthesis 3 outf spectrum srate dur frq chans maxrange rate
+    [-urise] [-dfall] [-fsteady] [-ssplice] [-nN] [-a] [-z] [-x]
+    [-tspacetype] [-rrotspeed]
+    [[-m] [-j] [efrom -Etime] [cto -Ctime]]
+newsynth synthesis 4 outf srate dur frq atk ea dec ed atoh gtow [-fflv] [-rrnd|-e]
+newsynth synthesis 5 outf srate dur frq damping k b
+
+Synthesize complex spectra.
+
+MODE 1 Generates tones with any number of (possibly varying) partials.
+MODE 2 Generates wave-packet streams with any number of (possibly varying) partials.
+MODE 3 Multichan Mode1 where partials (spread over N octaves) fade in-out randomly.
+MODE 4 Fractally arrayed spikes.
+MODE 5 Duffing damped oscillator (frq, amplitude and damping can vary through time).
+
+Hit key '1' '2 '3' '4' or '5 to see more on individual modes, or 'e' to exit.
+

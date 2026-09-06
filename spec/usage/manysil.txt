@@ -1,0 +1,10 @@
+USAGE:
+manysil manysil infile outfile silencedata splicelen
+
+Insert many silences into a file.
+
+SILENCEDATA  textfile with time-duration pairs.
+             where 'time' is insertion time of silence
+             and 'duration' is duration of inserted silence
+SPLICELEN    length of splices (in mS).
+

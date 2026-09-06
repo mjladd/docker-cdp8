@@ -1,0 +1,32 @@
+CDP Release 7.1 2016
+ITERATE SOUND, WITH CUMULATIVE FILTERING BY A FILTERBANK.
+
+USAGE: filter iterated mode infile outfile datafile Q gain delay dur 
+         [-sprescale] [-rrand] [-ppshift] [-aashift] [-d] [-i] [-e] [-n]
+
+MODES ARE...
+1)  Enter filter-pitches as frq, in Hz.
+2)  Enter filter-pitches as MIDI values.
+
+DATAFILE  has Pitch & Amp of filters (paired, one pair on each line).
+          Pitch, as Hz or MIDI, Range(0Hz to srate/3)
+          Amp, Range(0.001000 to 10000.0), can also be entered as dB vals
+
+Q         Q (tightness) of filter: Range(0.001000 to 10000.0)
+GAIN      overrall gain in filtering process (0.001000 < gain < 10000.0)
+DELAY     (average) delay between iterations (secs).
+          Range(>0 to 32767)
+DUR       (min) duration of output file (>infile duration).
+PRESCALE  gain on the INPUT to the filtering process.
+          Range (0.0 - 1.0) Default 1.0
+          If set to 0.0, Program automatically divides input level by
+          the max no. of sound overlays occuring in the iteration process.
+RAND      delaytime-randomisation: Range 0 (none) to 1 (max).
+PSHIFT    max pitchshift of any segment in (fractions of) semitones (>=0).
+ASHIFT    max amplitude reduction of any segment: Range (0.0 - 1.0)
+-d        double filtering.
+-i        Turn off Interpolation during pitch shift: (fast but dirty).
+-e        Exponential decay added: each seg gets quieter before next enters.
+-n        turns OFF normalisation: segs may grow or fall in level quickly.
+
+

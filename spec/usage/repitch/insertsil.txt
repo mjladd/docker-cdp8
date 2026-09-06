@@ -1,0 +1,13 @@
+CDP Release 7.1 2016
+repitch insertsil mode infile outfile silence-data
+
+MARK AREAS AS SILENT IN A PITCHDATA FILE
+
+MODES
+1  data as times.
+2  data as (grouped) sample count: Count samples in mono, pairs in stereo etc
+
+SILENCE-DATA
+is a a list of pairs of times between which silence is to be indicated.
+
+

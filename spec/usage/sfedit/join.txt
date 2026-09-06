@@ -1,0 +1,10 @@
+CDP Release 7.1 2016
+JOIN FILES TOGETHER, ONE AFTER ANOTHER.
+
+USAGE: sfedit join infile1 [infile2 infile3....] outfile [-wsplice] [-b] [-e] 
+
+SPLICE duration of splices, in MS (default 15)
+-b     splices start of first file
+-e     splices end of last file
+
+

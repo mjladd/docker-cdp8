@@ -1,0 +1,21 @@
+CDP Release 7.1 2016
+repitch randomise mode pitchfile outfile maxinterval timestep [-sslew]
+
+RANDOMISE PITCH LINE.
+
+MAXINTERVAL (semitones) over which pitches can +- randomvary.
+            Range 0 to 96: Value or brkpnt file.
+TIMESTEP    maximum timestep between random pitch fluctuations (milliseconds).
+            Timesteps are random values less than this.
+            Range: duration of 1 anal window to dur of entire file.
+SLEW	    e.g. 2:  upward variation range twice that of downward.
+    	    e.g -3: downward variation range 3 times that of upward.
+    	    Range >1 || <-1.
+
+MODES....
+(1) Gives a pitchfile as ouput.
+(2) Gives a transposition file as output.
+
+Maxinterval and timestep may vary over time.
+
+

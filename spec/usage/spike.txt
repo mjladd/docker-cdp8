@@ -1,0 +1,17 @@
+USAGE:
+spike spike infile outfile peak(s) upslope downslope [-mmaxup] [-dmaxdown] [-n]
+
+Envelope the input sound to spike at the peak.
+
+PEAKS(S)  Is either a single time (single peak) or a list of trof-peak-trof triplets,
+          Adjacent trofs may be at the same time, but other times must advance.
+
+UPSLOPE   Power-value for slope of envelope before peak(s) Range (1 to 100).
+DOWNSLOPE Power-value for slope of envelope after peak(s) Range (1 to 100).
+
+MAXUP     Maximum duration of upward approach: Range (0 to 1 secs).
+MAXDOWN   Maximum duration of downward approach: Range (0 to 1 secs).
+          (In both cases ZERO implies NO maximum)
+
+-n        Raise all peaks to that of maximum.
+

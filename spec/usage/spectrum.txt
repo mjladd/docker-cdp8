@@ -1,0 +1,10 @@
+
+CREATE SPECTRA FROM TEXT DATA
+
+USAGE: spectrum NAME outanalfile datafile pointcnt srate dur parameters
+
+where NAME can be any one of
+
+format  fixed   varying  lines
+
+Type 'spectrum format' for more info on spectrum format..ETC.

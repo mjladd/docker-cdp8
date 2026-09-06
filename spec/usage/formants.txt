@@ -1,0 +1,13 @@
+CDP Release 7.1 2016
+
+EXTRACTION AND USE OF FORMANTS FROM SPECTRAL FILES
+
+USAGE: formants NAME (mode) infile (infile2) outfile parameters: 
+
+where NAME can be any one of
+
+get     put     vocode     see      getsee
+
+Type 'formants get' for more info on formants get..ETC.
+
+

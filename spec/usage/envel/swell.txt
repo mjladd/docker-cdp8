@@ -1,0 +1,8 @@
+CDP Release 7.1 2016
+CAUSE SOUND TO FADE IN TO AND OUT FROM A PEAK MOMENT
+
+envel swell infile outfile peaktime peaktype
+
+PEAKTYPE: 0 linear: 1 (default) exponential
+
+

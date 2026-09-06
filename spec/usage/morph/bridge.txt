@@ -1,0 +1,29 @@
+CDP Release 7.1 2016
+morph bridge mode infile1 infile2 outfile
+       [-aoffset] [-bsf2] [-csa2] [-def2] [-eea2] [-fstart] [-gend]
+
+      MAKE A BRIDGING-INTERPOLATION BETWEEN TWO SOUND SPECTRA
+BY INTERPOLATING BETWEEN 2 TIME-SPECIFIED WINDOWS IN THE 2 INFILES.
+
+OFFSET time infile2 starts, relative to start of file1: (>=0)  default: 0.0
+SF2    fraction of 2nd sound's frq interpolated at START.(default 0)
+SA2    fraction of 2nd sound's amp interpolated at START.(default 0)
+...if an OFFSET is used, when SF2 or SA2 are set NON-zero,
+...outsound starts from point where 2nd sound enters.
+EF2    fraction of 2nd sound's frq interpolated at END.(default 1)
+EA2    fraction of 2nd sound's amp interpolated at END.(default 1)
+
+...if EF2 or EA2 are set < 1.0 , outsound ends at end of first sound to end.
+START  time in infile1, of startwindow for interp, (secs): default: 0.0
+END    time in infile1 of endwindow of interp: default: end_of_file
+...if START and END are not specified
+...interp runs from OFFSET to end of 1st file to end.
+MODES....
+(1) output level is direct result of interpolation.
+(2) output level follows moment to moment minimum of the 2 infile amplitudes.
+(3) output level follows moment to moment amplitude of infile1.
+(4) output level follows moment to moment amplitude of infile2.
+(5) output level moves, through interp, from that of file1 to that of file2.
+(6) output level moves, through interp, from that of file2 to that of file1.
+
+

@@ -1,0 +1,7 @@
+USAGE:
+onset onset infile outtextfile
+
+Return the succession of sound-onsets in each channel of a multichannel file.
+
+ONSETLEVEL  level at which sound onset is recognised.
+

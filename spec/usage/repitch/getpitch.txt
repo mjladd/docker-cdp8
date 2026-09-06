@@ -1,0 +1,32 @@
+CDP Release 7.1 2016
+repitch getpitch 1 infile outfile pfil 
+	 [-tR] [-gM] [-sS] [-nH] [-lL] [-hT] [-a] [-z]
+repitch getpitch 2 infile outfile bfil 
+	 [-tR] [-gM] [-sS] [-nH] [-lL] [-hT] [-di] [-a]
+
+ATTEMPT TO EXTRACT PITCH FROM SPECTRAL DATA.
+
+outfile  If resynthesized, produces tone at detected (possibly varying) pitch.
+
+pfil     (MODE 1) Binary output file containing pitch information.
+bfil     (MODE 2) breakpoint (text) outfile of pitch info (as time/Hz pairs).
+         Either of these may be reused in other pitch-manipulating options.
+
+-t R     R = Tuning range(semitones) within which harmonics accepted as in tune
+         (Default 1)
+-g M     M = minimum number of adjacent windows that must be pitched,
+         for a pitch-value to be registered (Default 2).
+-s S     S = signal to noise ratio, in decibels. (Default 80dB)
+         Windows which are more than SdB below maximum level in sound, are
+         assumed to be noise, & any detected pitchvalue is assumed spurious.
+-n H     H = how many of the 8 loudest peaks in spectrum must be harmonics
+         to confirm sound is pitched: Default 5.
+-l L     L = frequency of LOWEST acceptable pitch (Default min: 9Hz).
+-h T     T = frequency of TOPMOST acceptable pitch (Default max: nyquist/8).
+-d i     i = acceptable pitch-ratio error in data reduction. (semitones)
+         Default 1/8 tone = 0.250000
+-a       Alternative pitch-finding algorithm (avoid N<2).
+-z       Retain unpitched windows (set them to -1)
+         Default: Set pitch by interpolation between adjacent pitched windows.
+
+

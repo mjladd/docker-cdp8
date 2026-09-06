@@ -1,0 +1,25 @@
+CDP Release 7.1 2016
+CREATE AN ENVELOPE.
+
+USAGE: envel create 1 envfile createfile  wsize
+OR:    envel create 2 brkfile createfile
+
+MODES..
+1) creates a BINARY envelope file:
+   If you specify starttime > 0,vals from 0 to starttime hold your startlevel.
+2) creates a (TEXT) BRKPNT file:   File starts at time you specify.
+
+WSIZE      window_size (in MS) of envelope to be created.
+           Range (5 - filelen)
+CREATEFILE is a textfile with the following format:
+           time [e]level time [e]level ......
+where time-level pairs can be repeated as often as desired.
+Level is a number between 0 and 1, or a dB value between -96dB and 0dB
+(you must write 'dB' if you want dB).
+If preceded by an 'e', envelope rises[falls] exponentially to that level.
+Default is linear rise[fall].
+
+Times are in seconds, must increase through the file,
+and be separated by at least 0.010 secs
+
+

@@ -1,0 +1,28 @@
+USAGE:
+ceracu ceracu inf outf cyclcnts mincycdur chans outdur echo echshift [-o] [-l]
+
+Repeat src in several cyclestreams that resynchronise after specified counts.
+One complete pass is a "resync-cycle". e.g. for 10 12 15
+Source repeat 10,12 and 15 times before cyclestreams resynchronise ....
+IF source sound is "A", cyclestreams would be ....
+A     A     A     A     A     A     A     A     A     A     A (10 times)
+A    A    A    A    A    A    A    A    A    A    A    A    A (12 times)
+A   A   A   A   A   A   A   A   A   A   A   A   A   A   A   A (15 times)
+|--------------------------Resync cycle --------------------|
+|---| = Mincycdur (see below)
+
+CYCLECNTS A list of integers, being
+          the number of repeats in each cyclestream before the streams resync.
+MINCYCDUR Time before the first repeat in the fastest cyclestream.
+          If set to ZERO, assumed to be the duration of the input sound.
+CHANS:    Number of channels in output. (Not ness same as number of cyclestreams)
+OUTDUR    Duration of output. (If set to ZERO, outputs a single resync-cycle).
+          Process always outputs a WHOLE NUMBER of complete resync-cycles,
+          equal to or greater than the specified output duration.
+          If true duration > 1 hour, sound curtailed, unless "-o" flag set.
+ECHO      Single-echo-delay of entire output, in secs (Set to zero for no echo).
+ECHSHIFT  Spatial offset of echo-delay (an integer value). (Ignored if no echo)
+          1 = 1 chan to right; 2 = 2 chans to right; -1 = 1 channel to left; etc
+-o        Override duration restriction, to produce all resync-cycles (CARE!).
+-l        Output channels arranged linearly (default: arranged in a circle).
+

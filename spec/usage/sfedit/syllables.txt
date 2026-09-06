@@ -1,0 +1,16 @@
+CDP Release 7.1 2016
+CUT TEXT INTO ITS CONTIGUOUS SYLLABLES.
+
+USAGE: sfedit syllables mode infil outfil cuttimes dovetail splice [-p]
+
+MODES ARE
+1) Time in seconds.
+2) Time as sample count (rounded to multiples of channel-cnt).
+3) Time as grouped-sample count (e.g. 3 = 3 stereo-pairs).
+
+CUTTIMES is starttime of syllables, and end time of last syllable.
+DOVETAIL is time in milliseconds to allow for syllable overlap.
+SPLICE  splice window in milliseconds.
+-p   Forces process to cut PAIRS of syllables.
+
+

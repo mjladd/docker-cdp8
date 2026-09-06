@@ -1,0 +1,6 @@
+CDP Release 7.1 2016
+INTERPOLATE PARTIALS OF PITCHED SRC1 TOWARDS THOSE OF PITCHED SRC 2
+USAGE: specross partials analfile1 analfile2 outanalfile
+       tuning minwin signois harmcnt lo ho thresh level interp
+
+

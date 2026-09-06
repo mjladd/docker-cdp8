@@ -1,0 +1,35 @@
+USAGE:
+partition partition 1 infile outnam outcnt groupcnt
+
+Partition mono sound file into disjunct files
+in blocks defined by groups of wavesets.
+
+OR
+partition partition 2 infile outnam outcnt dur [-rrand] [-ssplice]
+
+Partition mono sound file into disjunct files
+in blocks defined by duration.
+
+For input file "abcdefghijklmno...." and 3 output files
+(where "a","b" etc are successive blocks), we produce
+
+Outfile1 "a--d--g--j--m--...
+Outfile2 "-b--e--h--k--n-...
+Outfile3 "--c--f--i--l--o...
+
+where "-" is silence replacing the missing blocks.
+
+OUTNAM   is generic name of the output files.
+OUTCNT   is the number of output files.
+
+The duration of the blocks sent to the outfiles is either
+
+GROUPCNT Number of wavesets per block, OR
+DUR      Duration, in seconds, per block, where
+         block-duration must be short enough to allow
+         at least 1 block to be sent to every output file.
+         (if too large, dur will be reduced appropriately).
+
+RAND     is randomsation of durations (only) (range 0-1).
+SPLICE   Splice length in mS: default 3mS.
+

@@ -1,0 +1,12 @@
+CDP Release 7.1 2016
+combine make pitchfile formantfile outfile
+
+GENERATE SPECTRUM FROM PITCH & FORMANT DATA ONLY.
+
+pitchfile   is a binary pitchdata file
+formantfile is a binary formantdata file
+outfile     is an analysis file which can be resynthesized with PVOC
+
+** Do not use output filenames which end in '1'
+
+

@@ -1,0 +1,8 @@
+CDP Release 7.1 2016
+spec gate infile outfile threshold
+
+ELIMINATE CHANNEL DATA BELOW A THRESHOLD AMP
+
+Threshold may vary over time. Range 0 to 1
+
+

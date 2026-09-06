@@ -1,0 +1,10 @@
+CDP Release 7.1 2016
+blur suppress infile outfile N
+
+SUPPRESS THE N LOUDEST PARTIALS (ON A WINDOW-BY-WINDOW BASIS)
+
+N   is number of spectral components to reject.
+
+N may vary over time.  
+
+

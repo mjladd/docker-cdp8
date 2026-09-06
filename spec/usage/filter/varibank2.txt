@@ -1,0 +1,23 @@
+CDP Release 7.1 2016
+USER-DEFINED TIME_VARYING FILTERBANK,WITH TIME-VARIABLE Q AND PARTIALS
+USAGE:
+filter varibank2 mode infil outfil data Q gain [-ttail] [-d]
+MODES ARE...
+1)  Enter filter-pitches as frq, in Hz.
+2)  Enter filter-pitches as MIDI values.
+
+DATAFILE: has lines of data for filter bands at successive times.
+          as varibank filter....
+          Followed by a line with a '#' sign at the start.
+          Followed by 2nd set of lines, similar to the pitchdata lines
+          but now the data is a time followed by any number of pairs of
+          partial number (possibly fractional) + amplitude of partial.
+          Times for pitch AND for partials data MUST START AT ZERO.
+Q         Q (tightness) of filter : Range(0.001000 to 10000.0).
+GAIN:     overall gain: Range: (0.001000 to 10000.0)
+TAIL      decay tail duration
+-d        double filtering.
+
+Q may also vary over time.
+
+

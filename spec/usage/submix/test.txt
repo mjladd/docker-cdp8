@@ -1,0 +1,7 @@
+CDP Release 7.1 2016
+TEST THE SYNTAX OF A MIXFILE
+
+USAGE:	submix test mixfile
+
+
+

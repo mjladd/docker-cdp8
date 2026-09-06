@@ -1,0 +1,21 @@
+USAGE: tsconvert indata outdata min max [-cminstep|-r|-q|-Q] [-ddur [-ftimes]] [-mmaxoutdur] [-l]
+
+Convert input data to specified range and format.
+
+INDATA  Text data as a list of numerical values.
+MIN     Minimum value in output data values.
+MAX     Maximum value in output data values.
+        In minimum > maximum, data contour is inverted in output.
+-d      Generate brkpnt file of time-val pairs, duration 'dur'
+        thus determining the timestep between output values,
+-m      Curtail total outlength to maximum of 'outdur'.
+        With brkpnt outputs, values generated beyond maxoutdur are ignored.
+        with '-c' flag, absolute size of values are summed.
+-c      compact data, so no (absolute)value is less than minstep,
+        and steps in same direction are joined into same step
+-r      Rectify the data around the mean.
+        Mean value = minimum: other vals become deviations from mean.
+-q      Quantise the data to whole-number values only.
+-Q      Quantise the data and suppress adjacent equal-values.
+-f      Output (untimed) vals at times specified in 'times' file (needs -d)
+-l      Output values vary as log of input values.

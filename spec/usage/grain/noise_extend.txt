@@ -1,0 +1,11 @@
+CDP Release 7.1 2016
+FIND AND TIME-STRETCH' NOISE COMPONENT IN SOUND.
+USAGE: 
+grain noise_extend inf outf duration minfrq mindur maxdur [-x]
+DURATION   Duration of noise (part of) output file.
+MINFRQ     lowest 'frequency' (Hz) acceptable as noise (try 6000.0)
+MINDUR     Minimum duration of signal (in ms) acceptable as noise source.
+MAXDUR     Maximum duration of signal (in secs) acceptable as noise source.
+-x         Keep only the extended noise: default keep rest of input src too.
+
+

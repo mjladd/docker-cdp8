@@ -1,0 +1,17 @@
+CDP Release 7.1 2016
+hilite greq mode infile outfile filtfile [-r]
+
+GRAPHIC EQ ON SPECTRUM
+
+MODES :-
+1   single bandwidth for all filter bands.
+    FILTFILE has ONE bandwidth (octaves)
+    followed by centre frqs of all filter bands (Hz).
+
+2   separate bandwidths for each filter band.
+    FILTFILE has a pair of values for each filter band.
+    These are centre frq of the band (Hz) && bandwidth (octaves).
+
+-r  Band reject (notch) filter: Default is a bandpass filter.
+
+

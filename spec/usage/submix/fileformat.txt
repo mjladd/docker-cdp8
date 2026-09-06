@@ -1,0 +1,32 @@
+CDP Release 7.1 2016
+MIXFILES CONSIST OF LINES WITH ONE OF THE FOLLOWING FORMATS
+sndname starttime_in_mix  chans  level
+sndname starttime_in_mix  1      level       pan
+sndname starttime_in_mix  2      left_level  left_pan  right_level  right_pan
+
+SNDNAME is name of a MONO or STEREO sndfile: ALL MUST BE OF SAME SAMPLING RATE.
+CHANS   is number of channels in this soundfile (1 or 2 ONLY)
+LEVEL   is loudness, as number (1 = unity gain) or dB (0dB = unity gain)
+        Mono AND stereo files MAY have a SINGLE level parameter (NO pan data).
+        In this case, MONO files in STEREO mixes are panned centrally.
+        OTHERWISE....
+        MONO files   must have 1 level & 1 pan parameter (ONLY).
+        STEREO files MUST have 2 level & 2 pan params, 1 for each channel.
+PAN     is spatial positioning of file (or file channel) in output mix.
+        -1 HArd Left : 0 Centre : 1 Hard Right
+        < -1 hard left & attenuated : > 1 hard right & attenuated.
+ALSO....
+1) The mixfile list need NOT be in starttime order.
+2) Silence at start of mix IGNORED.(splice on afterwards if needed).
+3) With exclusively mono inputs, with NO pan information, OR 
+   when ALL panned hard left, or ALL hard right, output is MONO.
+   All other situations produce stereo output.
+4) TAKE CARE WHEN PANNING BOTH CHANNELS OF A STEREO FILE.
+   The channel contributions sum, so e.g. if both channels are
+   panned to same position without attenuation, overload possible.
+5) You may test for maximum level in your mix output with submix GETLEVEL.
+   Reduce the mixfile level, if necessary, using 'submix attenuate'.
+6) You may put comment lines in mixfiles : Start such line with a ';'
+   Blank lines are ignored.
+
+

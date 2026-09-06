@@ -1,0 +1,7 @@
+USAGE:
+pairex pairex infile outfile pair
+
+Extract any pair of channels from a multichannel sound.
+
+PAIR : the channel numbers of the 2 channels to be extracted as a stereo pair.
+

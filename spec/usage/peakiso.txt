@@ -1,0 +1,8 @@
+USAGE: peakiso datafile outdatafile srate [minnotch]
+
+Isolate peaks in a spectrum.
+
+DATAFILE     textfile of frq/amp pairs.
+OUTDATAFILE  isolated peaks as frq/amp pairs.
+MINNOTCH     min depth of notch to qualify as peak-separator (Range 0-1).
+

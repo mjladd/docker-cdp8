@@ -1,0 +1,14 @@
+TO TEST THE GOBO SETTING FOR A NEW PROGRAM
+
+1) In the soundloom code, MAIN, set gobo_testing to 1
+2) restart the SOUND LOOM, choose zero or more files, & proceed to process.
+3) When the gobo cmdline is displayed, note it down.
+4) Now run gobo in command.tos, using the same cmdline PLUS
+   THE PROCESS NUMBER, placed at the end of the cmdline.
+   (The process number can be found in the file 'processno.h')
+
+   The GOBO program will report at what stage it decides that
+   the process will not run with the files entered.
+
+   If you are developing a new application, and the process SHOULD run
+   with the entered files, you need to correct the program's gobo settings.

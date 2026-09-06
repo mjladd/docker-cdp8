@@ -1,0 +1,21 @@
+CDP Release 7.1 2016
+combine mean mode infile infile2 outfile [-llofrq] [-hhifrq] [-cchans] [-z]
+
+GENERATE SPECTRAL 'MEAN' OF 2 SOUNDS.
+
+LOFRQ 	is low freq limit of channels to look at.
+HIFRQ 	is high freq limit of channels to look at.
+CHANS	no. of significant channels to compare..Default: All within range.
+-z   	Zeroes channels OUTSIDE frq range specified.
+
+MODES are...
+(1) mean channel amp of 2 files :  mean of two pitches
+(2) mean channel amp of 2 files :  mean of two frqs
+(3) channel amp from file1      :  mean of two pitches
+(4) channel amp from file1      :  mean of two frqs
+(5) channel amp from file2      :  mean of two pitches
+(6) channel amp from file2      :  mean of two frqs
+(7) max channel amp of 2 files  :  mean of two pitches
+(8) max channel amp of 2 files  :  mean of two frqs
+
+

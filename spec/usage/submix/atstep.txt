@@ -1,0 +1,9 @@
+CDP Release 7.1 2016
+CONVERT LISTED SNDFILES TO BASIC MIXFILE WITH FIXED TIMESTEP BETWEEN ENTRIES
+
+USAGE: submix atstep infile1 infile2 [infile3..] outmixfile step
+
+STEP is time, in seconds, between entry of each file.
+
+
+

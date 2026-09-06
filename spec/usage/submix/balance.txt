@@ -1,0 +1,17 @@
+CDP Release 7.1 2016
+MIX BETWEEN 2 SNDFILES USING A BALANCE FUNCTION.
+
+USAGE: submix balance sndfile1 sndfile2 outfile
+                            [-kbalance] [-bstart] [-eend]
+
+(files may or may not have different number of channels).
+
+BALANCE ...Describes the relative level of the two sounds. (Range 0-1)
+......File 1 level is multiplied by the balance function.
+......File 2 level is multiplied by the inverse of the balance function.
+Balance may vary over time.
+
+START .....Start the mix at the time specified.
+END........Stop the mix at the time specified.
+
+

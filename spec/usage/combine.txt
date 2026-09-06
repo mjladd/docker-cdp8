@@ -1,0 +1,13 @@
+CDP Release 7.1 2016
+
+COMBINATION OF SPECTRAL FILES
+
+USAGE: combine NAME (mode) infile (infile2...) outfile parameters: 
+
+where NAME can be any one of
+
+make    make2    sum    diff    interleave    max    mean    cross
+
+Type 'combine make' for more info on combine make..ETC.
+
+

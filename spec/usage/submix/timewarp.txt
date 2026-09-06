@@ -1,0 +1,29 @@
+CDP Release 7.1 2016
+TIMEWARP THE DATA IN A MIXFILE
+
+USAGE:  submix timewarp 1    inmixfile outmixfile
+OR:     submix timewarp 2-5  inmixfile outmixfile   [-sstartline] [-eendline]
+OR:     submix timewarp 6-16 inmixfile outmixfile Q [-sstartline] [-eendline]
+
+STARTLINE: line at which warping begins (default: 1st in file)
+ENDLINE  : line at which warping ends  (default: last in file).
+MODES ARE....
+1)  SORT INTO TIME ORDER.
+2)  REVERSE TIMING PATTERN:  e.g. rit. of sound entries becomes an accel.
+3)  REVERSE TIMING PATTERN & ORDER OF FILENAMES.
+4)  FREEZE TIMEGAPS          between sounds, at FIRST timegap value.
+5)  FREEZE TIMEGAPS & NAMES  ditto, and all files take firstfile name.
+6)  SCATTER ENTRY TIMES      about orig vals. Q is scattering: Range(0-1).
+7)  SHUFFLE UP ENTRY TIMES   shuffle times in file forward by time Q secs.
+8)  ADD TO TIMEGAPS          add fixed val Q secs, to timegaps between sounds.
+9)  CREATE FIXED TIMEGAPS 1  between all sounds,timegap = Q secs
+10) CREATE FIXED TIMEGAPS 2  startval+Q,startval+2Q  etc
+11) CREATE FIXED TIMEGAPS 3  startval*Q startval*2Q etc
+12) CREATE FIXED TIMEGAPS 4  startval*Q     startval*Q*Q    etc
+13) ENLARGE TIMEGAPS 1       multiply them by Q.
+14) ENLARGE TIMEGAPS 2       by +Q, +2Q,+3Q  etc
+15) ENLARGE TIMEGAPS 3       by *Q *2Q *3Q
+16) ENLARGE TIMEGAPS 4       by *Q, *Q*Q, *Q*Q*Q  etc. (CARE!!)
+
+
+
