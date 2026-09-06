@@ -119,6 +119,112 @@ pub fn flteq(a: f64, b: f64) -> bool {
     (a - b).abs() <= FLTERR
 }
 
+/// legacy: `isspace()` under the C locale, as seen by
+/// `is_an_empty_line_or_a_comment` and `get_word_from_string` in
+/// `legacy/dev/cdp2k/tklib1.c`. A `char`-based twin of [`is_space`]
+/// for the word-list formats below, which work on `str` rather than
+/// bytes.
+fn is_space_char(c: char) -> bool {
+    matches!(c, ' ' | '\t' | '\n' | '\u{0B}' | '\u{0C}' | '\r')
+}
+
+/// legacy: `is_an_empty_line_or_a_comment` in `tklib1.c`, called by
+/// `store_wordlist` in `readfiles.c` before a line is word-split.
+/// Every CDP word-list format (mix files, and -- in later slices --
+/// texture note-data and tuning files) uses this: a line is skipped
+/// entirely, not just trimmed, when it is blank or starts with `;`
+/// after leading whitespace. Unlike [`parse_line_floats`]'s per-token
+/// comment handling for breakpoint files, a `;` appearing after real
+/// data on the same line is not a comment marker here -- see
+/// [`split_words`].
+pub fn is_comment_or_blank_line(line: &str) -> bool {
+    matches!(
+        line.trim_start_matches(is_space_char).chars().next(),
+        None | Some(';')
+    )
+}
+
+/// legacy: `get_word_from_string` in `tklib1.c`, called in a loop by
+/// `store_wordlist` in `readfiles.c` to split one already-non-comment
+/// line into its whitespace-separated words. There is no quoting and
+/// no per-word comment stripping: a `;` in the middle of a line is
+/// just another word, which is why a trailing comment on a data line
+/// (fine in a breakpoint file) instead trips the word-count check of
+/// whichever format is reading the line.
+pub fn split_words(line: &str) -> Vec<&str> {
+    line.split(is_space_char)
+        .filter(|w| !w.is_empty())
+        .collect()
+}
+
+/// legacy: mimics the prefix-parsing behaviour of `sscanf(str, "%lf",
+/// ...)` -- an optional sign, digits, an optional `.` and more
+/// digits, and an optional exponent, reading only as much of a
+/// leading numeric prefix as is valid rather than requiring the whole
+/// token to be numeric. This is what several mix-file fields are
+/// actually scanned with in `legacy/dev/submix/setupmix.c` (time,
+/// and, when not a `dB`-suffixed level, the level and pan fields),
+/// unlike [`next_float`] (CDP's own tokenizer, used for breakpoint
+/// files), which rejects scientific notation outright.
+pub fn scan_c_double_prefix(s: &str) -> Option<f64> {
+    let bytes = s.as_bytes();
+    let mut i = 0usize;
+    if i < bytes.len() && (bytes[i] == b'+' || bytes[i] == b'-') {
+        i += 1;
+    }
+    let mut has_digits = false;
+    while i < bytes.len() && bytes[i].is_ascii_digit() {
+        i += 1;
+        has_digits = true;
+    }
+    if i < bytes.len() && bytes[i] == b'.' {
+        i += 1;
+        while i < bytes.len() && bytes[i].is_ascii_digit() {
+            i += 1;
+            has_digits = true;
+        }
+    }
+    if !has_digits {
+        return None;
+    }
+    let mut exp_end = i;
+    if i < bytes.len() && (bytes[i] == b'e' || bytes[i] == b'E') {
+        let mut j = i + 1;
+        if j < bytes.len() && (bytes[j] == b'+' || bytes[j] == b'-') {
+            j += 1;
+        }
+        let exp_digits_start = j;
+        while j < bytes.len() && bytes[j].is_ascii_digit() {
+            j += 1;
+        }
+        if j > exp_digits_start {
+            exp_end = j;
+        }
+    }
+    s[..exp_end].parse::<f64>().ok()
+}
+
+/// legacy: mimics the prefix-parsing behaviour of `sscanf(str, "%d",
+/// ...)` -- an optional sign followed by one or more digits, stopping
+/// at the first non-digit rather than requiring the whole token to be
+/// an integer. legacy: the `chans` field in
+/// `legacy/dev/submix/setupmix.c`'s `get_mixdata_in_line`.
+pub fn scan_c_int_prefix(s: &str) -> Option<i32> {
+    let bytes = s.as_bytes();
+    let mut i = 0usize;
+    if i < bytes.len() && (bytes[i] == b'+' || bytes[i] == b'-') {
+        i += 1;
+    }
+    let digits_start = i;
+    while i < bytes.len() && bytes[i].is_ascii_digit() {
+        i += 1;
+    }
+    if i == digits_start {
+        return None;
+    }
+    s[..i].parse::<i32>().ok()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -188,5 +294,56 @@ mod tests {
     fn flteq_matches_within_epsilon_only() {
         assert!(flteq(1.0, 1.0 + 0.0000015));
         assert!(!flteq(1.0, 1.0 + 0.0000025));
+    }
+
+    #[test]
+    fn comment_and_blank_lines_are_recognised() {
+        assert!(is_comment_or_blank_line(";a comment"));
+        assert!(is_comment_or_blank_line("   ;indented comment"));
+        assert!(is_comment_or_blank_line(""));
+        assert!(is_comment_or_blank_line("   "));
+        assert!(!is_comment_or_blank_line("capm.wav 0.0 1 0.5 C"));
+    }
+
+    #[test]
+    fn split_words_splits_on_runs_of_whitespace() {
+        assert_eq!(
+            split_words("capm.wav  0.0\t1  0.5 C"),
+            vec!["capm.wav", "0.0", "1", "0.5", "C"]
+        );
+    }
+
+    #[test]
+    fn split_words_does_not_strip_a_trailing_comment() {
+        // legacy quirk (see the doc comment): a mid-line `;` is just
+        // another word here, unlike parse_line_floats.
+        assert_eq!(
+            split_words("0.0 0.15 ;start fast"),
+            vec!["0.0", "0.15", ";start", "fast"]
+        );
+    }
+
+    #[test]
+    fn scan_c_double_prefix_accepts_scientific_notation() {
+        // legacy quirk: unlike next_float (the breakpoint-file
+        // tokenizer), this accepts it, because it mimics raw
+        // sscanf("%lf", ...) rather than get_float_from_within_string.
+        assert_eq!(scan_c_double_prefix("1e-1"), Some(0.1));
+        assert_eq!(scan_c_double_prefix("-6.5e0"), Some(-6.5));
+    }
+
+    #[test]
+    fn scan_c_double_prefix_reads_only_the_leading_numeric_prefix() {
+        // mimics sscanf("6dB", "%lf", &val) succeeding with 6.0 and
+        // leaving "dB" unconsumed.
+        assert_eq!(scan_c_double_prefix("6dB"), Some(6.0));
+        assert_eq!(scan_c_double_prefix("xdB"), None);
+    }
+
+    #[test]
+    fn scan_c_int_prefix_stops_at_the_first_non_digit() {
+        assert_eq!(scan_c_int_prefix("1.5"), Some(1));
+        assert_eq!(scan_c_int_prefix("-2"), Some(-2));
+        assert_eq!(scan_c_int_prefix("abc"), None);
     }
 }

@@ -247,6 +247,12 @@ impl BreakpointTable {
 /// legacy: `MIN_DB_ON_16_BIT` in `legacy/dev/include/globcon.h`.
 pub const MIN_DB_ON_16_BIT: f64 = -96.0;
 
+/// legacy: `MAX_DB_ON_16_BIT` in `legacy/dev/include/globcon.h`. Used
+/// by `get_leveldb` in `legacy/dev/cdp2k/tklib1.c` (see
+/// `crate::mix`) to clamp a dB-suffixed level from above, unlike
+/// [`db_to_gain_allowing_boost`], which leaves boost unclamped.
+pub const MAX_DB_ON_16_BIT: f64 = 96.0;
+
 /// legacy: `convert_dB_at_or_below_zero_to_gain` in
 /// `legacy/dev/cdp2k/readdata.c`. A dB value of `0` or above negative
 /// infinity converts to a linear gain; anything at or below
