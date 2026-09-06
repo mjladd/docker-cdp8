@@ -1,0 +1,16 @@
+[package]
+name = "cdp-sf"
+description = "Sound file I/O for the CDP System: WAVE reading and writing, PEAK chunk, and the CDP property block (legacy: dev/newsfsys/sfsys.c, snd.c, props.c)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+thiserror = "2"
+
+[dev-dependencies]
+tempfile = "3"
