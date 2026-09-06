@@ -124,19 +124,20 @@ pub fn flteq(a: f64, b: f64) -> bool {
 /// `legacy/dev/cdp2k/tklib1.c`. A `char`-based twin of [`is_space`]
 /// for the word-list formats below, which work on `str` rather than
 /// bytes.
-fn is_space_char(c: char) -> bool {
+pub(crate) fn is_space_char(c: char) -> bool {
     matches!(c, ' ' | '\t' | '\n' | '\u{0B}' | '\u{0C}' | '\r')
 }
 
 /// legacy: `is_an_empty_line_or_a_comment` in `tklib1.c`, called by
 /// `store_wordlist` in `readfiles.c` before a line is word-split.
-/// Every CDP word-list format (mix files, and -- in later slices --
-/// texture note-data and tuning files) uses this: a line is skipped
-/// entirely, not just trimmed, when it is blank or starts with `;`
-/// after leading whitespace. Unlike [`parse_line_floats`]'s per-token
-/// comment handling for breakpoint files, a `;` appearing after real
-/// data on the same line is not a comment marker here -- see
-/// [`split_words`].
+/// Mix files use this: a line is skipped entirely, not just trimmed,
+/// when it is blank or starts with `;` after leading whitespace.
+/// Unlike [`parse_line_floats`]'s per-token comment handling for
+/// breakpoint files, a `;` appearing after real data on the same line
+/// is not a comment marker here -- see [`split_words`]. Texture
+/// note-data files (`crate::notedata`) do *not* use this: their
+/// motif-header and note lines only skip a truly blank line, with no
+/// `;`-comment support at all, confirmed against `legacy` `texture`.
 pub fn is_comment_or_blank_line(line: &str) -> bool {
     matches!(
         line.trim_start_matches(is_space_char).chars().next(),
