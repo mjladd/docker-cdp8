@@ -29,11 +29,11 @@
 //!
 //! Current scope (see `docs/migration/STATUS.md` for the live list):
 //! reading WAVE and AIFF/AIFC files, 16-bit PCM and 32-bit float
-//! sample data, the `PEAK` chunk, and reading (not yet writing) the
-//! CDP named-property block. Writing is WAVE-only so far. PVOC-EX,
-//! WAVE_FORMAT_EXTENSIBLE multichannel formats, and the CDP-derived
-//! file types (analysis, pitch, transposition, formant, envelope) are
-//! not implemented yet.
+//! sample data, the `PEAK` chunk, the CDP named-property block (read
+//! and, for WAVE, write), and detecting the CDP-derived analysis-
+//! family file kinds ([`FileKind`]) a property block can carry.
+//! Writing is WAVE-only so far. PVOC-EX and WAVE_FORMAT_EXTENSIBLE
+//! multichannel formats are not implemented yet.
 
 pub mod aiff;
 pub mod error;

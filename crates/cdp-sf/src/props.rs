@@ -412,6 +412,12 @@ pub struct ChannelPeak {
 
 const CURRENT_PEAK_VERSION: u32 = 1;
 
+/// legacy: `PROPCNKSIZE` in `legacy/dev/newsfsys/sfsys.c` -- the
+/// fixed size (in bytes, after the `"sfif"` tag) legacy always
+/// reserves for the property block's text encoding, whether or not
+/// the properties actually fill it.
+pub const PROPCNKSIZE: usize = 2000;
+
 /// Parses a `PEAK` chunk's payload (after the tag and size, which the
 /// RIFF walker already consumed). legacy: `read_peak_lsf` and its
 /// caller in `legacy/dev/newsfsys/sfsys.c`.
@@ -559,6 +565,27 @@ impl PropertyBlock {
         }
         out.push(b'\n');
         out
+    }
+
+    /// As [`Self::encode`], then padded with `'\n'` bytes to exactly
+    /// `size`. legacy: `writeprops`'s `while(op < &obuf[f->proplim])
+    /// *op++ = '\n';` -- confirmed against the real padding bytes in
+    /// `docs/manual/sounds/marimba.wav`'s `note` chunk (0x0A
+    /// repeating, not zero). `size` is normally
+    /// [`PROPCNKSIZE`]. Errors if the encoded properties do not
+    /// already fit (legacy: `abort()` via the `op-obuf >= f->proplim`
+    /// assert in the same loop, which this crate reports instead of
+    /// crashing on).
+    pub fn encode_padded(&self, size: usize) -> Result<Vec<u8>> {
+        let mut out = self.encode();
+        if out.len() > size {
+            return Err(SfError::PropertyBlockTooLarge {
+                encoded_len: out.len(),
+                limit: size,
+            });
+        }
+        out.resize(size, b'\n');
+        Ok(out)
     }
 
     pub fn get_raw(&self, name: &str) -> Option<&[u8]> {
