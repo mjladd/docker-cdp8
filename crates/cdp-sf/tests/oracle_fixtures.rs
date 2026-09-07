@@ -125,3 +125,52 @@ fn real_corpus_file_without_peak_chunk_but_with_date_property() {
         "DATE property should decode to Wed Jul 19 08:50:04 2000 UTC"
     );
 }
+
+/// `docs/manual/sounds/ws2/tsw1-2nd.aiff`, confirmed against `legacy`
+/// `sndinfo props`:
+///
+/// ```text
+/// samples: ............ 241102
+/// sample rate: ........ 44100
+/// channels: ........... 1
+/// sample type:  16bit
+/// PEAK data at: Sun Jun 25 20:48:42 2006
+/// CH 1: amp = 0.2997 (-10.47 dB) Frame 29914
+/// ```
+///
+/// Every field here (including the exact `PEAK` value/position/
+/// timestamp and the `DATE` property) was independently confirmed by
+/// hand-decoding the file's raw big-endian `COMM`/`PEAK`/`APPL` chunk
+/// bytes (`xxd`), not by running this crate's own parser: `COMM`'s
+/// 80-bit extended-float sample rate is `40 0E AC 44 00 00 00 00 00
+/// 00`; `PEAK`'s payload is version `1`, timestamp `0x449EF6AA`
+/// (1151268522, matching `sndinfo`'s date), channel value `0x3E997533`
+/// (a big-endian `f32`, 0.299722284) and position `0x000074DA`
+/// (29914); and the `sfif` property text starts `DATE\nAAF69E44\n`,
+/// which as little-endian bytes is the same `0x449EF6AA` timestamp.
+#[test]
+fn real_aiff_corpus_file_matches_legacy_sndinfo_and_hand_decoded_chunks() {
+    let path = concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../docs/manual/sounds/ws2/tsw1-2nd.aiff"
+    );
+    let sf = SoundFile::open(path).expect("ships in this repository");
+
+    assert_eq!(sf.fmt.channels, 1);
+    assert_eq!(sf.fmt.sample_rate, 44100);
+    assert_eq!(sf.fmt.bits_per_sample, 16);
+    assert_eq!(sf.fmt.sample_type, SampleType::Short16);
+    assert_eq!(sf.sample_count(), 241_102);
+
+    assert_eq!(sf.peak_timestamp, Some(1_151_268_522));
+    assert_eq!(sf.peaks.len(), 1);
+    assert!((sf.peaks[0].value - 0.299_722_28).abs() < 1e-6);
+    assert_eq!(sf.peaks[0].position, 29_914);
+
+    assert_eq!(sf.properties.get_i32("DATE").unwrap(), 1_151_268_522);
+
+    let samples = sf.samples_f32().unwrap();
+    assert_eq!(samples.len(), 241_102);
+    let decoded_peak = samples.iter().fold(0.0f32, |m, &s| m.max(s.abs()));
+    assert!((decoded_peak - sf.peaks[0].value).abs() < 1.0 / 32767.0);
+}
