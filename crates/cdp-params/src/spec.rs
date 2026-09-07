@@ -48,9 +48,16 @@
 //! not `513`, confirming the stored value is `(int)` cast (C
 //! truncation toward zero, matching Rust's `as i64`) from the same
 //! `%lf`-parsed double every other numeric type uses, not rejected for
-//! having a fractional part and not rounded. `IntOrBreakpoint`
-//! (upper-case `I`) is not implemented yet -- no real command has
-//! confirmed it.
+//! having a fractional part and not rounded. `distort repeat`'s
+//! required `multiplier` argument and its `-c<cyclecnt>` optional
+//! flag are the fifth and last type, [`ParamType::IntOrBreakpoint`]
+//! (upper-case `I`): confirmed live both by a real breakpoint file
+//! (`distort repeat infile outfile brk_int.txt`, which runs to
+//! completion) and by the same `(int)`-cast truncation `Int` shows
+//! (an out-of-range check on a fractional value reports the
+//! unrounded, untruncated double, e.g. `"Parameter[1] Value
+//! (1.000000) ..."`, confirming the range check itself runs before
+//! any truncation, exactly mirroring `Int`).
 
 /// One parameter's type and (for the numeric types) valid range.
 /// legacy: one `char` of `parstruct.c`'s `param_list`/`opt_list`
@@ -98,6 +105,15 @@ pub enum ParamType {
         hi: f64,
         legacy_index: usize,
     },
+    /// legacy: an upper-case `I` entry -- [`Self::Int`]'s breakpoint-
+    /// capable counterpart, exactly as [`Self::DoubleOrBreakpoint`] is
+    /// to [`Self::Double`]. No `legacy_index` (like
+    /// `DoubleOrBreakpoint`, an unparseable token is always retried as
+    /// a breakpoint filename, so the "cannot read as a number" error
+    /// this crate's `Int`/`Double` produce never applies here).
+    /// Confirmed live by `distort repeat`'s required `multiplier`
+    /// argument and its `-c<cyclecnt>` flag -- see this module's doc.
+    IntOrBreakpoint { lo: f64, hi: f64 },
     /// A positional file argument (an input sound file). legacy: the
     /// generic `"Can't open file %s to read data.\n"` check that
     /// runs on every input file argument before any numeric
@@ -105,19 +121,28 @@ pub enum ParamType {
     File,
 }
 
-/// One `-<letter><value>` optional flag (legacy: `opt_flags`/
-/// `opt_list` in `parstruct.c`, e.g. `LOUDNESS_NORM`/`LOUDNESS_SET`'s
-/// `opt_flags = "l"`, `opt_list = "d"`). The value is attached
-/// directly after the letter with no space (confirmed live: `-l
-/// 0.5`, with a space, fails with `"option parameter missing with
-/// flag -l"` -- the same message a bare `-l` with nothing after it
-/// produces).
+/// One `-<letter><value>` flag: either an *option* (legacy:
+/// `opt_flags`/`opt_list` in `parstruct.c`, e.g. `LOUDNESS_NORM`/
+/// `LOUDNESS_SET`'s `opt_flags = "l"`, `opt_list = "d"`) via
+/// [`CommandSpec::flags`], or a value-carrying *variant* (legacy:
+/// `varflags`/`varlist` in `set_vflgs`, confirmed live by `distort
+/// repeat`'s `-s<skipcycles>`) via [`CommandSpec::variants`] -- the
+/// same shape either way, since only *where* [`crate::parser::parse`]
+/// looks for it, and which errors it reports, differ (see
+/// [`CommandSpec`]'s doc). The value is attached directly after the
+/// letter with no space (confirmed live: `-l 0.5`, with a space,
+/// fails with `"option parameter missing with flag -l"` -- the same
+/// message a bare `-l` with nothing after it produces). A pure
+/// boolean variant flag with no value at all (legacy: `vparamcnt`
+/// entries beyond the value-carrying ones, e.g. `blur scatter`'s
+/// `-r`/`-n`) is not implemented yet -- no real command has confirmed
+/// one live.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct OptionFlag {
     pub letter: char,
-    /// legacy: only `Double` and `DoubleOrBreakpoint` are confirmed
-    /// as flag value types so far; [`ParamType::File`] is meaningless
-    /// here and never used.
+    /// legacy: only `Double`, `DoubleOrBreakpoint`, `Int` and
+    /// `IntOrBreakpoint` are confirmed as flag value types so far;
+    /// [`ParamType::File`] is meaningless here and never used.
     pub value_type: ParamType,
     /// legacy: the position [`crate::error::ParamsError::ValueOutOfRange`]
     /// reports this flag's value at when it is out of range (see
@@ -130,14 +155,31 @@ pub struct OptionFlag {
 /// [`ParamType::File`] input files, then one output filename (not
 /// itself a [`ParamType`] entry -- legacy never range- or
 /// existence-checks it during parsing, since it is being created),
-/// then either a fixed list of required numeric [`Self::params`]
-/// (`modify loudness` mode 1) *or* a set of optional [`Self::flags`]
-/// (`modify loudness` modes 3/4) -- confirmed live that these two
-/// shapes report a leftover unrecognised token differently
-/// (`"Too many parameters on command line."` when `params` is
-/// non-empty, `"Unknown parameter '<token>'"` when it is empty and
-/// the token is not a recognised flag), so [`crate::parser::parse`]
-/// does not yet handle a mode with both.
+/// then [`Self::params`] (required, positional, in order), then
+/// [`Self::flags`] (optional, `-<letter><value>`, any order among
+/// themselves), then [`Self::variants`] (also optional and
+/// `-<letter><value>`, but legacy: `get_options`
+/// (`legacy/dev/cdp2k/readdata.c`) only scans a *prefix* of the
+/// remaining tokens for known [`Self::flags`] letters, stopping
+/// (without erroring) at the first it does not recognise; whatever is
+/// left is then scanned entirely as [`Self::variants`] by
+/// `get_variants_and_flags`/`get_variant_no`. This makes flags and
+/// variants order-dependent relative to each other -- confirmed live
+/// by `distort repeat infile outfile 3 -s1 -c2` (variant before
+/// option) failing with `"option flag -c out of order on cmdline."`,
+/// naming the *option* letter, even though `-s`, not `-c`, is the one
+/// out of place -- but each group is still order-independent among
+/// its own members ([`Self::flags`]' doc already established this for
+/// `pvoc anal`'s two options; `distort repeat` only has one variant,
+/// so this crate cannot yet confirm the same for
+/// [`Self::variants`]). Confirmed live that a leftover token
+/// unrecognised by either group reports differently depending on
+/// whether the mode has any flags/variants at all: `"Too many
+/// parameters on command line."` when both are empty (`modify
+/// loudness` mode 1), `"Unknown parameter '<token>'"` otherwise
+/// (`modify loudness` modes 3/4, `pvoc anal`, and `distort repeat`,
+/// confirmed with a required param, an option, and a variant all
+/// present at once).
 #[derive(Debug, Clone)]
 pub struct CommandSpec {
     /// Number of leading input-file arguments, before the single
@@ -147,6 +189,27 @@ pub struct CommandSpec {
     pub infile_count: usize,
     pub params: Vec<ParamType>,
     pub flags: Vec<OptionFlag>,
+    pub variants: Vec<OptionFlag>,
+    /// legacy: `UNEQUAL_SNDFILE` (`true`) vs `EQUAL_SNDFILE` (`false`,
+    /// the default for every mode ported so far) in
+    /// `setup_process_logic` (e.g. `legacy/dev/distort/ap_distort.c`).
+    /// `legacy/dev/cdp2k/mainfuncs.c`'s `count_infiles` derives the
+    /// actual infile count from the command line for an
+    /// `UNEQUAL_SNDFILE` mode, rather than using a fixed
+    /// [`Self::infile_count`]; this crate does not implement that in
+    /// general (every mode ported so far, including `distort repeat`,
+    /// only ever takes one infile in practice, whichever category it
+    /// is in). The one confirmed, implemented difference this makes:
+    /// when the command line is too short even for the infile,
+    /// outfile and required params combined, an `EQUAL_SNDFILE` mode
+    /// reports [`crate::error::ParamsError::InsufficientCmdlineParameters`]
+    /// (`"Insufficient cmdline parameters."`), but an `UNEQUAL_SNDFILE`
+    /// mode instead reports
+    /// [`crate::error::ParamsError::InsufficientParameters`]
+    /// (`"Insufficient parameters on command line."`) -- confirmed
+    /// live for `distort repeat` with both just an infile, and an
+    /// infile plus outfile, given.
+    pub unequal_sndfile: bool,
 }
 
 impl CommandSpec {
@@ -165,6 +228,8 @@ impl CommandSpec {
                 hi: 32767.0, // legacy: MAXSHORT
             }],
             flags: vec![],
+            variants: vec![],
+            unequal_sndfile: false,
         }
     }
 
@@ -188,6 +253,8 @@ impl CommandSpec {
                 },
                 range_check_paramno: 1,
             }],
+            variants: vec![],
+            unequal_sndfile: false,
         }
     }
 
@@ -244,6 +311,64 @@ impl CommandSpec {
                     range_check_paramno: 2,
                 },
             ],
+            variants: vec![],
+            unequal_sndfile: false,
+        }
+    }
+
+    /// `distort repeat` (`DISTORT_RPT`, single-mode, `maxmode=0`):
+    /// `distort repeat infile outfile multiplier [-ccyclecnt]
+    /// [-sskipcycles]`. legacy: `parstruct.c`'s `set_param_data(ap,0,1,1,"I")`
+    /// (one required `IntOrBreakpoint` positional, `multiplier`) and
+    /// `set_vflgs(ap,"c",1,"I","s",1,1,"i")` (one `IntOrBreakpoint`
+    /// option `-c` = `cyclecnt`, and one plain `Int` variant `-s` =
+    /// `skipcycles`). This is the first `CommandSpec` with a required
+    /// param *and* flags at once, and the first with any
+    /// [`CommandSpec::variants`] at all -- see both those fields' docs
+    /// for what's confirmed and what's not. Ranges from `tklib1.c`'s
+    /// `set_param_ranges`: `ap->lo[DISTRPT_MULTIPLY]=2`,
+    /// `ap->hi[DISTRPT_MULTIPLY]=BIG_VALUE`; `ap->lo[DISTRPT_CYCLECNT]=1`,
+    /// `ap->hi[DISTRPT_CYCLECNT]=MAX_CYCLECNT`; `ap->lo[DISTRPT_SKIPCNT]=0`,
+    /// `ap->hi[DISTRPT_SKIPCNT]=MAX_CYCLECNT` (`BIG_VALUE` and
+    /// `MAX_CYCLECNT` are both `32767.0`, from
+    /// `legacy/dev/include/globcon.h`). `multiplier`'s paramno is `1`
+    /// as usual; `-c`'s is `2` and `-s`'s is `3`, both confirmed live
+    /// to continue the same global, sequential numbering (params, then
+    /// options, then variants, in declaration order) rather than
+    /// restarting at `1` for the flags -- unlike `pvoc anal`, whose
+    /// options *did* start at `1` only because it has no required
+    /// params to occupy that slot first. `-s`'s `legacy_index` (`3`)
+    /// happens to equal its own paramno, unlike `modify loudness`'s
+    /// `-l` flag -- again carried as its own literal fact, not
+    /// derived, for the reason [`ParamType::Double`]'s doc gives.
+    /// `setup_process_logic` in `legacy/dev/distort/ap_distort.c`
+    /// classifies this mode `UNEQUAL_SNDFILE`, hence
+    /// `unequal_sndfile: true` -- see that field's doc.
+    pub fn distort_repeat() -> Self {
+        CommandSpec {
+            infile_count: 1,
+            params: vec![ParamType::IntOrBreakpoint {
+                lo: 2.0,
+                hi: 32767.0, // legacy: BIG_VALUE
+            }],
+            flags: vec![OptionFlag {
+                letter: 'c',
+                value_type: ParamType::IntOrBreakpoint {
+                    lo: 1.0,
+                    hi: 32767.0, // legacy: MAX_CYCLECNT
+                },
+                range_check_paramno: 2,
+            }],
+            variants: vec![OptionFlag {
+                letter: 's',
+                value_type: ParamType::Int {
+                    lo: 0.0,
+                    hi: 32767.0, // legacy: MAX_CYCLECNT
+                    legacy_index: 3,
+                },
+                range_check_paramno: 3,
+            }],
+            unequal_sndfile: true,
         }
     }
 }

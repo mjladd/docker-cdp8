@@ -74,6 +74,40 @@
 //! generic check this parser previously omitted, reporting the
 //! duplicate even when the first occurrence's value was valid and the
 //! second's was not.
+//!
+//! And against a further 15 live runs of `distort repeat` (the first
+//! spec with a required param *and* flags at once, and the first with
+//! any variants -- `crate::spec::CommandSpec::distort_repeat`): a run
+//! with just the required `multiplier`, and one with `-c<cyclecnt>`
+//! and `-s<skipcycles>` also given, both run to completion, confirming
+//! `-s` is only reachable once `-c` (or the option phase's end) has
+//! already been scanned. Giving `-s` before `-c` fails with `"option
+//! flag -c out of order on cmdline."`, naming the *option* letter, not
+//! the variant already read. `multiplier` retried as a real breakpoint
+//! file succeeds (confirming `IntOrBreakpoint`'s fallback); as a
+//! nonexistent one fails with the same `cdp_data` breakpoint-open text
+//! `DoubleOrBreakpoint` uses. `multiplier` and `-c` (both
+//! `IntOrBreakpoint`) out of range report `Parameter[1]`/`Parameter[2]`
+//! respectively, continuing the same sequential paramno numbering into
+//! `-s` (plain `Int`) at `Parameter[3]` -- unlike `pvoc anal`, whose
+//! options start at `1` only because it has no required params ahead
+//! of them. A leftover non-flag token after all three are given fails
+//! with `"Unknown parameter 'extra'"`, the same shape `pvoc anal` and
+//! `modify loudness` modes 3/4 use, now confirmed even when required
+//! params are also present. Duplicating `-c` still fails with
+//! `"Duplicate option c ..."`; duplicating `-s` fails with the
+//! variant-specific `"Duplicate flag s used on command line"`; a bare
+//! trailing `-s` fails with `"variant parameter missing with flag
+//! -s"`, checked before the duplicate check exactly as
+//! `OptionValueMissing` precedes `DuplicateOption` (confirmed live
+//! with `-s1 -s`, which reports the missing-value error, not the
+//! duplicate); an unrecognised `-z` during the variant phase fails
+//! with `"Unknown variant flag -z"`; and `distort repeat infile` alone,
+//! or `infile outfile` alone, both fail with `"Insufficient parameters
+//! on command line."`, not `"Insufficient cmdline parameters."` --
+//! `distort repeat`'s `UNEQUAL_SNDFILE` classification, unlike every
+//! other command ported so far -- see
+//! `crate::spec::CommandSpec::unequal_sndfile`'s doc.
 
 use crate::error::{ParamsError, Result};
 use crate::spec::{CommandSpec, ParamType};
@@ -100,15 +134,18 @@ pub struct ParsedCommand {
     pub infiles: Vec<String>,
     pub outfile: String,
     /// The required positional parameters, in order (empty for a mode
-    /// whose [`CommandSpec::params`] is empty -- see
-    /// [`CommandSpec::flags`]'s doc on why this crate does not yet
-    /// support a mode with both).
+    /// whose [`CommandSpec::params`] is empty).
     pub params: Vec<ParamValue>,
-    /// The optional flags that were actually present on the command
-    /// line, keyed by letter. A flag [`CommandSpec::flags`] lists but
-    /// the caller did not supply is simply absent here, matching
-    /// legacy leaving the parameter at its own default (not modelled
-    /// yet -- see `docs/migration/STATUS.md`).
+    /// The optional flags and variants that were actually present on
+    /// the command line, keyed by letter (a letter can only belong to
+    /// one of [`CommandSpec::flags`]/[`CommandSpec::variants`] --
+    /// legacy keeps them in separate arrays specifically so it can
+    /// detect one appearing where the other belongs, see that field's
+    /// doc -- so merging both into one map here loses no information).
+    /// A flag either list names but the caller did not supply is
+    /// simply absent here, matching legacy leaving the parameter at
+    /// its own default (not modelled yet -- see
+    /// `docs/migration/STATUS.md`).
     pub flags: BTreeMap<char, ParamValue>,
 }
 
@@ -117,7 +154,12 @@ pub struct ParsedCommand {
 pub fn parse(spec: &CommandSpec, args: &[&str]) -> Result<ParsedCommand> {
     let min_needed = spec.infile_count + 1; // + the output filename
     if args.len() < min_needed {
-        return Err(ParamsError::InsufficientCmdlineParameters);
+        // legacy: `crate::spec::CommandSpec::unequal_sndfile`'s doc.
+        return Err(if spec.unequal_sndfile {
+            ParamsError::InsufficientParameters
+        } else {
+            ParamsError::InsufficientCmdlineParameters
+        });
     }
 
     let mut infiles = Vec::with_capacity(spec.infile_count);
@@ -128,72 +170,137 @@ pub fn parse(spec: &CommandSpec, args: &[&str]) -> Result<ParsedCommand> {
     let outfile = args[spec.infile_count].to_string();
     let rest = &args[spec.infile_count + 1..];
 
-    if spec.params.is_empty() {
-        let flags = parse_flags(spec, rest)?;
-        return Ok(ParsedCommand {
-            infiles,
-            outfile,
-            params: vec![],
-            flags,
-        });
-    }
-
     if rest.len() < spec.params.len() {
         return Err(ParamsError::InsufficientParameters);
     }
-    if rest.len() > spec.params.len() {
-        return Err(ParamsError::TooManyParameters);
-    }
-
+    let (param_tokens, after_params) = rest.split_at(spec.params.len());
     let mut params = Vec::with_capacity(spec.params.len());
-    for (i, (&token, param_type)) in rest.iter().zip(&spec.params).enumerate() {
+    for (i, (&token, param_type)) in param_tokens.iter().zip(&spec.params).enumerate() {
         let paramno = i + 1; // legacy: 1-based in "Parameter[%d]"
         params.push(parse_param(token, *param_type, paramno)?);
     }
+
+    let flags = if spec.flags.is_empty() && spec.variants.is_empty() {
+        // legacy: a mode with no options or variants never reaches
+        // `get_options`/`get_variants_and_flags` at all, so a leftover
+        // word falls to `read_parameters_and_flags`'s own final check
+        // -- see the module doc's `modify loudness` mode 1 example.
+        if !after_params.is_empty() {
+            return Err(ParamsError::TooManyParameters);
+        }
+        BTreeMap::new()
+    } else {
+        parse_flags_and_variants(spec, after_params)?
+    };
 
     Ok(ParsedCommand {
         infiles,
         outfile,
         params,
-        flags: BTreeMap::new(),
+        flags,
     })
 }
 
-/// legacy: the optional-flag scanning loop for a mode with no
-/// required positional parameters -- see the module doc's mode 3/4
-/// examples for every error case confirmed here.
-fn parse_flags(spec: &CommandSpec, rest: &[&str]) -> Result<BTreeMap<char, ParamValue>> {
+/// legacy: `get_options` then, if any are declared,
+/// `get_variants_and_flags` -- two ordered phases over the same
+/// remaining tokens. See [`CommandSpec`]'s doc for the order
+/// constraint this creates and every error case confirmed here.
+fn parse_flags_and_variants(
+    spec: &CommandSpec,
+    rest: &[&str],
+) -> Result<BTreeMap<char, ParamValue>> {
     let mut flags = BTreeMap::new();
-    for &token in rest {
-        let Some(after_dash) = token.strip_prefix('-') else {
-            return Err(ParamsError::UnknownParameter(token.to_string()));
-        };
-        let letter = after_dash
-            .chars()
-            .next()
+    let mut i = 0;
+
+    // Phase 1: options (`spec.flags`), a contiguous prefix. legacy:
+    // `get_options`/`get_option_no`. A non-dash token errors
+    // immediately (unconditionally, whether or not the mode has any
+    // variants); a dash token whose letter isn't a known option stops
+    // this phase without erroring, leaving it for phase 2 (if any) or
+    // the trailing check below.
+    if !spec.flags.is_empty() {
+        while i < rest.len() {
+            let token = rest[i];
+            let Some(after_dash) = token.strip_prefix('-') else {
+                return Err(ParamsError::UnknownParameter(token.to_string()));
+            };
+            let letter = after_dash
+                .chars()
+                .next()
+                .ok_or_else(|| ParamsError::UnknownParameter(token.to_string()))?;
+            let Some(flag_spec) = spec.flags.iter().find(|f| f.letter == letter) else {
+                break;
+            };
+            let value_str = &after_dash[letter.len_utf8()..];
+            if value_str.is_empty() {
+                return Err(ParamsError::OptionValueMissing(letter));
+            }
+            // legacy: `get_options` checks this (`options_got[option_no]`)
+            // right after resolving the flag letter and its missing-value
+            // check, but before reading or range-checking its value -- see
+            // the module doc's `pvoc anal -c512 -c99999` example.
+            if flags.contains_key(&letter) {
+                return Err(ParamsError::DuplicateOption(letter));
+            }
+            let value = parse_param(
+                value_str,
+                flag_spec.value_type,
+                flag_spec.range_check_paramno,
+            )?;
+            flags.insert(letter, value);
+            i += 1;
+        }
+    }
+
+    // Phase 2: variants (`spec.variants`), consuming everything left.
+    // legacy: `get_variants_and_flags`/`get_variant_no`.
+    if !spec.variants.is_empty() {
+        while i < rest.len() {
+            let token = rest[i];
+            let Some(after_dash) = token.strip_prefix('-') else {
+                return Err(ParamsError::UnknownParameter(token.to_string()));
+            };
+            let letter = after_dash
+                .chars()
+                .next()
+                .ok_or_else(|| ParamsError::UnknownParameter(token.to_string()))?;
+            if let Some(variant_spec) = spec.variants.iter().find(|f| f.letter == letter) {
+                let value_str = &after_dash[letter.len_utf8()..];
+                if value_str.is_empty() {
+                    return Err(ParamsError::VariantValueMissing(letter));
+                }
+                // legacy: checked in the caller, after `get_variant_no`
+                // (which owns the missing-value check above) returns --
+                // same order as the option phase's own duplicate check.
+                if flags.contains_key(&letter) {
+                    return Err(ParamsError::DuplicateFlag(letter));
+                }
+                let value = parse_param(
+                    value_str,
+                    variant_spec.value_type,
+                    variant_spec.range_check_paramno,
+                )?;
+                flags.insert(letter, value);
+            } else if spec.flags.iter().any(|f| f.letter == letter) {
+                return Err(ParamsError::OptionOutOfOrder(letter));
+            } else {
+                return Err(ParamsError::UnknownVariantFlag(letter));
+            }
+            i += 1;
+        }
+        return Ok(flags);
+    }
+
+    // legacy: `read_parameters_and_flags`'s final check, reached only
+    // when the mode has options but no variants and phase 1 stopped
+    // early on an unrecognised dash-prefixed token (any non-dash token
+    // is already caught inside phase 1 itself).
+    if let Some(&token) = rest.get(i) {
+        let letter = token
+            .strip_prefix('-')
+            .and_then(|s| s.chars().next())
             .ok_or_else(|| ParamsError::UnknownParameter(token.to_string()))?;
-        let flag_spec = spec
-            .flags
-            .iter()
-            .find(|f| f.letter == letter)
-            .ok_or(ParamsError::UnknownFlag(letter))?;
-        let value_str = &after_dash[letter.len_utf8()..];
-        if value_str.is_empty() {
-            return Err(ParamsError::OptionValueMissing(letter));
-        }
-        // legacy: `get_options` checks this (`options_got[option_no]`)
-        // right after resolving the flag letter and its missing-value
-        // check, but before reading or range-checking its value -- see
-        // the module doc's `pvoc anal -c512 -c99999` example.
-        if flags.contains_key(&letter) {
-            return Err(ParamsError::DuplicateOption(letter));
-        }
-        let value = parse_param(
-            value_str,
-            flag_spec.value_type,
-            flag_spec.range_check_paramno,
-        )?;
-        flags.insert(letter, value);
+        return Err(ParamsError::UnknownFlag(letter));
     }
     Ok(flags)
 }
@@ -233,6 +340,15 @@ fn parse_param(token: &str, param_type: ParamType, paramno: usize) -> Result<Par
             // see `ParamType::Int`'s doc.
             Ok(ParamValue::Integer(value as i64))
         }
+        ParamType::IntOrBreakpoint { lo, hi } => match token.parse::<f64>() {
+            Ok(value) => {
+                check_range(value, lo, hi, paramno)?;
+                Ok(ParamValue::Integer(value as i64))
+            }
+            Err(_) => Ok(ParamValue::Breakpoint(BreakpointTable::from_file(
+                token, lo, hi,
+            )?)),
+        },
         ParamType::File => unreachable!(
             "ParamType::File describes a leading input file, consumed before any numeric \
              parameter or flag"
@@ -690,6 +806,274 @@ mod tests {
         assert!(matches!(
             parse(&spec, &args),
             Err(ParamsError::OptionValueMissing('c'))
+        ));
+    }
+
+    #[test]
+    fn distort_repeat_with_just_multiplier_parses() {
+        let infile = existing_file();
+        let spec = CommandSpec::distort_repeat();
+        let args = [infile.path().to_str().unwrap(), "out.wav", "3"];
+        let parsed = parse(&spec, &args).unwrap();
+        assert!(matches!(parsed.params[0], ParamValue::Integer(3)));
+        assert!(parsed.flags.is_empty());
+    }
+
+    #[test]
+    fn distort_repeat_with_option_and_variant_in_order_parses() {
+        let infile = existing_file();
+        let spec = CommandSpec::distort_repeat();
+        let args = [
+            infile.path().to_str().unwrap(),
+            "out.wav",
+            "3",
+            "-c2",
+            "-s1",
+        ];
+        let parsed = parse(&spec, &args).unwrap();
+        assert!(matches!(parsed.params[0], ParamValue::Integer(3)));
+        assert!(matches!(parsed.flags[&'c'], ParamValue::Integer(2)));
+        assert!(matches!(parsed.flags[&'s'], ParamValue::Integer(1)));
+    }
+
+    #[test]
+    fn distort_repeat_variant_before_option_is_option_out_of_order() {
+        // legacy: confirmed live -- `-s1 -c2` fails naming `-c` (the
+        // option), not `-s` (the variant already read), since option
+        // scanning stops for good once a non-option token is seen.
+        let infile = existing_file();
+        let spec = CommandSpec::distort_repeat();
+        let args = [
+            infile.path().to_str().unwrap(),
+            "out.wav",
+            "3",
+            "-s1",
+            "-c2",
+        ];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::OptionOutOfOrder('c'))
+        ));
+    }
+
+    #[test]
+    fn distort_repeat_missing_just_multiplier_is_insufficient_parameters() {
+        let infile = existing_file();
+        let spec = CommandSpec::distort_repeat();
+        let args = [infile.path().to_str().unwrap(), "out.wav"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::InsufficientParameters)
+        ));
+    }
+
+    #[test]
+    fn distort_repeat_just_infile_is_insufficient_parameters_not_insufficient_cmdline() {
+        // legacy: confirmed live -- `distort repeat infile` alone fails
+        // with "Insufficient parameters on command line.", not
+        // "Insufficient cmdline parameters.", since `distort repeat` is
+        // UNEQUAL_SNDFILE-classified, unlike `modify loudness`/`pvoc
+        // anal` -- see `CommandSpec::unequal_sndfile`'s doc.
+        let infile = existing_file();
+        let spec = CommandSpec::distort_repeat();
+        let args = [infile.path().to_str().unwrap()];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::InsufficientParameters)
+        ));
+    }
+
+    #[test]
+    fn distort_repeat_multiplier_unparseable_is_retried_as_a_breakpoint_file() {
+        let infile = existing_file();
+        let mut brk = tempfile::NamedTempFile::new().unwrap();
+        writeln!(brk, "0.0 3\n1.0 4").unwrap();
+        let spec = CommandSpec::distort_repeat();
+        let args = [
+            infile.path().to_str().unwrap(),
+            "out.wav",
+            brk.path().to_str().unwrap(),
+        ];
+        let parsed = parse(&spec, &args).unwrap();
+        assert!(matches!(parsed.params[0], ParamValue::Breakpoint(_)));
+    }
+
+    #[test]
+    fn distort_repeat_multiplier_unparseable_nonexistent_file_is_breakpoint_open_error() {
+        let infile = existing_file();
+        let spec = CommandSpec::distort_repeat();
+        let args = [infile.path().to_str().unwrap(), "out.wav", "abc"];
+        let err = parse(&spec, &args).unwrap_err();
+        assert_eq!(err.to_string(), "Can't open brkpntfile abc to read data.");
+    }
+
+    #[test]
+    fn distort_repeat_multiplier_out_of_range_is_paramno_1() {
+        let infile = existing_file();
+        let spec = CommandSpec::distort_repeat();
+        let args = [infile.path().to_str().unwrap(), "out.wav", "1"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::ValueOutOfRange {
+                paramno: 1,
+                lo: 2.0,
+                hi: 32767.0,
+                ..
+            })
+        ));
+    }
+
+    #[test]
+    fn distort_repeat_option_out_of_range_is_paramno_2() {
+        let infile = existing_file();
+        let spec = CommandSpec::distort_repeat();
+        let args = [infile.path().to_str().unwrap(), "out.wav", "3", "-c99999"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::ValueOutOfRange {
+                paramno: 2,
+                lo: 1.0,
+                hi: 32767.0,
+                ..
+            })
+        ));
+    }
+
+    #[test]
+    fn distort_repeat_variant_out_of_range_is_paramno_3() {
+        let infile = existing_file();
+        let spec = CommandSpec::distort_repeat();
+        let args = [
+            infile.path().to_str().unwrap(),
+            "out.wav",
+            "3",
+            "-c2",
+            "-s99999",
+        ];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::ValueOutOfRange {
+                paramno: 3,
+                lo: 0.0,
+                hi: 32767.0,
+                ..
+            })
+        ));
+    }
+
+    #[test]
+    fn distort_repeat_variant_unparseable_is_cannot_read_parameter_3() {
+        // legacy: confirmed live -- `-s`, a plain `Int` (no breakpoint
+        // fallback), unlike `multiplier`/`-c` which are `IntOrBreakpoint`.
+        let infile = existing_file();
+        let spec = CommandSpec::distort_repeat();
+        let args = [
+            infile.path().to_str().unwrap(),
+            "out.wav",
+            "3",
+            "-c2",
+            "-sabc",
+        ];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::CannotReadParameter {
+                legacy_index: 3,
+                ..
+            })
+        ));
+    }
+
+    #[test]
+    fn distort_repeat_leftover_non_flag_token_is_unknown_parameter() {
+        let infile = existing_file();
+        let spec = CommandSpec::distort_repeat();
+        let args = [
+            infile.path().to_str().unwrap(),
+            "out.wav",
+            "3",
+            "-c2",
+            "-s1",
+            "extra",
+        ];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::UnknownParameter(ref s)) if s == "extra"
+        ));
+    }
+
+    #[test]
+    fn distort_repeat_duplicate_option_is_duplicate_option() {
+        let infile = existing_file();
+        let spec = CommandSpec::distort_repeat();
+        let args = [
+            infile.path().to_str().unwrap(),
+            "out.wav",
+            "3",
+            "-c2",
+            "-c4",
+        ];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::DuplicateOption('c'))
+        ));
+    }
+
+    #[test]
+    fn distort_repeat_duplicate_variant_is_duplicate_flag() {
+        let infile = existing_file();
+        let spec = CommandSpec::distort_repeat();
+        let args = [
+            infile.path().to_str().unwrap(),
+            "out.wav",
+            "3",
+            "-s1",
+            "-s2",
+        ];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::DuplicateFlag('s'))
+        ));
+    }
+
+    #[test]
+    fn distort_repeat_duplicate_variant_missing_value_reports_missing_value_first() {
+        // legacy: confirmed live -- `-s1 -s` (bare second occurrence)
+        // reports the missing-value error, not DuplicateFlag, mirroring
+        // the option phase's own check ordering.
+        let infile = existing_file();
+        let spec = CommandSpec::distort_repeat();
+        let args = [infile.path().to_str().unwrap(), "out.wav", "3", "-s1", "-s"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::VariantValueMissing('s'))
+        ));
+    }
+
+    #[test]
+    fn distort_repeat_bare_variant_with_no_value_is_variant_value_missing() {
+        let infile = existing_file();
+        let spec = CommandSpec::distort_repeat();
+        let args = [infile.path().to_str().unwrap(), "out.wav", "3", "-c2", "-s"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::VariantValueMissing('s'))
+        ));
+    }
+
+    #[test]
+    fn distort_repeat_unrecognised_variant_flag_is_unknown_variant_flag() {
+        let infile = existing_file();
+        let spec = CommandSpec::distort_repeat();
+        let args = [
+            infile.path().to_str().unwrap(),
+            "out.wav",
+            "3",
+            "-c2",
+            "-z5",
+        ];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::UnknownVariantFlag('z'))
         ));
     }
 }
