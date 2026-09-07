@@ -24,15 +24,14 @@
 //! (`wrwavhdr98`, header writing), `snd.c` (`fputshortEx`, the
 //! float-to-sample conversion).
 //!
-//! Scope of this first version: writes plain `fmt `+`data`(+`PEAK`)
-//! WAVE files in 16-bit PCM or 32-bit float. It does not yet write
-//! the `cue `/`LIST`/`adtl`/`note`/`sfif` property block (see
-//! [`crate::props::PropertyBlock`], which can already *read* one) or
-//! WAVE_FORMAT_EXTENSIBLE / multichannel formats beyond plain PCM.
-//! Tracked in docs/migration/STATUS.md.
+//! Scope of this version: writes `fmt `+`data`(+`PEAK`)(+`cue
+//! `+`LIST`/`adtl`/`note`/`sfif`) WAVE files in 16-bit PCM or 32-bit
+//! float. It does not yet write AIFF/AIFC or WAVE_FORMAT_EXTENSIBLE /
+//! multichannel formats beyond plain PCM. Tracked in
+//! docs/migration/STATUS.md.
 
-use crate::error::Result;
-use crate::props::{ChannelPeak, SampleType};
+use crate::error::{Result, SfError};
+use crate::props::{ChannelPeak, PROPCNKSIZE, PropertyBlock, SampleType};
 use crate::reader::MAXSHORT;
 use crate::riff;
 use std::path::Path;
@@ -42,7 +41,7 @@ const WAVE_FORMAT_IEEE_FLOAT: u16 = 0x0003;
 
 /// What to create a [`SoundFileWriter`] with. legacy: the subset of
 /// `SFPROPS` a writer needs before the first sample is written.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct WriteSpec {
     pub channels: u16,
     pub sample_rate: u32,
@@ -53,6 +52,20 @@ pub struct WriteSpec {
     /// when true, rather than the legacy zero-then-defer-to-later
     /// behaviour used only for streaming writes that reopen the file.
     pub write_peaks: bool,
+    /// The named properties to write as a `cue `(optional)+`LIST`/
+    /// `adtl`/`note`/`sfif` chunk group, or an empty
+    /// [`PropertyBlock`] to skip writing any of it (legacy:
+    /// `min_header < SFILE_CDP`).
+    pub properties: PropertyBlock,
+    /// Whether to also write the `cue ` chunk that normally precedes
+    /// the property `LIST` (legacy: `f->min_header==SFILE_CDP`,
+    /// confirmed by `docs/manual/sounds/marimba.wav` having one).
+    /// Meaningless when `properties` is empty. Real CDP-derived
+    /// analysis files (`docs/manual/data/capm.ana`) have properties
+    /// but no `cue ` chunk (legacy comment: "don't need cue for
+    /// analysis files"), which is why this is the caller's choice
+    /// rather than inferred from `sample_type`.
+    pub write_cue_chunk: bool,
 }
 
 /// Accumulates `f32` sample frames in memory and writes a complete
@@ -126,7 +139,7 @@ impl SoundFileWriter {
             SampleType::Short16 => (16u16, WAVE_FORMAT_PCM, encode_pcm16(&self.samples)),
             SampleType::Float32 => (32u16, WAVE_FORMAT_IEEE_FLOAT, encode_float32(&self.samples)),
             other => {
-                return Err(crate::error::SfError::UnsupportedSampleDataDecoding(other));
+                return Err(SfError::UnsupportedSampleDataDecoding(other));
             }
         };
         let block_align = channels * (bits_per_sample / 8);
@@ -147,6 +160,13 @@ impl SoundFileWriter {
             let peak_data =
                 crate::props::encode_peak_chunk(now_unix_timestamp(), &self.peak_running);
             riff::write_chunk(&mut body, riff::PEAK, &peak_data)?;
+        }
+        if !self.spec.properties.is_empty() {
+            if self.spec.write_cue_chunk {
+                riff::write_chunk(&mut body, riff::CUE_, &encode_cue_chunk())?;
+            }
+            let list_data = encode_property_list_chunk(&self.spec.properties)?;
+            riff::write_chunk(&mut body, riff::LIST, &list_data)?;
         }
         riff::write_chunk(&mut body, riff::DATA, &data_bytes)?;
 
@@ -187,6 +207,44 @@ fn encode_float32(samples: &[f32]) -> Vec<u8> {
     out
 }
 
+/// legacy: the single fixed cue point `wrwavhdr98` writes ahead of
+/// the property `LIST` -- `struct cuepoint {name, position,
+/// incchunkid, chunkoffset, blockstart, sampleoffset}`, always
+/// pointing at the `sfif` property (by name) inside the `data` chunk
+/// (by `incchunkid`), at offset zero. Confirmed byte-for-byte against
+/// `docs/manual/sounds/marimba.wav`'s `cue ` chunk.
+fn encode_cue_chunk() -> Vec<u8> {
+    let mut out = Vec::with_capacity(28);
+    out.extend_from_slice(&1u32.to_le_bytes()); // legacy: one cue point
+    out.extend_from_slice(&riff::SFIF.0); // cue.name
+    out.extend_from_slice(&0u32.to_le_bytes()); // cue.position
+    out.extend_from_slice(&riff::DATA.0); // cue.incchunkid
+    out.extend_from_slice(&0u32.to_le_bytes()); // cue.chunkoffset
+    out.extend_from_slice(&0u32.to_le_bytes()); // cue.blockstart
+    out.extend_from_slice(&0u32.to_le_bytes()); // cue.sampleoffset
+    out
+}
+
+/// legacy: `wrwavhdr98`'s `LIST`("adtl")/`note`("sfif") chunk group,
+/// containing [`PropertyBlock::encode_padded`]'s `PROPCNKSIZE`-byte
+/// text. Returns the `LIST` chunk's payload (i.e. what
+/// `riff::write_chunk` should wrap with the `LIST` tag), not the
+/// `LIST` chunk itself.
+fn encode_property_list_chunk(properties: &PropertyBlock) -> Result<Vec<u8>> {
+    let padded = properties.encode_padded(PROPCNKSIZE)?;
+
+    let mut note_chunk = Vec::with_capacity(8 + 4 + padded.len());
+    note_chunk.extend_from_slice(&riff::NOTE.0);
+    note_chunk.extend_from_slice(&((4 + padded.len()) as u32).to_le_bytes());
+    note_chunk.extend_from_slice(&riff::SFIF.0);
+    note_chunk.extend_from_slice(&padded);
+
+    let mut list_data = Vec::with_capacity(4 + note_chunk.len());
+    list_data.extend_from_slice(&riff::ADTL.0);
+    list_data.extend_from_slice(&note_chunk);
+    Ok(list_data)
+}
+
 fn now_unix_timestamp() -> u32 {
     std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -218,6 +276,8 @@ mod tests {
             sample_rate: 44100,
             sample_type: SampleType::Short16,
             write_peaks: true,
+            properties: PropertyBlock::new(),
+            write_cue_chunk: false,
         };
         let mut w = SoundFileWriter::new(spec);
         let sine = make_sine(1, 44100, 440.0, 44100);
@@ -244,6 +304,8 @@ mod tests {
             sample_rate: 48000,
             sample_type: SampleType::Float32,
             write_peaks: false,
+            properties: PropertyBlock::new(),
+            write_cue_chunk: false,
         };
         let mut w = SoundFileWriter::new(spec);
         let sine = make_sine(2, 1000, 220.0, 48000);
@@ -270,6 +332,8 @@ mod tests {
             sample_rate: 44100,
             sample_type: SampleType::Float32,
             write_peaks: true,
+            properties: PropertyBlock::new(),
+            write_cue_chunk: false,
         };
         let mut w = SoundFileWriter::new(spec);
         w.write_frames(&[0.1, 0.9, 0.2, 0.9, 0.3]);
@@ -284,6 +348,8 @@ mod tests {
             sample_rate: 44100,
             sample_type: SampleType::Float32,
             write_peaks: true,
+            properties: PropertyBlock::new(),
+            write_cue_chunk: false,
         };
         let mut w = SoundFileWriter::new(spec);
         w.write_frames(&[0.1, 0.2, 0.3, 0.4]); // frames 0,1
@@ -302,5 +368,128 @@ mod tests {
         let encoded = encode_pcm16(&[2.0]);
         let v = i16::from_le_bytes([encoded[0], encoded[1]]);
         assert_eq!(v, 65534i32 as i16);
+    }
+
+    fn find_chunk_offsets(bytes: &[u8]) -> Vec<(String, usize)> {
+        // Walks top-level RIFF chunks (skipping "RIFF"+size+"WAVE"),
+        // returning each chunk's tag and the file offset its tag
+        // starts at, in order -- used to check chunk sequencing
+        // without depending on `crate::riff`'s own chunk reader.
+        let mut out = Vec::new();
+        let mut pos = 12usize;
+        while pos + 8 <= bytes.len() {
+            let tag = String::from_utf8_lossy(&bytes[pos..pos + 4]).into_owned();
+            let size = u32::from_le_bytes(bytes[pos + 4..pos + 8].try_into().unwrap()) as usize;
+            out.push((tag, pos));
+            pos += 8 + size + (size % 2);
+        }
+        out
+    }
+
+    /// legacy: `wrwavhdr98` writes `cue ` immediately before the
+    /// property `LIST`, matching the exact chunk sequence in the real
+    /// `docs/manual/sounds/marimba.wav` (`fmt `, `cue `, `LIST`,
+    /// `data`, no `PEAK` in that particular file, but this crate
+    /// always places `PEAK` -- when present -- before the property
+    /// group, per legacy's write order).
+    #[test]
+    fn writing_properties_with_cue_chunk_matches_marimba_wav_chunk_order() {
+        let mut properties = PropertyBlock::new();
+        properties.set_i32("DATE", 963_996_604);
+        let spec = WriteSpec {
+            channels: 1,
+            sample_rate: 44100,
+            sample_type: SampleType::Short16,
+            write_peaks: true,
+            properties,
+            write_cue_chunk: true,
+        };
+        let mut w = SoundFileWriter::new(spec);
+        w.write_frames(&[0.1, 0.2, 0.3]);
+        let bytes = w.encode().unwrap();
+
+        let tags: Vec<String> = find_chunk_offsets(&bytes)
+            .into_iter()
+            .map(|(t, _)| t)
+            .collect();
+        assert_eq!(tags, vec!["fmt ", "PEAK", "cue ", "LIST", "data"]);
+
+        let sf = SoundFile::from_reader(std::io::Cursor::new(bytes)).unwrap();
+        assert_eq!(sf.properties.get_i32("DATE").unwrap(), 963_996_604);
+    }
+
+    /// legacy: real CDP-derived analysis files (`docs/manual/data/
+    /// capm.ana`) go straight from `fmt ` to `LIST`, with no `cue `
+    /// chunk at all ("don't need cue for analysis files").
+    #[test]
+    fn writing_properties_without_cue_chunk_matches_capm_ana_chunk_order() {
+        let mut properties = PropertyBlock::new();
+        properties.set_i32("original sampsize", 0);
+        properties.set_i32("original sample rate", 44100);
+        properties.set_f32("arate", 344.53125);
+        properties.set_i32("analwinlen", 1024);
+        properties.set_i32("decfactor", 128);
+        let spec = WriteSpec {
+            channels: 2,
+            sample_rate: 344,
+            sample_type: SampleType::Float32,
+            write_peaks: false,
+            properties,
+            write_cue_chunk: false,
+        };
+        let mut w = SoundFileWriter::new(spec);
+        w.write_frames(&[0.0, 0.0]);
+        let bytes = w.encode().unwrap();
+
+        let tags: Vec<String> = find_chunk_offsets(&bytes)
+            .into_iter()
+            .map(|(t, _)| t)
+            .collect();
+        assert_eq!(tags, vec!["fmt ", "LIST", "data"]);
+
+        let sf = SoundFile::from_reader(std::io::Cursor::new(bytes)).unwrap();
+        assert!(matches!(sf.file_kind, crate::props::FileKind::Analysis(_)));
+    }
+
+    /// legacy: `writeprops`'s padding loop, `while(op <
+    /// &obuf[f->proplim]) *op++ = '\n';` -- confirmed against the real
+    /// padding bytes in `docs/manual/sounds/marimba.wav`'s `note`
+    /// chunk (`0x0A` repeating, not zero; see
+    /// `PropertyBlock::encode_padded`'s doc).
+    #[test]
+    fn property_block_is_padded_to_propcnksize_with_newlines() {
+        let mut properties = PropertyBlock::new();
+        properties.set_i32("DATE", 1);
+        let list_data = encode_property_list_chunk(&properties).unwrap();
+        // list_data = "adtl" (4) + "note" (4) + size (4) + "sfif" (4) + padded properties
+        let padded = &list_data[16..];
+        assert_eq!(padded.len(), PROPCNKSIZE);
+        assert_eq!(padded[padded.len() - 1], b'\n');
+        assert!(padded[padded.len() - 100..].iter().all(|&b| b == b'\n'));
+    }
+
+    #[test]
+    fn oversized_property_block_is_an_error_not_a_panic() {
+        let mut properties = PropertyBlock::new();
+        for n in 0..200 {
+            properties.set_i32(&format!("property_number_{n}"), n);
+        }
+        assert!(
+            properties.encode().len() > PROPCNKSIZE,
+            "test fixture must actually exceed PROPCNKSIZE"
+        );
+        let spec = WriteSpec {
+            channels: 1,
+            sample_rate: 44100,
+            sample_type: SampleType::Short16,
+            write_peaks: false,
+            properties,
+            write_cue_chunk: false,
+        };
+        let w = SoundFileWriter::new(spec);
+        assert!(matches!(
+            w.encode(),
+            Err(SfError::PropertyBlockTooLarge { .. })
+        ));
     }
 }

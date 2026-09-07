@@ -141,6 +141,13 @@ pub enum SfError {
     /// envelope file"`.
     #[error("Error reading window size in envelope file")]
     MissingEnvelopeWindowSize,
+
+    /// legacy: `writeprops`'s `if(op-obuf >= f->proplim) abort();` --
+    /// reported here rather than crashing.
+    #[error(
+        "property block too large: encoded size {encoded_len} exceeds the {limit}-byte reservation"
+    )]
+    PropertyBlockTooLarge { encoded_len: usize, limit: usize },
 }
 
 pub type Result<T> = std::result::Result<T, SfError>;
