@@ -94,6 +94,20 @@ pub enum ParamsError {
     #[error("Unknown flag -{0} on command line.")]
     UnknownFlag(char),
 
+    /// legacy: `"Duplicate option %c used on command line\n"`
+    /// (`get_options` in `legacy/dev/cdp2k/readdata.c`) -- the same
+    /// flag letter given twice. This check runs generically for every
+    /// command with optional flags, not just the one that surfaced it:
+    /// confirmed live for both `pvoc anal 1 infile outfile -c512
+    /// -c99999` (reporting the duplicate rather than the second
+    /// value's own out-of-range error) and, retroactively, `modify
+    /// loudness 3 infile outfile -l0.5 -l0.6`. Checked after a bare
+    /// flag's own missing-value check (`-c512 -c` reports
+    /// [`Self::OptionValueMissing`], not this), but before the second
+    /// occurrence's value is parsed or range-checked at all.
+    #[error("Duplicate option {0} used on command line")]
+    DuplicateOption(char),
+
     /// legacy: `"option parameter missing with flag -%c\n"`,
     /// confirmed live both for a bare trailing `-l` and for `-l 0.5`
     /// (a space-separated value is not supported at all: the whole

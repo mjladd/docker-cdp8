@@ -57,6 +57,23 @@
 //! line."`; and a plain leftover word with no `-` prefix (`modify
 //! loudness 3 infile outfile 0.5`) fails with `"Unknown parameter
 //! '0.5'"` -- confirmed, independently, for both mode 3 and mode 4.
+//!
+//! And against a further 9 live runs of `pvoc anal` (all three modes
+//! share one spec, `crate::spec::CommandSpec::pvoc_anal`): with no
+//! flags, and with both `-c<points>` and `-o<overlap>` given in either
+//! order, all parse and run to completion; `-c1` and `-c99999` fail
+//! with `"Parameter[1] Value (...) out of range (2.000000 to
+//! 32768.000000)"`, `-o5` fails with the same shape at `"Parameter[2]
+//! ... (1.000000 to 4.000000)"` (confirming errors are reported in
+//! command-line order, not by paramno, since `-o5 -c1` reports
+//! `Parameter[2]` first while `-c1 -o5` reports `Parameter[1]` first);
+//! `-cabc`/`-oabc` fail with `"Cannot read parameter 1/2 [abc]:
+//! brkpnt_files not permitted."`; and repeating a flag (`-c512 -c99999`,
+//! and, retroactively, `modify loudness 3 infile outfile -l0.5 -l0.6`)
+//! fails with `"Duplicate option c/l used on command line"` -- a
+//! generic check this parser previously omitted, reporting the
+//! duplicate even when the first occurrence's value was valid and the
+//! second's was not.
 
 use crate::error::{ParamsError, Result};
 use crate::spec::{CommandSpec, ParamType};
@@ -71,6 +88,10 @@ use std::collections::BTreeMap;
 #[derive(Debug, Clone)]
 pub enum ParamValue {
     Number(f64),
+    /// legacy: an [`crate::ParamType::Int`] value, `(int)` cast (C
+    /// truncation toward zero) from the same range-checked `f64` a
+    /// [`Self::Number`] carries -- see that type's doc.
+    Integer(i64),
     Breakpoint(BreakpointTable),
 }
 
@@ -160,6 +181,13 @@ fn parse_flags(spec: &CommandSpec, rest: &[&str]) -> Result<BTreeMap<char, Param
         if value_str.is_empty() {
             return Err(ParamsError::OptionValueMissing(letter));
         }
+        // legacy: `get_options` checks this (`options_got[option_no]`)
+        // right after resolving the flag letter and its missing-value
+        // check, but before reading or range-checking its value -- see
+        // the module doc's `pvoc anal -c512 -c99999` example.
+        if flags.contains_key(&letter) {
+            return Err(ParamsError::DuplicateOption(letter));
+        }
         let value = parse_param(
             value_str,
             flag_spec.value_type,
@@ -173,7 +201,10 @@ fn parse_flags(spec: &CommandSpec, rest: &[&str]) -> Result<BTreeMap<char, Param
 fn parse_param(token: &str, param_type: ParamType, paramno: usize) -> Result<ParamValue> {
     match param_type {
         ParamType::DoubleOrBreakpoint { lo, hi } => match token.parse::<f64>() {
-            Ok(value) => Ok(check_range(value, lo, hi, paramno)?),
+            Ok(value) => {
+                check_range(value, lo, hi, paramno)?;
+                Ok(ParamValue::Number(value))
+            }
             // legacy: a token that does not parse with `%lf` is
             // retried as a breakpoint filename, not rejected as a bad
             // number -- see the module doc's `abc` example.
@@ -186,13 +217,21 @@ fn parse_param(token: &str, param_type: ParamType, paramno: usize) -> Result<Par
             hi,
             legacy_index,
         } => {
-            let value: f64 = token
-                .parse()
-                .map_err(|_| ParamsError::CannotReadParameter {
-                    legacy_index,
-                    token: token.to_string(),
-                })?;
-            check_range(value, lo, hi, paramno)
+            let value = parse_as_f64_or_cannot_read(token, legacy_index)?;
+            check_range(value, lo, hi, paramno)?;
+            Ok(ParamValue::Number(value))
+        }
+        ParamType::Int {
+            lo,
+            hi,
+            legacy_index,
+        } => {
+            let value = parse_as_f64_or_cannot_read(token, legacy_index)?;
+            check_range(value, lo, hi, paramno)?;
+            // legacy: `(int)` cast of the range-checked double --
+            // truncates toward zero, matching Rust's `as i64` here --
+            // see `ParamType::Int`'s doc.
+            Ok(ParamValue::Integer(value as i64))
         }
         ParamType::File => unreachable!(
             "ParamType::File describes a leading input file, consumed before any numeric \
@@ -201,7 +240,18 @@ fn parse_param(token: &str, param_type: ParamType, paramno: usize) -> Result<Par
     }
 }
 
-fn check_range(value: f64, lo: f64, hi: f64, paramno: usize) -> Result<ParamValue> {
+/// legacy: the `%lf`-style read shared by [`ParamType::Double`] and
+/// [`ParamType::Int`] (see that type's doc on why they parse
+/// identically), producing `"Cannot read parameter {legacy_index}
+/// [{token}]: brkpnt_files not permitted."` on failure.
+fn parse_as_f64_or_cannot_read(token: &str, legacy_index: usize) -> Result<f64> {
+    token.parse().map_err(|_| ParamsError::CannotReadParameter {
+        legacy_index,
+        token: token.to_string(),
+    })
+}
+
+fn check_range(value: f64, lo: f64, hi: f64, paramno: usize) -> Result<()> {
     if value < lo || value > hi {
         return Err(ParamsError::ValueOutOfRange {
             paramno,
@@ -210,7 +260,7 @@ fn check_range(value: f64, lo: f64, hi: f64, paramno: usize) -> Result<ParamValu
             hi,
         });
     }
-    Ok(ParamValue::Number(value))
+    Ok(())
 }
 
 fn check_file_openable(path: &str) -> Result<()> {
@@ -440,6 +490,206 @@ mod tests {
         assert!(matches!(
             parse(&spec, &args),
             Err(ParamsError::ValueOutOfRange { paramno: 1, .. })
+        ));
+    }
+
+    #[test]
+    fn normalise_duplicate_flag_is_duplicate_option_even_when_second_value_is_out_of_range() {
+        // legacy: confirmed live for `modify loudness 3 infile outfile
+        // -l0.5 -l0.6` (both in range) and, separately, for the
+        // pvoc-anal case this test's name describes -- see the module
+        // doc.
+        let infile = existing_file();
+        let spec = CommandSpec::modify_loudness_normalise();
+        let args = [infile.path().to_str().unwrap(), "out.wav", "-l0.5", "-l1.5"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::DuplicateOption('l'))
+        ));
+    }
+
+    #[test]
+    fn pvoc_anal_with_no_flags_parses() {
+        let infile = existing_file();
+        let spec = CommandSpec::pvoc_anal();
+        let args = [infile.path().to_str().unwrap(), "out.ana"];
+        let parsed = parse(&spec, &args).unwrap();
+        assert!(parsed.flags.is_empty());
+    }
+
+    #[test]
+    fn pvoc_anal_with_both_flags_in_either_order_parses_as_integers() {
+        let infile = existing_file();
+        let spec = CommandSpec::pvoc_anal();
+
+        let args = [infile.path().to_str().unwrap(), "out.ana", "-c512", "-o2"];
+        let parsed = parse(&spec, &args).unwrap();
+        assert!(matches!(parsed.flags[&'c'], ParamValue::Integer(512)));
+        assert!(matches!(parsed.flags[&'o'], ParamValue::Integer(2)));
+
+        let args = [infile.path().to_str().unwrap(), "out.ana", "-o2", "-c512"];
+        let parsed = parse(&spec, &args).unwrap();
+        assert!(matches!(parsed.flags[&'c'], ParamValue::Integer(512)));
+        assert!(matches!(parsed.flags[&'o'], ParamValue::Integer(2)));
+    }
+
+    #[test]
+    fn pvoc_anal_fractional_points_truncates_toward_zero() {
+        // legacy: confirmed live -- `pvoc anal 1 infile outfile
+        // -c512.9` produced an analysis file reflecting channel count
+        // 512, not 513 -- see `ParamType::Int`'s doc.
+        let infile = existing_file();
+        let spec = CommandSpec::pvoc_anal();
+        let args = [infile.path().to_str().unwrap(), "out.ana", "-c512.9"];
+        let parsed = parse(&spec, &args).unwrap();
+        assert!(matches!(parsed.flags[&'c'], ParamValue::Integer(512)));
+    }
+
+    #[test]
+    fn pvoc_anal_points_out_of_range_reports_paramno_1() {
+        let infile = existing_file();
+        let spec = CommandSpec::pvoc_anal();
+        let args = [infile.path().to_str().unwrap(), "out.ana", "-c99999"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::ValueOutOfRange {
+                paramno: 1,
+                lo: 2.0,
+                hi: 32768.0,
+                ..
+            })
+        ));
+    }
+
+    #[test]
+    fn pvoc_anal_overlap_out_of_range_reports_paramno_2() {
+        let infile = existing_file();
+        let spec = CommandSpec::pvoc_anal();
+        let args = [infile.path().to_str().unwrap(), "out.ana", "-o5"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::ValueOutOfRange {
+                paramno: 2,
+                lo: 1.0,
+                hi: 4.0,
+                ..
+            })
+        ));
+    }
+
+    #[test]
+    fn pvoc_anal_errors_report_in_command_line_order_not_by_paramno() {
+        // legacy: confirmed live -- `-c1 -o5` reports Parameter[1]
+        // first, `-o5 -c1` reports Parameter[2] first, since both
+        // flags are scanned left to right and the first bad one wins.
+        let infile = existing_file();
+        let spec = CommandSpec::pvoc_anal();
+
+        let args = [infile.path().to_str().unwrap(), "out.ana", "-c1", "-o5"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::ValueOutOfRange { paramno: 1, .. })
+        ));
+
+        let args = [infile.path().to_str().unwrap(), "out.ana", "-o5", "-c1"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::ValueOutOfRange { paramno: 2, .. })
+        ));
+    }
+
+    #[test]
+    fn pvoc_anal_unparseable_points_is_cannot_read_parameter_1() {
+        let infile = existing_file();
+        let spec = CommandSpec::pvoc_anal();
+        let args = [infile.path().to_str().unwrap(), "out.ana", "-cabc"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::CannotReadParameter {
+                legacy_index: 1,
+                ..
+            })
+        ));
+    }
+
+    #[test]
+    fn pvoc_anal_unparseable_overlap_is_cannot_read_parameter_2() {
+        let infile = existing_file();
+        let spec = CommandSpec::pvoc_anal();
+        let args = [infile.path().to_str().unwrap(), "out.ana", "-oabc"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::CannotReadParameter {
+                legacy_index: 2,
+                ..
+            })
+        ));
+    }
+
+    #[test]
+    fn pvoc_anal_bare_flag_with_no_value_is_option_value_missing() {
+        let infile = existing_file();
+        let spec = CommandSpec::pvoc_anal();
+        let args = [infile.path().to_str().unwrap(), "out.ana", "-c"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::OptionValueMissing('c'))
+        ));
+    }
+
+    #[test]
+    fn pvoc_anal_unknown_flag_is_unknown_flag() {
+        let infile = existing_file();
+        let spec = CommandSpec::pvoc_anal();
+        let args = [infile.path().to_str().unwrap(), "out.ana", "-x5"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::UnknownFlag('x'))
+        ));
+    }
+
+    #[test]
+    fn pvoc_anal_leftover_non_flag_token_is_unknown_parameter() {
+        let infile = existing_file();
+        let spec = CommandSpec::pvoc_anal();
+        let args = [infile.path().to_str().unwrap(), "out.ana", "extra"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::UnknownParameter(ref s)) if s == "extra"
+        ));
+    }
+
+    #[test]
+    fn pvoc_anal_duplicate_flag_is_duplicate_option_even_when_second_value_is_out_of_range() {
+        // legacy: confirmed live -- `pvoc anal 1 infile outfile -c512
+        // -c99999` reports the duplicate, not the second value's own
+        // out-of-range error.
+        let infile = existing_file();
+        let spec = CommandSpec::pvoc_anal();
+        let args = [
+            infile.path().to_str().unwrap(),
+            "out.ana",
+            "-c512",
+            "-c99999",
+        ];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::DuplicateOption('c'))
+        ));
+    }
+
+    #[test]
+    fn pvoc_anal_duplicate_flag_missing_value_still_reports_option_value_missing_first() {
+        // legacy: confirmed live -- `-c512 -c` (bare second occurrence)
+        // reports the missing-value error, not DuplicateOption, since
+        // legacy's own missing-value check runs inside `get_option_no`,
+        // before `get_options`'s duplicate check ever sees it.
+        let infile = existing_file();
+        let spec = CommandSpec::pvoc_anal();
+        let args = [infile.path().to_str().unwrap(), "out.ana", "-c512", "-c"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::OptionValueMissing('c'))
         ));
     }
 }
