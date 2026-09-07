@@ -1,0 +1,15 @@
+[package]
+name = "cdp-core"
+description = "Program lifecycle for the CDP System: the legacy exit-status categories and the exact stdout shape they print (legacy: dev/cdp2k/mainfuncs.c's print_messages_and_close_sndfiles, writedata.c's splice_multiline_string)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+cdp-data = { path = "../cdp-data" }
+cdp-params = { path = "../cdp-params" }
+cdp-sf = { path = "../cdp-sf" }

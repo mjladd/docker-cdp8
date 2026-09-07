@@ -1,0 +1,27 @@
+[package]
+name = "cdp-cli"
+description = "The cdp binary and the legacy-name launchers (legacy: dev/*/main.c's own argv handling, dev/cdp2k/mainfuncs.c's sound_loom_in_use)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[lib]
+name = "cdp_cli"
+path = "src/lib.rs"
+
+[[bin]]
+name = "cdp"
+path = "src/bin/cdp.rs"
+
+[[bin]]
+name = "synth"
+path = "src/bin/synth.rs"
+
+[dependencies]
+cdp-core = { path = "../cdp-core" }
+cdp-params = { path = "../cdp-params" }
+cdp-programs = { path = "../cdp-programs" }
