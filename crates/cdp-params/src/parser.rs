@@ -108,9 +108,36 @@
 //! `distort repeat`'s `UNEQUAL_SNDFILE` classification, unlike every
 //! other command ported so far -- see
 //! `crate::spec::CommandSpec::unequal_sndfile`'s doc.
+//!
+//! And against a further 13 live runs of `synth wave` (the first spec
+//! with more than one required param, and the first with a
+//! [`crate::Variant::Boolean`] -- `crate::spec::CommandSpec::synth_wave`):
+//! a run with all four required params and no flags, and one with
+//! `-a<amp>`, `-t<tabsize>` and the undocumented boolean `-f` also
+//! given, both run to completion. `-f999` (an attached value on a
+//! boolean variant) behaves identically to a bare `-f`, silently
+//! discarding the `999`; `-f` before `-a` still fails with `"option
+//! flag -a out of order on cmdline."`, the same as a value-carrying
+//! variant; and `-f -f` still fails with `"Duplicate flag f used on
+//! command line."` Zero of the four required params given fails with
+//! `"Insufficient parameters on command line."`, but 1, 2, or 3 of 4
+//! (some but not all) fails instead with `"Insufficient parameters on
+//! cmdline."` -- a distinction invisible in every mode ported before
+//! this one, since none had more than one required param (see
+//! `crate::error::ParamsError::InsufficientParametersOnCmdline`'s
+//! doc). Paramno numbering is confirmed to run 1 through 4 across
+//! `sr`/`chans`/`dur`/`freq` in order, then continue at 5/6 for
+//! `-a`/`-t` -- the first confirmation of sequential numbering across
+//! *multiple* required params, not just from one required param into
+//! the flags that follow it (`distort repeat` only had one). `freq`
+//! retried as a real breakpoint file succeeds; `-a`'s own breakpoint
+//! fallback failing on a nonexistent file produces the same `cdp_data`
+//! text every other `DoubleOrBreakpoint`/`IntOrBreakpoint` case does. A
+//! leftover non-flag token fails with `"Unknown parameter 'extra'"`,
+//! the same shape already confirmed for every other flag-bearing mode.
 
 use crate::error::{ParamsError, Result};
-use crate::spec::{CommandSpec, ParamType};
+use crate::spec::{CommandSpec, ParamType, Variant};
 use cdp_data::BreakpointTable;
 use std::collections::BTreeMap;
 
@@ -127,6 +154,9 @@ pub enum ParamValue {
     /// [`Self::Number`] carries -- see that type's doc.
     Integer(i64),
     Breakpoint(BreakpointTable),
+    /// legacy: a [`crate::Variant::Boolean`] flag was given -- no
+    /// value at all, just `dz->vflag[flagno] = TRUE`.
+    Present,
 }
 
 #[derive(Debug, Clone)]
@@ -171,7 +201,14 @@ pub fn parse(spec: &CommandSpec, args: &[&str]) -> Result<ParsedCommand> {
     let rest = &args[spec.infile_count + 1..];
 
     if rest.len() < spec.params.len() {
-        return Err(ParamsError::InsufficientParameters);
+        // legacy: zero tokens left is `read_parameters_and_flags`'s own
+        // pre-check; some but not all is `get_params`'s mid-loop check
+        // -- see `ParamsError::InsufficientParametersOnCmdline`'s doc.
+        return Err(if rest.is_empty() {
+            ParamsError::InsufficientParameters
+        } else {
+            ParamsError::InsufficientParametersOnCmdline
+        });
     }
     let (param_tokens, after_params) = rest.split_at(spec.params.len());
     let mut params = Vec::with_capacity(spec.params.len());
@@ -264,23 +301,36 @@ fn parse_flags_and_variants(
                 .chars()
                 .next()
                 .ok_or_else(|| ParamsError::UnknownParameter(token.to_string()))?;
-            if let Some(variant_spec) = spec.variants.iter().find(|f| f.letter == letter) {
-                let value_str = &after_dash[letter.len_utf8()..];
-                if value_str.is_empty() {
-                    return Err(ParamsError::VariantValueMissing(letter));
+            if let Some(variant) = spec.variants.iter().find(|v| v.letter() == letter) {
+                match variant {
+                    Variant::Value(variant_spec) => {
+                        let value_str = &after_dash[letter.len_utf8()..];
+                        if value_str.is_empty() {
+                            return Err(ParamsError::VariantValueMissing(letter));
+                        }
+                        // legacy: checked in the caller, after
+                        // `get_variant_no` (which owns the missing-value
+                        // check above) returns -- same order as the
+                        // option phase's own duplicate check.
+                        if flags.contains_key(&letter) {
+                            return Err(ParamsError::DuplicateFlag(letter));
+                        }
+                        let value = parse_param(
+                            value_str,
+                            variant_spec.value_type,
+                            variant_spec.range_check_paramno,
+                        )?;
+                        flags.insert(letter, value);
+                    }
+                    Variant::Boolean { .. } => {
+                        // legacy: nothing after the letter is ever
+                        // inspected -- see `Variant::Boolean`'s doc.
+                        if flags.contains_key(&letter) {
+                            return Err(ParamsError::DuplicateFlag(letter));
+                        }
+                        flags.insert(letter, ParamValue::Present);
+                    }
                 }
-                // legacy: checked in the caller, after `get_variant_no`
-                // (which owns the missing-value check above) returns --
-                // same order as the option phase's own duplicate check.
-                if flags.contains_key(&letter) {
-                    return Err(ParamsError::DuplicateFlag(letter));
-                }
-                let value = parse_param(
-                    value_str,
-                    variant_spec.value_type,
-                    variant_spec.range_check_paramno,
-                )?;
-                flags.insert(letter, value);
             } else if spec.flags.iter().any(|f| f.letter == letter) {
                 return Err(ParamsError::OptionOutOfOrder(letter));
             } else {
@@ -1074,6 +1124,159 @@ mod tests {
         assert!(matches!(
             parse(&spec, &args),
             Err(ParamsError::UnknownVariantFlag('z'))
+        ));
+    }
+
+    #[test]
+    fn synth_wave_with_no_flags_parses_all_four_required_params_in_order() {
+        let spec = CommandSpec::synth_wave();
+        let args = ["out.wav", "44100", "1", "1.0", "440"];
+        let parsed = parse(&spec, &args).unwrap();
+        assert!(parsed.infiles.is_empty());
+        assert!(matches!(parsed.params[0], ParamValue::Integer(44100)));
+        assert!(matches!(parsed.params[1], ParamValue::Integer(1)));
+        assert!(matches!(parsed.params[2], ParamValue::Number(v) if v == 1.0));
+        assert!(matches!(parsed.params[3], ParamValue::Number(v) if v == 440.0));
+    }
+
+    #[test]
+    fn synth_wave_with_options_and_boolean_variant_parses() {
+        let spec = CommandSpec::synth_wave();
+        let args = [
+            "out.wav", "44100", "1", "1.0", "440", "-a0.5", "-t512", "-f",
+        ];
+        let parsed = parse(&spec, &args).unwrap();
+        assert!(matches!(parsed.flags[&'a'], ParamValue::Number(v) if v == 0.5));
+        assert!(matches!(parsed.flags[&'t'], ParamValue::Integer(512)));
+        assert!(matches!(parsed.flags[&'f'], ParamValue::Present));
+    }
+
+    #[test]
+    fn synth_wave_boolean_variant_with_attached_value_is_silently_discarded() {
+        // legacy: confirmed live -- `-f999` behaves identically to a
+        // bare `-f`, since `get_variant_no` never inspects what follows
+        // a boolean variant's letter.
+        let spec = CommandSpec::synth_wave();
+        let args = ["out.wav", "44100", "1", "1.0", "440", "-f999"];
+        let parsed = parse(&spec, &args).unwrap();
+        assert!(matches!(parsed.flags[&'f'], ParamValue::Present));
+    }
+
+    #[test]
+    fn synth_wave_boolean_variant_before_option_is_option_out_of_order() {
+        let spec = CommandSpec::synth_wave();
+        let args = ["out.wav", "44100", "1", "1.0", "440", "-f", "-a0.5"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::OptionOutOfOrder('a'))
+        ));
+    }
+
+    #[test]
+    fn synth_wave_duplicate_boolean_variant_is_duplicate_flag() {
+        let spec = CommandSpec::synth_wave();
+        let args = ["out.wav", "44100", "1", "1.0", "440", "-f", "-f"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::DuplicateFlag('f'))
+        ));
+    }
+
+    #[test]
+    fn synth_wave_zero_required_params_given_is_insufficient_parameters() {
+        let spec = CommandSpec::synth_wave();
+        let args = ["out.wav"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::InsufficientParameters)
+        ));
+    }
+
+    #[test]
+    fn synth_wave_partial_required_params_is_insufficient_parameters_on_cmdline() {
+        // legacy: confirmed live -- 1, 2, or 3 of the 4 required params
+        // given (but not zero) fails with "Insufficient parameters on
+        // cmdline.", not "Insufficient parameters on command line.",
+        // since this distinction is invisible with only one required
+        // param, as every mode ported before this one has.
+        let spec = CommandSpec::synth_wave();
+        for args in [
+            vec!["out.wav", "44100"],
+            vec!["out.wav", "44100", "1"],
+            vec!["out.wav", "44100", "1", "1.0"],
+        ] {
+            assert!(matches!(
+                parse(&spec, &args),
+                Err(ParamsError::InsufficientParametersOnCmdline)
+            ));
+        }
+    }
+
+    #[test]
+    fn synth_wave_required_params_are_numbered_1_through_4() {
+        let spec = CommandSpec::synth_wave();
+        let args = ["out.wav", "999999", "1", "1.0", "440"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::ValueOutOfRange { paramno: 1, .. })
+        ));
+        let args = ["out.wav", "44100", "99", "1.0", "440"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::ValueOutOfRange { paramno: 2, .. })
+        ));
+        let args = ["out.wav", "44100", "1", "99999", "440"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::ValueOutOfRange { paramno: 3, .. })
+        ));
+        let args = ["out.wav", "44100", "1", "1.0", "99999"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::ValueOutOfRange { paramno: 4, .. })
+        ));
+    }
+
+    #[test]
+    fn synth_wave_options_continue_numbering_at_5_and_6() {
+        let spec = CommandSpec::synth_wave();
+        let args = ["out.wav", "44100", "1", "1.0", "440", "-a1.5"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::ValueOutOfRange { paramno: 5, .. })
+        ));
+        let args = ["out.wav", "44100", "1", "1.0", "440", "-t99999"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::ValueOutOfRange { paramno: 6, .. })
+        ));
+    }
+
+    #[test]
+    fn synth_wave_freq_unparseable_is_retried_as_a_breakpoint_file() {
+        let mut brk = tempfile::NamedTempFile::new().unwrap();
+        writeln!(brk, "0.0 440\n1.0 880").unwrap();
+        let spec = CommandSpec::synth_wave();
+        let args = ["out.wav", "44100", "1", "1.0", brk.path().to_str().unwrap()];
+        let parsed = parse(&spec, &args).unwrap();
+        assert!(matches!(parsed.params[3], ParamValue::Breakpoint(_)));
+    }
+
+    #[test]
+    fn synth_wave_amp_unparseable_nonexistent_file_is_breakpoint_open_error() {
+        let spec = CommandSpec::synth_wave();
+        let args = ["out.wav", "44100", "1", "1.0", "440", "-aabc"];
+        let err = parse(&spec, &args).unwrap_err();
+        assert_eq!(err.to_string(), "Can't open brkpntfile abc to read data.");
+    }
+
+    #[test]
+    fn synth_wave_leftover_non_flag_token_is_unknown_parameter() {
+        let spec = CommandSpec::synth_wave();
+        let args = ["out.wav", "44100", "1", "1.0", "440", "-a0.5", "extra"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::UnknownParameter(ref s)) if s == "extra"
         ));
     }
 }
