@@ -29,17 +29,18 @@
 //! checks in `mainfuncs.c`/`tklib1.c`).
 //!
 //! Current scope (see `docs/migration/STATUS.md` for the live list):
-//! three hand-written [`CommandSpec`]s, all `modify loudness` modes
-//! (mode 1 `LOUDNESS_GAIN`, modes 3/4 `LOUDNESS_NORM`/`LOUDNESS_SET`),
-//! and a parser handling three of PLAN.md's five parameter types
+//! four hand-written [`CommandSpec`]s -- all `modify loudness` modes
+//! (mode 1 `LOUDNESS_GAIN`, modes 3/4 `LOUDNESS_NORM`/`LOUDNESS_SET`)
+//! and `pvoc anal` (all three modes share one spec) -- and a parser
+//! handling four of PLAN.md's five parameter types
 //! ([`ParamType::DoubleOrBreakpoint`], [`ParamType::Double`],
-//! [`ParamType::File`]) plus one optional `-<letter><value>` flag,
-//! all confirmed against live `legacy` runs (see `parser`'s module
-//! doc). The general `CommandSpec`-from-TOML loader, `Int`/
+//! [`ParamType::Int`], [`ParamType::File`]) plus multiple simultaneous
+//! optional `-<letter><value>` flags, including duplicate-flag
+//! detection, all confirmed against live `legacy` runs (see `parser`'s
+//! module doc). The general `CommandSpec`-from-TOML loader,
 //! `IntOrBreakpoint`, variant flags, a mode with both required
-//! positional parameters and optional flags, more than one
-//! simultaneous optional flag, and usage-text formatting are not
-//! implemented yet.
+//! positional parameters and optional flags, and usage-text formatting
+//! are not implemented yet.
 
 pub mod error;
 pub mod parser;

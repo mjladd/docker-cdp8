@@ -29,20 +29,28 @@
 //!
 //! `docs/migration/PLAN.md`'s architecture section names five
 //! positional parameter types: `Double`, `DoubleOrBreakpoint`, `Int`,
-//! `IntOrBreakpoint`, `File`. `Int`/`IntOrBreakpoint` are not
-//! implemented yet -- no real command has confirmed what they look
-//! like -- but the other three now are, having turned out to be
-//! distinguishable after all: `modify loudness`'s `-l<level>` optional
-//! flag (modes 3 and 4) is a plain `Double` (no breakpoint fallback,
-//! confirmed by a live run of `modify loudness 3 infile outfile
-//! -labc`, which fails with `"Cannot read parameter 2 [abc]:
-//! brkpnt_files not permitted."` rather than trying to open `abc` as a
-//! breakpoint file), while mode 1's `gain` positional argument is
-//! [`ParamType::DoubleOrBreakpoint`] (see `crate::parser`'s module
-//! doc). In `parstruct.c`'s own source this is exactly the
-//! upper-/lower-case distinction visible in `LOUDNESS_GAIN`'s
-//! parameter-list letter (`"D0"`) versus `LOUDNESS_NORM`/
-//! `LOUDNESS_SET`'s optional-flag value-type letter (`"d"`).
+//! `IntOrBreakpoint`, `File`. Four of the five are now confirmed
+//! against real commands, and turned out to line up exactly with
+//! `legacy/dev/cdp2k/tklib3.c`'s `mark_parameter_types`, which reads
+//! one of four letters (`i`, `I`, `d`, `D`) off `parstruct.c`'s
+//! parameter-list string: lower-case sets `no_brk` (no breakpoint-file
+//! fallback), `i`/`I` additionally set `is_int`. `modify loudness`'s
+//! `-l<level>` optional flag (modes 3 and 4) is a plain `Double`
+//! (lower-case `d`, no breakpoint fallback, confirmed by a live run of
+//! `modify loudness 3 infile outfile -labc`, which fails with `"Cannot
+//! read parameter 2 [abc]: brkpnt_files not permitted."` rather than
+//! trying to open `abc` as a breakpoint file), while mode 1's `gain`
+//! positional argument is [`ParamType::DoubleOrBreakpoint`] (upper-case
+//! `D`, see `crate::parser`'s module doc). `pvoc anal`'s `-c<points>`
+//! and `-o<overlap>` optional flags are [`ParamType::Int`] (lower-case
+//! `i`): a live run of `pvoc anal 1 infile outfile -c512.9` completed
+//! and produced an analysis file whose channel count reflects `512`,
+//! not `513`, confirming the stored value is `(int)` cast (C
+//! truncation toward zero, matching Rust's `as i64`) from the same
+//! `%lf`-parsed double every other numeric type uses, not rejected for
+//! having a fractional part and not rounded. `IntOrBreakpoint`
+//! (upper-case `I`) is not implemented yet -- no real command has
+//! confirmed it.
 
 /// One parameter's type and (for the numeric types) valid range.
 /// legacy: one `char` of `parstruct.c`'s `param_list`/`opt_list`
@@ -72,6 +80,20 @@ pub enum ParamType {
     /// a second real `Double` parameter is confirmed, `legacy_index`
     /// is carried as a literal per-parameter fact, not derived.
     Double {
+        lo: f64,
+        hi: f64,
+        legacy_index: usize,
+    },
+    /// legacy: a lower-case `i` entry. Parsed exactly like
+    /// [`Self::Double`] (the same `%lf`-style tokenizer, the same
+    /// unparseable-token and range-check errors, and the same
+    /// `legacy_index` caveat) since `mark_parameter_types` only turns
+    /// `is_int`/`no_brk` into a later `(int)` cast, not a different
+    /// read function; [`crate::ParamValue::Integer`] carries that cast
+    /// applied to the already range-checked value. Confirmed live by
+    /// `pvoc anal 1 infile outfile -c512.9` and `-o` (see this
+    /// module's doc).
+    Int {
         lo: f64,
         hi: f64,
         legacy_index: usize,
@@ -177,5 +199,51 @@ impl CommandSpec {
     /// -- see `crate::parser`'s module doc.
     pub fn modify_loudness_force_level() -> Self {
         Self::modify_loudness_normalise()
+    }
+
+    /// `pvoc anal` (`PVOC_ANAL`, all three modes -- `STANDARD ANALYSIS`,
+    /// `OUTPUT SPECTRAL ENVELOPE VALS ONLY`, `OUTPUT SPECTRAL MAGNITUDE
+    /// VALS ONLY`): `pvoc anal mode infile outfile [-cpoints]
+    /// [-ooverlap]`. legacy: `parstruct.c`'s `set_param_data(ap,0,0,0,"")`
+    /// (no required positional parameters at all -- confirmed live: a
+    /// leftover positional word reports `"Unknown parameter '<word>'"`,
+    /// the same as `modify loudness` modes 3/4, not `"Too many
+    /// parameters..."`) and `set_vflgs(ap,"co",2,"ii","",0,0,"")` (two
+    /// plain `Int` optional flags, no variant flags -- despite the name
+    /// `set_vflgs`, `vflagcnt` is `0` here). Ranges from `tklib1.c`'s
+    /// `set_param_ranges`: `ap->lo[PVOC_CHANS_INPUT]=2`,
+    /// `ap->hi[PVOC_CHANS_INPUT]=MAX_PVOC_CHANS` (`32768`, from
+    /// `legacy/dev/include/pvoc.h`); `ap->lo[PVOC_WINOVLP_INPUT]=1`,
+    /// `ap->hi[PVOC_WINOVLP_INPUT]=4`. Both flags' `legacy_index` and
+    /// `range_check_paramno` are confirmed live to be the same number
+    /// as each other (`1` for `-c`, `2` for `-o`) -- unlike `modify
+    /// loudness`'s `-l` flag, where those two numbers differ -- but
+    /// each is still carried as its own literal fact, not derived from
+    /// the other, for the reason [`ParamType::Double`]'s doc gives.
+    pub fn pvoc_anal() -> Self {
+        CommandSpec {
+            infile_count: 1,
+            params: vec![],
+            flags: vec![
+                OptionFlag {
+                    letter: 'c',
+                    value_type: ParamType::Int {
+                        lo: 2.0,
+                        hi: 32768.0, // legacy: MAX_PVOC_CHANS
+                        legacy_index: 1,
+                    },
+                    range_check_paramno: 1,
+                },
+                OptionFlag {
+                    letter: 'o',
+                    value_type: ParamType::Int {
+                        lo: 1.0,
+                        hi: 4.0,
+                        legacy_index: 2,
+                    },
+                    range_check_paramno: 2,
+                },
+            ],
+        }
     }
 }
