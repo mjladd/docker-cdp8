@@ -1,0 +1,17 @@
+[package]
+name = "cdp-params"
+description = "Command-line argument parsing for the CDP System: CommandSpec, positional parameter validation, and the shared error text every group program produces (legacy: dev/cdp2k/parstruct.c, tklib1.c's set_param_ranges, readdata.c)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+cdp-data = { path = "../cdp-data" }
+thiserror = "2"
+
+[dev-dependencies]
+tempfile = "3"
