@@ -16,6 +16,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "cdp-params"
+version = "0.1.0"
+dependencies = [
+ "cdp-data",
+ "tempfile",
+ "thiserror",
+]
+
+[[package]]
 name = "cdp-sf"
 version = "0.1.0"
 dependencies = [
