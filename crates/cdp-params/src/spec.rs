@@ -121,22 +121,13 @@ pub enum ParamType {
     File,
 }
 
-/// One `-<letter><value>` flag: either an *option* (legacy:
-/// `opt_flags`/`opt_list` in `parstruct.c`, e.g. `LOUDNESS_NORM`/
-/// `LOUDNESS_SET`'s `opt_flags = "l"`, `opt_list = "d"`) via
-/// [`CommandSpec::flags`], or a value-carrying *variant* (legacy:
-/// `varflags`/`varlist` in `set_vflgs`, confirmed live by `distort
-/// repeat`'s `-s<skipcycles>`) via [`CommandSpec::variants`] -- the
-/// same shape either way, since only *where* [`crate::parser::parse`]
-/// looks for it, and which errors it reports, differ (see
-/// [`CommandSpec`]'s doc). The value is attached directly after the
-/// letter with no space (confirmed live: `-l 0.5`, with a space,
-/// fails with `"option parameter missing with flag -l"` -- the same
-/// message a bare `-l` with nothing after it produces). A pure
-/// boolean variant flag with no value at all (legacy: `vparamcnt`
-/// entries beyond the value-carrying ones, e.g. `blur scatter`'s
-/// `-r`/`-n`) is not implemented yet -- no real command has confirmed
-/// one live.
+/// One `-<letter><value>` option flag (legacy: `opt_flags`/`opt_list`
+/// in `parstruct.c`, e.g. `LOUDNESS_NORM`/`LOUDNESS_SET`'s
+/// `opt_flags = "l"`, `opt_list = "d"`), via [`CommandSpec::flags`].
+/// The value is attached directly after the letter with no space
+/// (confirmed live: `-l 0.5`, with a space, fails with `"option
+/// parameter missing with flag -l"` -- the same message a bare `-l`
+/// with nothing after it produces).
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct OptionFlag {
     pub letter: char,
@@ -149,6 +140,32 @@ pub struct OptionFlag {
     /// [`ParamType::Double`]'s doc on why this cannot be computed
     /// generally yet). 1-based, matching the legacy message.
     pub range_check_paramno: usize,
+}
+
+/// One `-<letter>[value]` entry of [`CommandSpec::variants`]: legacy's
+/// `varflags`/`varlist` in `set_vflgs` split the first
+/// `variant_param_cnt` letters (value-carrying, same shape as
+/// [`OptionFlag`], confirmed live by `distort repeat`'s
+/// `-s<skipcycles>`) from the remaining `vflag_cnt - variant_param_cnt`
+/// (pure boolean, no value at all -- confirmed live by `synth wave`'s
+/// `-f`, whose *presence* is all that matters: `dz->vflag[flagno] =
+/// TRUE`, with nothing after the letter ever inspected. `-f999`
+/// behaves identically to a bare `-f`, silently discarding the `999`,
+/// since `get_variant_no` never even looks at what follows a boolean
+/// variant's letter).
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum Variant {
+    Value(OptionFlag),
+    Boolean { letter: char },
+}
+
+impl Variant {
+    pub fn letter(&self) -> char {
+        match self {
+            Variant::Value(flag) => flag.letter,
+            Variant::Boolean { letter } => *letter,
+        }
+    }
 }
 
 /// One process/mode's full argument list: some number of leading
@@ -189,7 +206,7 @@ pub struct CommandSpec {
     pub infile_count: usize,
     pub params: Vec<ParamType>,
     pub flags: Vec<OptionFlag>,
-    pub variants: Vec<OptionFlag>,
+    pub variants: Vec<Variant>,
     /// legacy: `UNEQUAL_SNDFILE` (`true`) vs `EQUAL_SNDFILE` (`false`,
     /// the default for every mode ported so far) in
     /// `setup_process_logic` (e.g. `legacy/dev/distort/ap_distort.c`).
@@ -359,7 +376,7 @@ impl CommandSpec {
                 },
                 range_check_paramno: 2,
             }],
-            variants: vec![OptionFlag {
+            variants: vec![Variant::Value(OptionFlag {
                 letter: 's',
                 value_type: ParamType::Int {
                     lo: 0.0,
@@ -367,8 +384,83 @@ impl CommandSpec {
                     legacy_index: 3,
                 },
                 range_check_paramno: 3,
-            }],
+            })],
             unequal_sndfile: true,
+        }
+    }
+
+    /// `synth wave` (`SYNTH_WAVE`, modes 1-4 -- sine, square, sawtooth,
+    /// ramp -- all sharing one spec, same as `pvoc anal`): `synth wave
+    /// mode outfile sr chans dur freq [-aamp] [-ttabsize]`, plus one
+    /// undocumented boolean flag `-f` -- absent from the usage text
+    /// entirely, found only by reading `parstruct.c` itself. legacy:
+    /// `set_param_data(ap,0,4,4,"iidD")` (four required params:
+    /// `sr`/`chans` plain `Int`, `dur` plain `Double`, `freq`
+    /// `DoubleOrBreakpoint`) and `set_vflgs(ap,"at",2,"Di","f",1,0,"0")`
+    /// (`-a` `DoubleOrBreakpoint`, `-t` plain `Int`, one boolean variant
+    /// `-f`). The first spec with more than one required param, and the
+    /// first with a [`Variant::Boolean`]. Ranges from `tklib1.c`'s
+    /// `set_param_ranges` and `legacy/dev/include/synth.h`:
+    /// `ap->lo[SYN_SRATE]=16000`, `hi=192000`; `ap->lo[SYN_CHANS]=1`,
+    /// `hi=16`; `ap->lo[SYN_DUR]=MIN_SYN_DUR(0.04)`,
+    /// `hi=MAX_SYN_DUR(7200.0)`; `ap->lo[SYN_FRQ]=MIN_SYNTH_FRQ(0.1)`,
+    /// `hi=MAX_SYNTH_FRQ(22000)`; `ap->lo[SYN_AMP]=0.0`, `hi=1.0`;
+    /// `ap->lo[SYN_TABSIZE]=WAVE_TABSIZE(256)`,
+    /// `hi=WAVE_TABSIZE*16(4096)`. The usage text's documented values
+    /// (`SR` "can be 48000, 24000, ... or 16000", `CHANS` "can be 1, 2
+    /// or 4") are recommendations, not the real range check, which is
+    /// this much wider continuous interval -- ported as observed, not
+    /// as documented. Paramno numbering continues sequentially across
+    /// all four required params (`sr`=1, `chans`=2, `dur`=3, `freq`=4)
+    /// then the two options (`-a`=5, `-t`=6), confirmed live -- the
+    /// first spec to confirm this for more than one required param in a
+    /// row. `-f` needs no paramno or `legacy_index` at all: confirmed
+    /// live that `-f999` behaves identically to a bare `-f` (see
+    /// [`Variant::Boolean`]'s doc) and that duplicating it
+    /// (`-f -f`) still reports `"Duplicate flag f used on command
+    /// line"`, the same as a value-carrying variant.
+    pub fn synth_wave() -> Self {
+        CommandSpec {
+            infile_count: 0,
+            params: vec![
+                ParamType::Int {
+                    lo: 16000.0,
+                    hi: 192000.0,
+                    legacy_index: 1,
+                }, // sr
+                ParamType::Int {
+                    lo: 1.0,
+                    hi: 16.0,
+                    legacy_index: 2,
+                }, // chans
+                ParamType::Double {
+                    lo: 0.04, // legacy: MIN_SYN_DUR
+                    hi: 7200.0,
+                    legacy_index: 3,
+                }, // dur
+                ParamType::DoubleOrBreakpoint {
+                    lo: 0.1, // legacy: MIN_SYNTH_FRQ
+                    hi: 22000.0,
+                }, // freq
+            ],
+            flags: vec![
+                OptionFlag {
+                    letter: 'a',
+                    value_type: ParamType::DoubleOrBreakpoint { lo: 0.0, hi: 1.0 },
+                    range_check_paramno: 5,
+                },
+                OptionFlag {
+                    letter: 't',
+                    value_type: ParamType::Int {
+                        lo: 256.0,
+                        hi: 4096.0, // legacy: WAVE_TABSIZE * 16
+                        legacy_index: 6,
+                    },
+                    range_check_paramno: 6,
+                },
+            ],
+            variants: vec![Variant::Boolean { letter: 'f' }],
+            unequal_sndfile: false,
         }
     }
 }

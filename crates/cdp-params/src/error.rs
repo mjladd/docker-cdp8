@@ -38,11 +38,25 @@ pub enum ParamsError {
     #[error("Insufficient cmdline parameters.")]
     InsufficientCmdlineParameters,
 
-    /// legacy: the numeric-parameter-count check, once the file
-    /// arguments have been consumed -- confirmed live: `modify
-    /// loudness 1 infile outfile` (missing just the gain parameter).
+    /// legacy: `read_parameters_and_flags`'s own pre-check
+    /// (`legacy/dev/cdp2k/readdata.c`), fired when *zero* required
+    /// parameter tokens are left, before `get_params` is even called --
+    /// confirmed live: `modify loudness 1 infile outfile` (missing the
+    /// one and only gain parameter) and `synth wave 1 outfile` (missing
+    /// all four required params).
     #[error("Insufficient parameters on command line.")]
     InsufficientParameters,
+
+    /// legacy: `get_params`'s own mid-loop check (same file), fired
+    /// instead of [`Self::InsufficientParameters`] when *some but not
+    /// all* required parameter tokens are present -- a distinction
+    /// invisible with only one required parameter (every mode ported
+    /// before `synth wave` has exactly one), since "some but not all"
+    /// is then impossible. Confirmed live: `synth wave 1 outfile 44100`
+    /// (1 of 4), `... 44100 1` (2 of 4), and `... 44100 1 1.0` (3 of 4)
+    /// all produce this text, not [`Self::InsufficientParameters`].
+    #[error("Insufficient parameters on cmdline.")]
+    InsufficientParametersOnCmdline,
 
     /// legacy: as above, too many words left over -- confirmed live:
     /// `modify loudness 1 infile outfile 0.5 extra`.
