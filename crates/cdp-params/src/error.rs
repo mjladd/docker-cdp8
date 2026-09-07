@@ -82,6 +82,36 @@ pub enum ParamsError {
         lo: f64,
         hi: f64,
     },
+
+    /// legacy: a [`crate::ParamType::Double`] token that failed to
+    /// parse as a plain number -- confirmed live: `modify loudness 3
+    /// infile outfile -labc`.
+    #[error("Cannot read parameter {legacy_index} [{token}]: brkpnt_files not permitted.")]
+    CannotReadParameter { legacy_index: usize, token: String },
+
+    /// legacy: `"Unknown flag -%c on command line.\n"`, confirmed
+    /// live: `modify loudness 3 infile outfile -x0.5`.
+    #[error("Unknown flag -{0} on command line.")]
+    UnknownFlag(char),
+
+    /// legacy: `"option parameter missing with flag -%c\n"`,
+    /// confirmed live both for a bare trailing `-l` and for `-l 0.5`
+    /// (a space-separated value is not supported at all: the whole
+    /// next word is a separate, unrecognised token, not part of this
+    /// flag).
+    #[error("option parameter missing with flag -{0}")]
+    OptionValueMissing(char),
+
+    /// legacy: `"Unknown parameter '%s'\n"` -- confirmed live for a
+    /// leftover non-flag token in a mode whose `params` list is empty
+    /// (`modify loudness 3 infile outfile 0.5`, an extra word neither
+    /// consumed as a required positional parameter, since this mode
+    /// has none, nor recognised as a `-`-prefixed flag). Distinct
+    /// from [`Self::TooManyParameters`], which is what a mode with a
+    /// non-empty `params` list uses for the same underlying "extra
+    /// word" situation.
+    #[error("Unknown parameter '{0}'")]
+    UnknownParameter(String),
 }
 
 pub type Result<T> = std::result::Result<T, ParamsError>;
