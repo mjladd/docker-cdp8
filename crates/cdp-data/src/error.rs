@@ -72,9 +72,11 @@ pub enum DataError {
 
     /// legacy: `store_wordlist`'s `fopen` failure in
     /// `legacy/dev/cdp2k/readfiles.c`, shared by every word-list
-    /// format (mix files now, texture/tuning files in a later
-    /// slice) -- distinct wording from [`DataError::CannotOpen`],
-    /// which is breakpoint-file specific.
+    /// format that goes through it (mix files; tuning files in a
+    /// later slice) -- distinct wording from [`DataError::CannotOpen`]
+    /// (breakpoint-file specific) and [`DataError::CannotOpenNotedataFile`]
+    /// (texture note-data has its own `fopen` call site with its own
+    /// message).
     #[error("Failed to open file {path} for input.")]
     CannotOpenDataFile { path: String, source: io::Error },
 
@@ -132,6 +134,82 @@ pub enum DataError {
     /// `MIX_END` windowing is applied (see [`crate::mix`]).
     #[error("No mixfile line is active within the time limits specified.")]
     NoMixData,
+
+    /// legacy: `get_the_notedatafile` in
+    /// `legacy/dev/texture/ap_texture.c`.
+    #[error("Failed to open notedata file {path}")]
+    CannotOpenNotedataFile { path: String, source: io::Error },
+
+    /// legacy: `get_the_notedata` in
+    /// `legacy/dev/texture/texprepro.c`, wrapping any failure from
+    /// `get_sample_pitches` (missing first line, or a first
+    /// non-comment line with fewer pitch values than there are input
+    /// sound files) into this one message, regardless of the
+    /// specific cause.
+    #[error("Insufficient pitch values in notedata file.")]
+    NotedataInsufficientPitches,
+
+    /// legacy: `get_motifs`, a motif's header line must start with
+    /// `#` (`TEXTURE_SEPARATOR`) once leading whitespace is skipped.
+    #[error(
+        "'#' missing before datacount in notedata file: motif {motifno} (or more notes listed than indicated by #N)\ncheck datalen is correct"
+    )]
+    NotedataMissingHash { motifno: usize },
+
+    /// legacy: `get_motifs`, the character right after `#` must be a
+    /// digit.
+    #[error("No datalength given: motif {motifno}")]
+    NotedataNoDatalength { motifno: usize },
+
+    /// legacy: `get_motifs`, a `#N` datalength of zero or less.
+    #[error("Invalid data length {datalen} in notedata: motif {motifno}")]
+    NotedataInvalidDatalen { datalen: i32, motifno: usize },
+
+    /// legacy: `read_a_note_from_notedata_file`, `fgets` returning
+    /// `NULL` (end of file) while a motif still expects more notes.
+    #[error("Note data line for note {noteno}, motif {motifno} missing in notedatafile")]
+    NotedataMissingNoteLine { noteno: usize, motifno: usize },
+
+    #[error("No time data for note {noteno}, motif {motifno} in notedatafile")]
+    NotedataNoTimeData { noteno: usize, motifno: usize },
+    #[error("No data after time for note {noteno}, motif {motifno} in notedatafile")]
+    NotedataNoDataAfterTime { noteno: usize, motifno: usize },
+    #[error("No instr_no for note {noteno}, motif {motifno} in notedatafile")]
+    NotedataNoInstrNo { noteno: usize, motifno: usize },
+    #[error("No data after instr_no for note {noteno}, motif {motifno} in notedatafile")]
+    NotedataNoDataAfterInstrNo { noteno: usize, motifno: usize },
+    #[error("No pitch data for note {noteno}, motif {motifno} in notedatafile")]
+    NotedataNoPitchData { noteno: usize, motifno: usize },
+    #[error("No data after pitch for note {noteno}, motif {motifno} in notedatafile")]
+    NotedataNoDataAfterPitch { noteno: usize, motifno: usize },
+    #[error("No amplitude data for note {noteno}, motif {motifno} in notedatafile")]
+    NotedataNoAmpData { noteno: usize, motifno: usize },
+    #[error("No data after amp for note {noteno}, motif {motifno} in notedatafile")]
+    NotedataNoDataAfterAmp { noteno: usize, motifno: usize },
+    #[error("No duration data for note {noteno}, motif {motifno} in notedatafile")]
+    NotedataNoDurationData { noteno: usize, motifno: usize },
+
+    /// legacy: `read_a_note_from_notedata_file`, `noteno > 1 &&
+    /// *lasttime > thisnote->ntime`. `prev_noteno` is always `noteno
+    /// - 1`, matching the legacy message, which names both notes.
+    #[error(
+        "Notes in reverse time order: notedata file : motif {motifno}: notes {noteno} & {prev_noteno}"
+    )]
+    NotedataReverseTimeOrder {
+        motifno: usize,
+        noteno: usize,
+        prev_noteno: usize,
+    },
+
+    /// legacy: `get_the_notedata`, the `IS_ORN_OR_MTF` ("at least")
+    /// branch of the motif-count check.
+    #[error("Insufficient motifs in notedata file.")]
+    NotedataInsufficientMotifs,
+
+    /// legacy: `get_the_notedata`, the exact-count branch of the
+    /// motif-count check.
+    #[error("Incorrect number [{motifcnt}] of motifs in notedata file (expected {expected}).")]
+    NotedataIncorrectMotifCount { motifcnt: usize, expected: usize },
 }
 
 pub type Result<T> = std::result::Result<T, DataError>;
