@@ -45,6 +45,10 @@ pub const MAXSHORT: f32 = 32767.0;
 #[derive(Debug)]
 pub struct SoundFile {
     pub fmt: FmtInfo,
+    /// legacy: `props->type` -- always [`props::FileKind::Wave`]
+    /// unless `fmt.sample_type` is [`SampleType::Float32`] and the
+    /// property block marks it as a CDP-derived analysis-family file.
+    pub file_kind: props::FileKind,
     pub peak_timestamp: Option<u32>,
     pub peaks: Vec<ChannelPeak>,
     pub properties: PropertyBlock,
@@ -98,9 +102,11 @@ impl SoundFile {
             .as_deref()
             .map(PropertyBlock::parse)
             .unwrap_or_default();
+        let file_kind = props::detect_file_kind(&fmt, &properties)?;
 
         Ok(SoundFile {
             fmt,
+            file_kind,
             peak_timestamp,
             peaks,
             properties,
@@ -160,9 +166,11 @@ impl SoundFile {
             .find(|c| c.tag == aiff::APPL && c.data.len() >= 4 && &c.data[0..4] == b"sfif")
             .map(|c| PropertyBlock::parse(&c.data[4..]))
             .unwrap_or_default();
+        let file_kind = props::detect_file_kind(&fmt, &properties)?;
 
         Ok(SoundFile {
             fmt,
+            file_kind,
             peak_timestamp,
             peaks,
             properties,

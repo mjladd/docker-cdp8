@@ -173,6 +173,150 @@ pub fn parse_fmt_chunk(data: &[u8]) -> Result<FmtInfo> {
     })
 }
 
+/// The CDP-derived file types stored inside a float32 sound file's
+/// property block. legacy: `wt_wave`/`wt_binenv`/`wt_pitch`/
+/// `wt_transposition`/`wt_formant`/`wt_analysis` in
+/// `legacy/dev/newinclude/sfsys.h`, as detected by `sf_headread`/
+/// `snd_headread` in `legacy/dev/newsfsys/props.c`. Applies equally
+/// to WAVE and AIFC (the only AIFF form that can carry float32
+/// samples at all): the detection reads named properties from the
+/// property block regardless of which container holds it.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum FileKind {
+    /// An ordinary sound file (or, if not float32, always this).
+    Wave,
+    /// legacy: `wt_binenv`, detected by the `"is an envelope"` marker
+    /// property. `window_size` (ms) is legacy's `props->window_size`.
+    Envelope {
+        window_size: f32,
+    },
+    Pitch(OriginalChannelInfo),
+    Transposition(OriginalChannelInfo),
+    Formant {
+        channel_info: OriginalChannelInfo,
+        /// legacy: `specenvcnt`, the `"specenvcnt"` property.
+        spectral_envelope_count: i32,
+    },
+    /// legacy: `wt_analysis`, the default when none of the `"is a
+    /// ... file"` marker properties are present.
+    Analysis(SpectralInfo),
+}
+
+/// The five analysis properties every non-`Wave`, non-`Envelope`
+/// [`FileKind`] carries: `original sampsize`, `original sample
+/// rate`, `arate`, `analwinlen`, `decfactor`.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct SpectralInfo {
+    pub original_sample_size: i32,
+    pub original_sample_rate: i32,
+    pub analysis_rate: f32,
+    pub analysis_window_length: i32,
+    pub decimation_factor: i32,
+}
+
+/// [`SpectralInfo`] plus the `"orig channels"` property, which
+/// `sf_headread` only reads for [`FileKind::Pitch`],
+/// [`FileKind::Transposition`] and [`FileKind::Formant`] -- these
+/// collapse the parent analysis file's many channels (amplitude/
+/// frequency pairs per band) down to one, so `original_channels`
+/// records how many the parent had.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct OriginalChannelInfo {
+    pub spectral: SpectralInfo,
+    pub original_channels: i32,
+}
+
+/// legacy: `sf_headread`/`snd_headread`'s `props->samptype==FLOAT32`
+/// branch in `legacy/dev/newsfsys/props.c`. Any other sample type is
+/// always [`FileKind::Wave`] (that branch is skipped entirely, and
+/// `props->type` is left at its `wt_wave` initial value).
+pub fn detect_file_kind(fmt: &FmtInfo, properties: &PropertyBlock) -> Result<FileKind> {
+    use crate::error::SfError;
+
+    if fmt.sample_type != SampleType::Float32 {
+        return Ok(FileKind::Wave);
+    }
+
+    let origsize = properties.get_i32("original sampsize");
+    let origrate = properties.get_i32("original sample rate");
+    let arate = properties.get_f32("arate");
+    let wlen = properties.get_i32("analwinlen");
+    let dfac = properties.get_i32("decfactor");
+    let any_missing =
+        origsize.is_err() || origrate.is_err() || arate.is_err() || wlen.is_err() || dfac.is_err();
+    let origsize = origsize.unwrap_or(0);
+    let origrate = origrate.unwrap_or(0);
+    let arate = arate.unwrap_or(0.0);
+    let wlen = wlen.unwrap_or(0);
+    let dfac = dfac.unwrap_or(0);
+
+    // legacy: checksum = origsize + origrate + wlen + dfac + (int)arate
+    let checksum = origsize + origrate + wlen + dfac + (arate as i32);
+
+    if checksum == 0 {
+        // legacy: "its a wave file, or an envelope file" -- a missing
+        // read here (any_missing) is not an error, since a genuine
+        // plain WAVE file has none of the five properties at all.
+        let is_envelope = properties.get_i32("is an envelope").unwrap_or(0) != 0;
+        if !is_envelope {
+            return Ok(FileKind::Wave);
+        }
+        let window_size = properties
+            .get_f32("window size")
+            .map_err(|_| SfError::MissingEnvelopeWindowSize)?;
+        return Ok(FileKind::Envelope { window_size });
+    }
+
+    if any_missing {
+        return Err(SfError::InconsistentAnalysisProperties);
+    }
+    let spectral = SpectralInfo {
+        original_sample_size: origsize,
+        original_sample_rate: origrate,
+        analysis_rate: arate,
+        analysis_window_length: wlen,
+        decimation_factor: dfac,
+    };
+
+    // legacy: presence, not value, of these three marker properties
+    // (`sfgetprop(...) >= 0`) -- checked in this order, pitch first.
+    let is_pitch = properties.get_raw("is a pitch file").is_some();
+    let is_transpos = properties.get_raw("is a transpos file").is_some();
+    let is_formant = properties.get_raw("is a formant file").is_some();
+
+    if !(is_pitch || is_transpos || is_formant) {
+        return Ok(FileKind::Analysis(spectral));
+    }
+
+    // legacy: pitch, transposition and formant files all fall
+    // through to the same "channels must be 1, then read orig
+    // channels" handling.
+    if fmt.channels != 1 {
+        return Err(SfError::AnalysisFileChannelCountNotOne);
+    }
+    let original_channels = properties
+        .get_i32("orig channels")
+        .map_err(|_| SfError::MissingOriginalChannels)?;
+    let channel_info = OriginalChannelInfo {
+        spectral,
+        original_channels,
+    };
+
+    if is_pitch {
+        Ok(FileKind::Pitch(channel_info))
+    } else if is_transpos {
+        Ok(FileKind::Transposition(channel_info))
+    } else {
+        let spectral_envelope_count = properties
+            .get_i32("specenvcnt")
+            .map_err(|_| SfError::MissingSpectralEnvelopeCount)?;
+        Ok(FileKind::Formant {
+            channel_info,
+            spectral_envelope_count,
+        })
+    }
+}
+
 /// legacy: `rdaiffhdr`/`rdaifchdr` in `legacy/dev/newsfsys/sfsys.c`,
 /// the `COMM` chunk fields. `data` is the chunk payload with the tag
 /// and size already stripped, as `crate::aiff::read_form` returns it.
@@ -711,5 +855,185 @@ mod tests {
         assert_eq!(ts, 1_151_268_522);
         assert_eq!(peaks[0].position, 29_914);
         assert!((peaks[0].value - 0.299_722_28).abs() < 1e-9);
+    }
+
+    fn float32_fmt(channels: u16) -> FmtInfo {
+        FmtInfo {
+            channels,
+            sample_rate: 44100,
+            bits_per_sample: 32,
+            block_align: 4 * channels,
+            sample_type: SampleType::Float32,
+        }
+    }
+
+    #[test]
+    fn non_float32_is_always_wave_even_with_analysis_properties_present() {
+        // legacy: sf_headread's float32 branch is skipped entirely
+        // for any other sample type, so props->type stays wt_wave.
+        let mut fmt = float32_fmt(1);
+        fmt.sample_type = SampleType::Short16;
+        let mut props = PropertyBlock::new();
+        props.set_i32("is a pitch file", 1);
+        assert_eq!(detect_file_kind(&fmt, &props).unwrap(), FileKind::Wave);
+    }
+
+    #[test]
+    fn float32_with_no_analysis_properties_is_plain_wave() {
+        let props = PropertyBlock::new();
+        assert_eq!(
+            detect_file_kind(&float32_fmt(2), &props).unwrap(),
+            FileKind::Wave
+        );
+    }
+
+    /// `docs/manual/sounds/crklenv.evl`'s real properties (see
+    /// `tests/oracle_fixtures.rs` for the byte-for-byte version):
+    /// `is an envelope` (any nonzero value) plus `window size`.
+    #[test]
+    fn envelope_marker_with_window_size() {
+        let mut props = PropertyBlock::new();
+        props.set_i32("is an envelope", 1);
+        props.set_f32("window size", 2.902_494);
+        let kind = detect_file_kind(&float32_fmt(1), &props).unwrap();
+        assert_eq!(
+            kind,
+            FileKind::Envelope {
+                window_size: 2.902_494
+            }
+        );
+    }
+
+    #[test]
+    fn envelope_marker_without_window_size_is_an_error() {
+        let mut props = PropertyBlock::new();
+        props.set_i32("is an envelope", 1);
+        assert!(matches!(
+            detect_file_kind(&float32_fmt(1), &props),
+            Err(SfError::MissingEnvelopeWindowSize)
+        ));
+    }
+
+    fn spectral_props() -> PropertyBlock {
+        let mut props = PropertyBlock::new();
+        props.set_i32("original sampsize", 0);
+        props.set_i32("original sample rate", 44100);
+        props.set_f32("arate", 344.53125);
+        props.set_i32("analwinlen", 1024);
+        props.set_i32("decfactor", 128);
+        props
+    }
+
+    /// `docs/manual/data/capm.ana`'s real property values (see
+    /// `tests/oracle_fixtures.rs`): no marker property present, so
+    /// this is the `wt_analysis` default.
+    #[test]
+    fn spectral_properties_with_no_marker_is_analysis() {
+        let props = spectral_props();
+        let kind = detect_file_kind(&float32_fmt(1026), &props).unwrap();
+        assert_eq!(
+            kind,
+            FileKind::Analysis(SpectralInfo {
+                original_sample_size: 0,
+                original_sample_rate: 44100,
+                analysis_rate: 344.53125,
+                analysis_window_length: 1024,
+                decimation_factor: 128,
+            })
+        );
+    }
+
+    /// `docs/manual/data/crklptrace.frq`'s real properties.
+    #[test]
+    fn pitch_marker_with_orig_channels() {
+        let mut props = spectral_props();
+        props.set_i32("is a pitch file", 1);
+        props.set_i32("orig channels", 1026);
+        let kind = detect_file_kind(&float32_fmt(1), &props).unwrap();
+        assert!(matches!(kind, FileKind::Pitch(info) if info.original_channels == 1026));
+    }
+
+    /// `docs/manual/data/ssbcrkl.trn`'s real properties.
+    #[test]
+    fn transposition_marker_with_orig_channels() {
+        let mut props = spectral_props();
+        props.set_i32("is a transpos file", 1);
+        props.set_i32("orig channels", 1026);
+        let kind = detect_file_kind(&float32_fmt(1), &props).unwrap();
+        assert!(matches!(kind, FileKind::Transposition(info) if info.original_channels == 1026));
+    }
+
+    /// No formant file exists in this repository's corpus, so unlike
+    /// the pitch/transposition/analysis cases above, this is a
+    /// hand-built fixture (see the module doc's note on AIFC for the
+    /// same caveat).
+    #[test]
+    fn formant_marker_with_spectral_envelope_count() {
+        let mut props = spectral_props();
+        props.set_i32("is a formant file", 1);
+        props.set_i32("orig channels", 1026);
+        props.set_i32("specenvcnt", 80);
+        let kind = detect_file_kind(&float32_fmt(1), &props).unwrap();
+        assert!(matches!(
+            kind,
+            FileKind::Formant { channel_info, spectral_envelope_count: 80 }
+                if channel_info.original_channels == 1026
+        ));
+    }
+
+    /// legacy: pitch, in this order, wins over transposition and
+    /// formant if (illegally) more than one marker is present.
+    #[test]
+    fn pitch_marker_takes_precedence_when_multiple_markers_present() {
+        let mut props = spectral_props();
+        props.set_i32("is a pitch file", 1);
+        props.set_i32("is a transpos file", 1);
+        props.set_i32("orig channels", 1);
+        let kind = detect_file_kind(&float32_fmt(1), &props).unwrap();
+        assert!(matches!(kind, FileKind::Pitch(_)));
+    }
+
+    #[test]
+    fn pitch_file_with_more_than_one_channel_is_an_error() {
+        let mut props = spectral_props();
+        props.set_i32("is a pitch file", 1);
+        props.set_i32("orig channels", 1);
+        assert!(matches!(
+            detect_file_kind(&float32_fmt(2), &props),
+            Err(SfError::AnalysisFileChannelCountNotOne)
+        ));
+    }
+
+    #[test]
+    fn pitch_file_missing_orig_channels_is_an_error() {
+        let mut props = spectral_props();
+        props.set_i32("is a pitch file", 1);
+        assert!(matches!(
+            detect_file_kind(&float32_fmt(1), &props),
+            Err(SfError::MissingOriginalChannels)
+        ));
+    }
+
+    #[test]
+    fn formant_file_missing_specenvcnt_is_an_error() {
+        let mut props = spectral_props();
+        props.set_i32("is a formant file", 1);
+        props.set_i32("orig channels", 1);
+        assert!(matches!(
+            detect_file_kind(&float32_fmt(1), &props),
+            Err(SfError::MissingSpectralEnvelopeCount)
+        ));
+    }
+
+    #[test]
+    fn partially_present_analysis_properties_is_an_error() {
+        // Only "arate" set (nonzero, so checksum != 0), the other
+        // four genuinely missing rather than present-and-zero.
+        let mut props = PropertyBlock::new();
+        props.set_f32("arate", 344.53125);
+        assert!(matches!(
+            detect_file_kind(&float32_fmt(1), &props),
+            Err(SfError::InconsistentAnalysisProperties)
+        ));
     }
 }
