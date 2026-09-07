@@ -28,12 +28,14 @@
 //! and `legacy/dev/pvxio2/pvfileio.c`.
 //!
 //! Current scope (see `docs/migration/STATUS.md` for the live list):
-//! WAVE files, 16-bit PCM and 32-bit float sample data, the `PEAK`
-//! chunk, and reading (not yet writing) the CDP named-property block.
-//! AIFF/AIFC, PVOC-EX, WAVE_FORMAT_EXTENSIBLE multichannel formats,
-//! and the CDP-derived file types (analysis, pitch, transposition,
-//! formant, envelope) are not implemented yet.
+//! reading WAVE and AIFF/AIFC files, 16-bit PCM and 32-bit float
+//! sample data, the `PEAK` chunk, and reading (not yet writing) the
+//! CDP named-property block. Writing is WAVE-only so far. PVOC-EX,
+//! WAVE_FORMAT_EXTENSIBLE multichannel formats, and the CDP-derived
+//! file types (analysis, pitch, transposition, formant, envelope) are
+//! not implemented yet.
 
+pub mod aiff;
 pub mod error;
 pub mod props;
 pub mod reader;

@@ -173,6 +173,89 @@ pub fn parse_fmt_chunk(data: &[u8]) -> Result<FmtInfo> {
     })
 }
 
+/// legacy: `rdaiffhdr`/`rdaifchdr` in `legacy/dev/newsfsys/sfsys.c`,
+/// the `COMM` chunk fields. `data` is the chunk payload with the tag
+/// and size already stripped, as `crate::aiff::read_form` returns it.
+/// Plain AIFF's `COMM` is a fixed 18 bytes (channels, frame count,
+/// bits per sample, then the 10-byte extended-float sample rate) and
+/// is always integer PCM; AIFC's is at least 22 bytes, adding a
+/// 4-byte compression-type tag right after, which is what lets it
+/// declare 32-bit float samples (`FL32`/`fl32`) or Steinberg's packed
+/// 24-in-32 (`in24`) -- the rest of the chunk (a Pascal string naming
+/// the compression) is not needed here and is skipped by the caller,
+/// since [`crate::aiff::read_form`] already captured the whole chunk.
+pub fn parse_aiff_comm(data: &[u8], form: crate::aiff::AiffForm) -> Result<FmtInfo> {
+    use crate::aiff::AiffForm;
+    use crate::error::SfError;
+
+    let min_len = match form {
+        AiffForm::Aiff => 18,
+        AiffForm::Aifc => 22,
+    };
+    if data.len() < min_len || (form == AiffForm::Aiff && data.len() != 18) {
+        return Err(SfError::MalformedAiffCommChunk);
+    }
+
+    let channels = u16::from_be_bytes([data[0], data[1]]);
+    if channels == 0 {
+        return Err(SfError::MalformedAiffCommChunk);
+    }
+    let mut bits_per_sample = u16::from_be_bytes([data[6], data[7]]);
+    let sample_rate = crate::aiff::read_sample_rate(&data[8..18])?;
+
+    let is_float = if form == AiffForm::Aifc {
+        let compression = &data[18..22];
+        match compression {
+            b"NONE" => false,
+            b"FL32" | b"fl32" => {
+                // legacy: QuickTime writes size = 16 (i.e.
+                // bits_per_sample 16) for a float AIFC COMM chunk;
+                // legacy silently corrects it to 32 rather than
+                // erroring, so this does too.
+                if bits_per_sample == 16 {
+                    bits_per_sample = 32;
+                } else if bits_per_sample != 32 {
+                    return Err(SfError::MalformedAiffCommChunk);
+                }
+                true
+            }
+            b"in24" => {
+                if bits_per_sample != 24 {
+                    return Err(SfError::MalformedAiffCommChunk);
+                }
+                false
+            }
+            _ => return Err(SfError::UnknownAifcCompressionType),
+        }
+    } else {
+        false
+    };
+
+    let (block_align, sample_type) = match bits_per_sample {
+        32 if is_float => (4u16, SampleType::Float32),
+        32 => (4, SampleType::Int32),
+        24 => (3, SampleType::Int2424),
+        20 => (3, SampleType::Int2024),
+        16 => (2, SampleType::Short16),
+        // legacy quirk, matching the WAVE SHORT8 case documented on
+        // `SampleType`: 8-bit AIFF is classified the same as 16-bit
+        // for reporting, though its on-disk container is genuinely 1
+        // byte per sample (`block_align` reflects that truthfully),
+        // and -- as for WAVE -- this crate does not yet decode it;
+        // see the `samples_f32` guard in `reader.rs`.
+        8 => (1, SampleType::Short16),
+        other => return Err(SfError::UnsupportedAiffSampleSize(other)),
+    };
+
+    Ok(FmtInfo {
+        channels,
+        sample_rate,
+        bits_per_sample,
+        block_align: block_align * channels,
+        sample_type,
+    })
+}
+
 /// A per-channel entry from the `PEAK` chunk. legacy: `CHPEAK` in
 /// `legacy/dev/newinclude/sfsys.h` (`float value; unsigned int
 /// position;`), a peak sample's absolute value and the frame position
@@ -207,6 +290,33 @@ pub fn parse_peak_chunk(data: &[u8], channels: u16) -> Result<(u32, Vec<ChannelP
         }
         let value = f32::from_le_bytes(data[offset..offset + 4].try_into().unwrap());
         let position = u32::from_le_bytes(data[offset + 4..offset + 8].try_into().unwrap());
+        peaks.push(ChannelPeak { value, position });
+        offset += 8;
+    }
+    Ok((timestamp, peaks))
+}
+
+/// As [`parse_peak_chunk`], for AIFF/AIFC: legacy's `read_peak_msf`
+/// reads the same version/timestamp/per-channel layout, but every
+/// field big-endian (`_msf` = "most significant byte first") rather
+/// than little-endian.
+pub fn parse_peak_chunk_be(data: &[u8], channels: u16) -> Result<(u32, Vec<ChannelPeak>)> {
+    if data.len() < 8 {
+        return Err(SfError::MalformedChunk(crate::riff::PEAK));
+    }
+    let version = u32::from_be_bytes(data[0..4].try_into().unwrap());
+    let timestamp = u32::from_be_bytes(data[4..8].try_into().unwrap());
+    if version != CURRENT_PEAK_VERSION {
+        return Ok((timestamp, Vec::new()));
+    }
+    let mut peaks = Vec::with_capacity(channels as usize);
+    let mut offset = 8usize;
+    for _ in 0..channels {
+        if offset + 8 > data.len() {
+            return Err(SfError::MalformedChunk(crate::riff::PEAK));
+        }
+        let value = f32::from_be_bytes(data[offset..offset + 4].try_into().unwrap());
+        let position = u32::from_be_bytes(data[offset + 4..offset + 8].try_into().unwrap());
         peaks.push(ChannelPeak { value, position });
         offset += 8;
     }
@@ -508,5 +618,98 @@ mod tests {
     fn truncated_fmt_chunk_is_an_error_not_a_panic() {
         let fmt = vec![1u8, 0, 2, 0, 0x44, 0xAC];
         assert!(parse_fmt_chunk(&fmt).is_err());
+    }
+
+    /// 44100.0 as a 10-byte IEEE-80 extended float, confirmed
+    /// byte-for-byte against `docs/manual/sounds/ws2/tsw1-2nd.aiff`'s
+    /// real `COMM` chunk (see `tests/oracle_fixtures.rs`).
+    const SRATE_44100_EXT80: [u8; 10] = [0x40, 0x0E, 0xAC, 0x44, 0, 0, 0, 0, 0, 0];
+
+    fn plain_aiff_comm(channels: u16, frames: u32, bits: u16) -> Vec<u8> {
+        let mut d = Vec::new();
+        d.extend_from_slice(&channels.to_be_bytes());
+        d.extend_from_slice(&frames.to_be_bytes());
+        d.extend_from_slice(&bits.to_be_bytes());
+        d.extend_from_slice(&SRATE_44100_EXT80);
+        d
+    }
+
+    #[test]
+    fn parses_plain_aiff_comm_chunk() {
+        let comm = plain_aiff_comm(1, 241_102, 16);
+        let info = parse_aiff_comm(&comm, crate::aiff::AiffForm::Aiff).unwrap();
+        assert_eq!(info.channels, 1);
+        assert_eq!(info.sample_rate, 44100);
+        assert_eq!(info.bits_per_sample, 16);
+        assert_eq!(info.sample_type, SampleType::Short16);
+        assert_eq!(info.block_align, 2);
+    }
+
+    #[test]
+    fn plain_aiff_comm_of_wrong_size_is_an_error() {
+        let mut comm = plain_aiff_comm(1, 100, 16);
+        comm.push(0); // legacy: plain AIFF COMM must be exactly 18 bytes
+        assert!(parse_aiff_comm(&comm, crate::aiff::AiffForm::Aiff).is_err());
+    }
+
+    #[test]
+    fn plain_aiff_never_reports_float_even_at_32_bits() {
+        // legacy: plain AIFF's COMM has no compression-type field, so
+        // it is always PCM -- only AIFC can declare float samples.
+        let comm = plain_aiff_comm(1, 100, 32);
+        let info = parse_aiff_comm(&comm, crate::aiff::AiffForm::Aiff).unwrap();
+        assert_eq!(info.sample_type, SampleType::Int32);
+    }
+
+    /// No AIFC file exists in this repository's corpus (all 120 real
+    /// AIFF files under `docs/manual/sounds` are plain `AIFF`), so
+    /// unlike `parses_plain_aiff_comm_chunk`, this is a hand-built
+    /// fixture rather than bytes lifted from a real file. The
+    /// `COMM` layout (fixed fields, then `compressionType`, then a
+    /// Pascal string this parser does not need to read) is ported
+    /// from `rdaifchdr` in `legacy/dev/newsfsys/sfsys.c`.
+    #[test]
+    fn parses_aifc_float_comm_chunk() {
+        let mut comm = plain_aiff_comm(2, 1000, 32);
+        comm.extend_from_slice(b"FL32");
+        comm.extend_from_slice(&[4, b't', b'e', b's', b't']); // pascal string, ignored
+        let info = parse_aiff_comm(&comm, crate::aiff::AiffForm::Aifc).unwrap();
+        assert_eq!(info.sample_type, SampleType::Float32);
+        assert_eq!(info.block_align, 8); // 4 bytes * 2 channels
+    }
+
+    /// legacy: "F***** Quicktime writes size = 16, for floats!" --
+    /// `rdaifchdr` silently corrects a `FL32`-compressed COMM chunk
+    /// that declares 16-bit samples to 32-bit, rather than erroring.
+    #[test]
+    fn aifc_float_quicktime_16bit_quirk_is_corrected_to_32() {
+        let mut comm = plain_aiff_comm(1, 100, 16);
+        comm.extend_from_slice(b"fl32");
+        let info = parse_aiff_comm(&comm, crate::aiff::AiffForm::Aifc).unwrap();
+        assert_eq!(info.bits_per_sample, 32);
+        assert_eq!(info.sample_type, SampleType::Float32);
+    }
+
+    #[test]
+    fn aifc_unknown_compression_type_is_an_error() {
+        let mut comm = plain_aiff_comm(1, 100, 16);
+        comm.extend_from_slice(b"ZZZZ");
+        assert!(matches!(
+            parse_aiff_comm(&comm, crate::aiff::AiffForm::Aifc),
+            Err(SfError::UnknownAifcCompressionType)
+        ));
+    }
+
+    #[test]
+    fn peak_chunk_be_round_trip_matches_le_values() {
+        let mut data = Vec::new();
+        data.extend_from_slice(&1u32.to_be_bytes()); // version
+        data.extend_from_slice(&1_151_268_522u32.to_be_bytes()); // timestamp
+        data.extend_from_slice(&0.299_722_28f32.to_be_bytes());
+        data.extend_from_slice(&29_914u32.to_be_bytes());
+        let (ts, peaks) = parse_peak_chunk_be(&data, 1).unwrap();
+        assert_eq!(ts, 1_151_268_522);
+        assert_eq!(peaks[0].position, 29_914);
+        assert!((peaks[0].value - 0.299_722_28).abs() < 1e-9);
     }
 }

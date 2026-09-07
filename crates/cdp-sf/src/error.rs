@@ -44,6 +44,42 @@ pub enum SfError {
     #[error("not a WAVE file: RIFF form type is not \"WAVE\"")]
     NotWave,
 
+    /// legacy: `rdaiffhdr`/`rdaifchdr`, "File is not an AIFF file" --
+    /// the leading four bytes are not `FORM`.
+    #[error("File is not an AIFF file")]
+    NotAiff,
+
+    /// legacy: "File does not include an AIFF form" -- `FORM` is
+    /// present but the form type is neither `AIFF` nor `AIFC`.
+    #[error("File does not include an AIFF form")]
+    NotAiffForm,
+
+    /// legacy: "AIFF COMM chunk of incorrect size" (plain AIFF
+    /// requires exactly 18 bytes) / "AIFC COMM chunk of incorrect
+    /// size" (AIFC requires at least 22).
+    #[error("AIFF COMM chunk of incorrect size")]
+    MalformedAiffCommChunk,
+
+    /// legacy: "unsupported sample size in aiff file".
+    #[error("unsupported sample size in aiff file (bits={0})")]
+    UnsupportedAiffSampleSize(u16),
+
+    /// legacy: "Unknown AIFC compression type".
+    #[error("Unknown AIFC compression type")]
+    UnknownAifcCompressionType,
+
+    /// legacy: "AIFF format error: no COMM chunk found".
+    #[error("AIFF format error: no COMM chunk found")]
+    MissingCommChunk,
+
+    /// legacy: "AIFF format error: no SSND chunk found".
+    #[error("AIFF format error: no SSND chunk found")]
+    MissingSsndChunk,
+
+    /// legacy: "Funny offset in AIFF SSND chunk".
+    #[error("Funny offset in AIFF SSND chunk")]
+    FunnyAiffSsndOffset,
+
     #[error("missing required chunk: {0:?}")]
     MissingChunk(FourCc),
 
