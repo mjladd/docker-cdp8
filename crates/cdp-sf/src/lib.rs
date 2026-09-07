@@ -43,6 +43,8 @@ pub mod riff;
 pub mod writer;
 
 pub use error::{FourCc, Result, SfError};
-pub use props::{ChannelPeak, FmtInfo, PropertyBlock, SampleType};
+pub use props::{
+    ChannelPeak, FileKind, FmtInfo, OriginalChannelInfo, PropertyBlock, SampleType, SpectralInfo,
+};
 pub use reader::SoundFile;
 pub use writer::{SoundFileWriter, WriteSpec};

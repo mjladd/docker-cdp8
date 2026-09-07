@@ -108,6 +108,39 @@ pub enum SfError {
         expected: usize,
         found: usize,
     },
+
+    /// legacy: `sf_headread`/`snd_headread` in
+    /// `legacy/dev/newsfsys/props.c` -- of the five analysis
+    /// properties (`original sampsize`, `original sample rate`,
+    /// `arate`, `analwinlen`, `decfactor`), some are present and some
+    /// are not. legacy leaves this case only weakly defined (a stale
+    /// `props_errstr` from whichever one of the five failed last,
+    /// checked only if the ones that did read produce a non-zero
+    /// checksum); every real analysis-family file has all five, so
+    /// this is a single, distinct error here rather than an attempt
+    /// to reproduce that exact quirk.
+    #[error("inconsistent or corrupt analysis-file properties")]
+    InconsistentAnalysisProperties,
+
+    /// legacy: `props_errstr = "Channel count does not equal to 1
+    /// formant,pitch or transposition file"`.
+    #[error("Channel count does not equal to 1 formant,pitch or transposition file")]
+    AnalysisFileChannelCountNotOne,
+
+    /// legacy: `props_errstr = "Failure to read original channel
+    /// data in formant,pitch or transposition file"`.
+    #[error("Failure to read original channel data in formant,pitch or transposition file")]
+    MissingOriginalChannels,
+
+    /// legacy: `props_errstr = "Failure to read formant size in
+    /// formant file"`.
+    #[error("Failure to read formant size in formant file")]
+    MissingSpectralEnvelopeCount,
+
+    /// legacy: `props_errstr = "Error reading window size in
+    /// envelope file"`.
+    #[error("Error reading window size in envelope file")]
+    MissingEnvelopeWindowSize,
 }
 
 pub type Result<T> = std::result::Result<T, SfError>;
