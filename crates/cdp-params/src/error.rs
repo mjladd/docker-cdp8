@@ -108,6 +108,44 @@ pub enum ParamsError {
     #[error("Duplicate option {0} used on command line")]
     DuplicateOption(char),
 
+    /// legacy: `"variant parameter missing with flag -%c\n"`
+    /// (`get_variant_no` in `legacy/dev/cdp2k/readdata.c`) -- the
+    /// variant-flag counterpart of [`Self::OptionValueMissing`],
+    /// confirmed live for `distort repeat infile outfile 3 -c2 -s`
+    /// (a bare trailing `-s`). Checked before [`Self::DuplicateFlag`],
+    /// the same order [`Self::OptionValueMissing`] takes relative to
+    /// [`Self::DuplicateOption`] -- confirmed live with `-s1 -s`.
+    #[error("variant parameter missing with flag -{0}")]
+    VariantValueMissing(char),
+
+    /// legacy: `"Duplicate flag %c used on command line\n"`
+    /// (`get_variants_and_flags` in `legacy/dev/cdp2k/readdata.c`) --
+    /// the variant-flag counterpart of [`Self::DuplicateOption`],
+    /// distinct text ("flag" vs "option"), confirmed live for `distort
+    /// repeat infile outfile 3 -s1 -s2`.
+    #[error("Duplicate flag {0} used on command line")]
+    DuplicateFlag(char),
+
+    /// legacy: `"option flag -%c out of order on cmdline.\n"`
+    /// (`get_variant_no`) -- a flag letter that belongs to
+    /// [`crate::CommandSpec::flags`], not
+    /// [`crate::CommandSpec::variants`], appearing after variant
+    /// scanning has already started (so it is too late to be
+    /// recognised as an option). Confirmed live for `distort repeat
+    /// infile outfile 3 -s1 -c2` (`-c` is a real option, but appears
+    /// after `-s`, a variant).
+    #[error("option flag -{0} out of order on cmdline.")]
+    OptionOutOfOrder(char),
+
+    /// legacy: `"Unknown variant flag -%c\n"` (`get_variant_no`,
+    /// reached only when the mode has at least one option -- see that
+    /// function's `else` branch, `"Unknown flag '-%c'\n"`, for the
+    /// no-options case, not yet implemented since no confirmed command
+    /// exercises it). Confirmed live for `distort repeat infile
+    /// outfile 3 -c2 -z5`.
+    #[error("Unknown variant flag -{0}")]
+    UnknownVariantFlag(char),
+
     /// legacy: `"option parameter missing with flag -%c\n"`,
     /// confirmed live both for a bare trailing `-l` and for `-l 0.5`
     /// (a space-separated value is not supported at all: the whole

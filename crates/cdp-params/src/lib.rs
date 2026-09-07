@@ -29,18 +29,18 @@
 //! checks in `mainfuncs.c`/`tklib1.c`).
 //!
 //! Current scope (see `docs/migration/STATUS.md` for the live list):
-//! four hand-written [`CommandSpec`]s -- all `modify loudness` modes
-//! (mode 1 `LOUDNESS_GAIN`, modes 3/4 `LOUDNESS_NORM`/`LOUDNESS_SET`)
-//! and `pvoc anal` (all three modes share one spec) -- and a parser
-//! handling four of PLAN.md's five parameter types
+//! five hand-written [`CommandSpec`]s -- all `modify loudness` modes
+//! (mode 1 `LOUDNESS_GAIN`, modes 3/4 `LOUDNESS_NORM`/`LOUDNESS_SET`),
+//! `pvoc anal` (all three modes share one spec), and `distort repeat`
+//! -- and a parser handling all five of PLAN.md's parameter types
 //! ([`ParamType::DoubleOrBreakpoint`], [`ParamType::Double`],
-//! [`ParamType::Int`], [`ParamType::File`]) plus multiple simultaneous
-//! optional `-<letter><value>` flags, including duplicate-flag
-//! detection, all confirmed against live `legacy` runs (see `parser`'s
-//! module doc). The general `CommandSpec`-from-TOML loader,
-//! `IntOrBreakpoint`, variant flags, a mode with both required
-//! positional parameters and optional flags, and usage-text formatting
-//! are not implemented yet.
+//! [`ParamType::Int`], [`ParamType::IntOrBreakpoint`],
+//! [`ParamType::File`]) plus multiple simultaneous optional
+//! `-<letter><value>` flags and variants, including duplicate and
+//! out-of-order detection, all confirmed against live `legacy` runs
+//! (see `parser`'s module doc). The general `CommandSpec`-from-TOML
+//! loader, a pure boolean (no-value) variant flag, and usage-text
+//! formatting are not implemented yet.
 
 pub mod error;
 pub mod parser;
