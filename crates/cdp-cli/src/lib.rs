@@ -36,6 +36,7 @@
 
 use cdp_core::{CdpError, ExitCategory, report_and_exit};
 use cdp_params::{CommandSpec, parse, parse_mode};
+use cdp_programs::pvoc::anal;
 use cdp_programs::synth::wave::{self, Mode};
 
 /// legacy: each program's own `cdp_version` constant in its
@@ -94,11 +95,13 @@ fn print_top_level_help() {
     println!();
     println!("Programs implemented so far:");
     println!("  synth wave    generate a sine, square, sawtooth or ramp waveform");
+    println!("  pvoc anal     analyse a sound file into a phase-vocoder file (mode 1, mono only)");
 }
 
 fn dispatch(program: &str, args: &[String]) -> ! {
     match program {
         "synth" => dispatch_synth(args),
+        "pvoc" => dispatch_pvoc(args),
         _ => {
             eprintln!("cdp: '{program}' is not implemented yet");
             std::process::exit(1);
@@ -143,5 +146,40 @@ fn run_synth_wave(mode_token: &str, args: &[String]) -> Result<(), CdpError> {
     let parsed = parse(&CommandSpec::synth_wave(), &args)?;
     let outfile = parsed.outfile.clone();
     let writer = wave::synthesize(mode, &parsed)?;
+    writer.finalize(&outfile).map_err(CdpError::from)
+}
+
+fn dispatch_pvoc(args: &[String]) -> ! {
+    match args.split_first() {
+        Some((subcommand, rest)) if subcommand == "anal" => dispatch_pvoc_anal(rest),
+        Some((subcommand, _)) => {
+            eprintln!("pvoc: '{subcommand}' is not implemented yet (only 'anal' is)");
+            std::process::exit(1);
+        }
+        None => {
+            eprintln!("pvoc: missing sub-command (only 'anal' is implemented)");
+            std::process::exit(1);
+        }
+    }
+}
+
+fn dispatch_pvoc_anal(args: &[String]) -> ! {
+    let Some((mode_token, rest)) = args.split_first() else {
+        // legacy: same bare-subcommand usage-text shape as `synth
+        // wave` -- see `run_synth_wave`'s own comment on
+        // `ExitCategory::UsageOnly`.
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, anal::USAGE)));
+    };
+    report_and_exit(run_pvoc_anal(mode_token, rest))
+}
+
+fn run_pvoc_anal(mode_token: &str, args: &[String]) -> Result<(), CdpError> {
+    let mode_number = parse_mode(mode_token, anal::MAX_MODE)?;
+    let mode = anal::Mode::from_number(mode_number)
+        .expect("parse_mode already checked mode_number is in 1..=MAX_MODE");
+    let args: Vec<&str> = args.iter().map(String::as_str).collect();
+    let parsed = parse(&CommandSpec::pvoc_anal(), &args)?;
+    let outfile = parsed.outfile.clone();
+    let writer = anal::analyze(mode, &parsed)?;
     writer.finalize(&outfile).map_err(CdpError::from)
 }

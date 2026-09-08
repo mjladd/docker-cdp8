@@ -61,6 +61,7 @@ version = "0.1.0"
 dependencies = [
  "cdp-core",
  "cdp-data",
+ "cdp-dsp",
  "cdp-params",
  "cdp-sf",
  "tempfile",
