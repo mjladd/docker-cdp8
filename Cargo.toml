@@ -7,6 +7,7 @@ members = [
     "crates/cdp-cli",
     "crates/cdp-core",
     "crates/cdp-data",
+    "crates/cdp-dsp",
     "crates/cdp-params",
     "crates/cdp-programs",
     "crates/cdp-sf",
