@@ -460,7 +460,25 @@ impl CommandSpec {
                 },
             ],
             variants: vec![Variant::Boolean { letter: 'f' }],
-            unequal_sndfile: false,
+            // legacy: `legacy/dev/synth/ap_synthesis.c`'s
+            // `setup_process_logic(NO_FILE_AT_ALL, UNEQUAL_SNDFILE,
+            // SNDFILE_OUT, dz)` for `SYNTH_WAVE` -- found while
+            // verifying WP-1.5's lifecycle wiring against a live
+            // `synth wave 1` (mode only, no other arguments at all):
+            // legacy prints "Insufficient parameters on command
+            // line." (this crate's `ParamsError::InsufficientParameters`),
+            // not "Insufficient cmdline parameters."
+            // (`InsufficientCmdlineParameters`), the text this field's
+            // previous `false` value produced. Every other confirmed
+            // live case for this command (a bare `outfile.wav`, or
+            // `outfile.wav` plus one of the four required params) was
+            // already correct regardless of this field, since both
+            // land past the `args.len() < min_needed` check this
+            // field controls (see `crate::parser::parse`'s doc) and
+            // into `parse`'s own `rest.is_empty()` branch instead --
+            // which is why the fifth `synth wave` slice's live
+            // verification did not already catch this.
+            unequal_sndfile: true,
         }
     }
 }

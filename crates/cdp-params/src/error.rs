@@ -178,6 +178,23 @@ pub enum ParamsError {
     /// word" situation.
     #[error("Unknown parameter '{0}'")]
     UnknownParameter(String),
+
+    /// legacy: `get_mode_from_cmdline` in `legacy/dev/cdp2k/tklib3.c`,
+    /// `sscanf(str,"%d",&dz->mode)` finding no leading integer at all
+    /// -- confirmed live: `synth wave abc outfile.wav 44100 1 1.0
+    /// 440`.
+    #[error("Cannot read mode of program.")]
+    CannotReadModeOfProgram,
+
+    /// legacy: `get_mode_from_cmdline`'s range check, once a mode
+    /// number was read -- confirmed live: `synth wave 9 outfile.wav
+    /// 44100 1 1.0 440`. `mode` is whatever `sscanf("%d")` read, which
+    /// -- confirmed live -- truncates at the first non-digit rather
+    /// than rejecting the token (`synth wave 3.5 ...` and `synth wave
+    /// 3abc ...` both run mode 3 to completion): [`crate::parse_mode`]
+    /// reproduces that truncation, not full-token validation.
+    #[error("Program mode value [{mode}] is out of range [1 - {maxmode}].")]
+    ModeOutOfRange { mode: i64, maxmode: u32 },
 }
 
 pub type Result<T> = std::result::Result<T, ParamsError>;

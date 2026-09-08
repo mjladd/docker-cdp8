@@ -44,9 +44,11 @@
 //! loader and usage-text formatting are not implemented yet.
 
 pub mod error;
+pub mod mode;
 pub mod parser;
 pub mod spec;
 
 pub use error::{ParamsError, Result};
+pub use mode::parse_mode;
 pub use parser::{ParamValue, ParsedCommand, parse};
 pub use spec::{CommandSpec, OptionFlag, ParamType, Variant};

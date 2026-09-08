@@ -1193,6 +1193,21 @@ mod tests {
     }
 
     #[test]
+    fn synth_wave_no_arguments_at_all_is_insufficient_parameters() {
+        // legacy: confirmed live, `synth wave 1` (no outfile, no
+        // required params at all) prints "Insufficient parameters on
+        // command line.", not "Insufficient cmdline parameters." --
+        // found while wiring up WP-1.5's lifecycle, see
+        // `CommandSpec::synth_wave`'s `unequal_sndfile` field doc.
+        let spec = CommandSpec::synth_wave();
+        let args: [&str; 0] = [];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::InsufficientParameters)
+        ));
+    }
+
+    #[test]
     fn synth_wave_partial_required_params_is_insufficient_parameters_on_cmdline() {
         // legacy: confirmed live -- 1, 2, or 3 of the 4 required params
         // given (but not zero) fails with "Insufficient parameters on

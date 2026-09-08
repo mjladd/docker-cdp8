@@ -1,0 +1,32 @@
+// This file is part of a Rust reimplementation of the CDP System, a
+// Composers Desktop Project (CDP) command-line sound-processing suite
+// originally written by Trevor Wishart, Richard Dobson, Martin Atkins
+// and others (see legacy/dev for the original C source and its
+// per-file copyright notices).
+//
+// SPDX-License-Identifier: LGPL-2.1-or-later
+//
+// This program is free software: you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License
+// as published by the Free Software Foundation, either version 2.1 of
+// the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this program. If not, see
+// <https://www.gnu.org/licenses/>.
+
+//! One module per legacy program directory.
+//!
+//! This crate is part of WP-1.5 of the migration plan
+//! (`docs/migration/PLAN.md`), brought in early (rather than starting
+//! in its own later-phase program WPs) because WP-1.5's done-when
+//! needs one real program wired all the way from argument parsing to
+//! a written sound file to prove `cdp-core`'s lifecycle. Current
+//! scope (see `docs/migration/STATUS.md`): [`synth::wave`] only.
+
+pub mod synth;

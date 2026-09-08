@@ -1,0 +1,19 @@
+[package]
+name = "cdp-programs"
+description = "One module per legacy program directory: registers each program's CommandSpecs and runs them (legacy: dev/<program>/main.c and ap_*.c, one module at a time as program work packages port them)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+cdp-core = { path = "../cdp-core" }
+cdp-data = { path = "../cdp-data" }
+cdp-params = { path = "../cdp-params" }
+cdp-sf = { path = "../cdp-sf" }
+
+[dev-dependencies]
+tempfile = "3"

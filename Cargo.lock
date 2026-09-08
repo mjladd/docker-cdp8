@@ -9,6 +9,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b588b76d00fde79687d7646a9b5bdf3cc0f655e0bbd080335a95d7e96f3587da"
 
 [[package]]
+name = "cdp-cli"
+version = "0.1.0"
+dependencies = [
+ "cdp-core",
+ "cdp-params",
+ "cdp-programs",
+]
+
+[[package]]
+name = "cdp-core"
+version = "0.1.0"
+dependencies = [
+ "cdp-data",
+ "cdp-params",
+ "cdp-sf",
+]
+
+[[package]]
 name = "cdp-data"
 version = "0.1.0"
 dependencies = [
@@ -22,6 +40,17 @@ dependencies = [
  "cdp-data",
  "tempfile",
  "thiserror",
+]
+
+[[package]]
+name = "cdp-programs"
+version = "0.1.0"
+dependencies = [
+ "cdp-core",
+ "cdp-data",
+ "cdp-params",
+ "cdp-sf",
+ "tempfile",
 ]
 
 [[package]]
