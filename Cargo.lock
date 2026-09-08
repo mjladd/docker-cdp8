@@ -21,6 +21,7 @@ dependencies = [
  "cdp-core",
  "cdp-params",
  "cdp-programs",
+ "cdp-sf",
 ]
 
 [[package]]

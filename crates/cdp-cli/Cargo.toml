@@ -21,7 +21,12 @@ path = "src/bin/cdp.rs"
 name = "synth"
 path = "src/bin/synth.rs"
 
+[[bin]]
+name = "sndinfo"
+path = "src/bin/sndinfo.rs"
+
 [dependencies]
 cdp-core = { path = "../cdp-core" }
 cdp-params = { path = "../cdp-params" }
 cdp-programs = { path = "../cdp-programs" }
+cdp-sf = { path = "../cdp-sf" }

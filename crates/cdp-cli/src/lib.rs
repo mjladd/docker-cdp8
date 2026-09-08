@@ -26,17 +26,20 @@
 //! sub-command tree) and once as `synth` (`src/bin/synth.rs`, a
 //! launcher that behaves as the legacy `synth` executable would).
 //!
-//! Current scope (see `docs/migration/STATUS.md`): only `synth wave`
-//! is registered ([`cdp_programs::synth::wave`], WP-1.5's one proof-
-//! of-life program). Every other program name reports "not
-//! implemented yet" rather than legacy's own usage text, since this
-//! crate does not (yet) know the full set of legacy program/
-//! sub-command names -- that comes from `spec/usage/`, captured by
-//! WP-0.2, one program at a time as each is wired up here.
+//! Current scope (see `docs/migration/STATUS.md`): `synth wave`
+//! ([`cdp_programs::synth::wave`], WP-1.5's one proof-of-life program)
+//! and `sndinfo props` ([`cdp_programs::sndinfo::props`], WP-2.1).
+//! Every other program name reports "not implemented yet" rather than
+//! legacy's own usage text, since this crate does not (yet) know the
+//! full set of legacy program/sub-command names -- that comes from
+//! `spec/usage/`, captured by WP-0.2, one program at a time as each is
+//! wired up here.
 
 use cdp_core::{CdpError, ExitCategory, report_and_exit};
 use cdp_params::{CommandSpec, parse, parse_mode};
+use cdp_programs::sndinfo::props;
 use cdp_programs::synth::wave::{self, Mode};
+use cdp_sf::SoundFile;
 
 /// legacy: each program's own `cdp_version` constant in its
 /// `main.c` (e.g. `legacy/dev/synth/main.c`) -- confirmed live via
@@ -46,6 +49,7 @@ use cdp_programs::synth::wave::{self, Mode};
 fn legacy_program_version(program: &str) -> Option<&'static str> {
     match program {
         "synth" => Some("7.1.1"),
+        "sndinfo" => Some("7.1.0"),
         _ => None,
     }
 }
@@ -94,11 +98,13 @@ fn print_top_level_help() {
     println!();
     println!("Programs implemented so far:");
     println!("  synth wave    generate a sine, square, sawtooth or ramp waveform");
+    println!("  sndinfo props display a sound or analysis file's properties");
 }
 
 fn dispatch(program: &str, args: &[String]) -> ! {
     match program {
         "synth" => dispatch_synth(args),
+        "sndinfo" => dispatch_sndinfo(args),
         _ => {
             eprintln!("cdp: '{program}' is not implemented yet");
             std::process::exit(1);
@@ -141,7 +147,55 @@ fn run_synth_wave(mode_token: &str, args: &[String]) -> Result<(), CdpError> {
         .expect("parse_mode already checked mode_number is in 1..=MAX_MODE");
     let args: Vec<&str> = args.iter().map(String::as_str).collect();
     let parsed = parse(&CommandSpec::synth_wave(), &args)?;
-    let outfile = parsed.outfile.clone();
+    let outfile = parsed
+        .outfile
+        .clone()
+        .expect("CommandSpec::synth_wave has_outfile: true");
     let writer = wave::synthesize(mode, &parsed)?;
     writer.finalize(&outfile).map_err(CdpError::from)
+}
+
+fn dispatch_sndinfo(args: &[String]) -> ! {
+    match args.split_first() {
+        Some((subcommand, rest)) if subcommand == "props" => dispatch_sndinfo_props(rest),
+        Some((subcommand, _)) => {
+            eprintln!("sndinfo: '{subcommand}' is not implemented yet (only 'props' is)");
+            std::process::exit(1);
+        }
+        None => {
+            eprintln!("sndinfo: missing sub-command (only 'props' is implemented)");
+            std::process::exit(1);
+        }
+    }
+}
+
+fn dispatch_sndinfo_props(args: &[String]) -> ! {
+    if args.is_empty() {
+        // legacy: confirmed live, a bare `sndinfo props` prints its
+        // usage text with no "ERROR:" header -- see
+        // `run_synth_wave`'s own comment on `ExitCategory::UsageOnly`.
+        // `props::USAGE` bundles the greeting itself (see its doc).
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, props::USAGE)));
+    }
+    if args.len() == 1 {
+        // legacy: `make_initial_cmdline_check`'s `argc<4` greeting --
+        // true for `sndinfo props infile` (argc 3) regardless of
+        // whether the run goes on to succeed, confirmed live including
+        // for a nonexistent infile. False once a further token makes
+        // argc 4 or more (confirmed live: `sndinfo props infile extra`
+        // prints no greeting at all, straight to `"Too many
+        // parameters..."`), so `run_sndinfo_props`'s own `parse` call
+        // below is what produces that error text for that case.
+        print!("{}", props::GREETING);
+    }
+    let args: Vec<&str> = args.iter().map(String::as_str).collect();
+    report_and_exit(run_sndinfo_props(&args));
+}
+
+fn run_sndinfo_props(args: &[&str]) -> Result<(), CdpError> {
+    let parsed = parse(&CommandSpec::sndinfo_props(), args)?;
+    let sf = SoundFile::open(&parsed.infiles[0])?;
+    let text = props::format_props(&sf)?;
+    print!("{text}");
+    Ok(())
 }
