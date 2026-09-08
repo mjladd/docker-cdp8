@@ -30,10 +30,11 @@
 //! Current scope (see `docs/migration/STATUS.md` for the live list):
 //! the phase vocoder's analysis and synthesis window construction
 //! ([`windows`]), ported from the window-setup block in
-//! `pvoc_process` (`legacy/dev/pv/pvoc.c` lines 272-358). The FFT
-//! wrapper, the phase vocoder's per-frame analysis/synthesis loop,
-//! splices, interpolators, filters and the seedable RNG are not
-//! implemented yet.
+//! `pvoc_process` (`legacy/dev/pv/pvoc.c` lines 272-358); and the
+//! real-signal FFT wrapper ([`fft`]) `pvoc_process`'s per-frame loop
+//! will call. The per-frame analysis/synthesis loop itself, splices,
+//! interpolators, filters and the seedable RNG are not implemented
+//! yet.
 
 /// The literal value of `PI` in `legacy/dev/include/globcon.h`: a
 /// truncated decimal (`3.141592654`), not full double-precision pi
@@ -47,4 +48,5 @@ pub const LEGACY_PI: f64 = 3.141592654;
 /// `TWOPI` from `legacy/dev/include/globcon.h`.
 pub const LEGACY_TWOPI: f64 = 2.0 * LEGACY_PI;
 
+pub mod fft;
 pub mod windows;
