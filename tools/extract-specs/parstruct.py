@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Extracts the parameter and option/variant tables from
-legacy/dev/cdp2k/parstruct.c into structured JSON.
+docs/legacy/dev/cdp2k/parstruct.c into structured JSON.
 
 This is the machine-readable core of every group program's command-line
 interface: for each (process, mode) pair, set_legal_param_structure gives
@@ -35,7 +35,7 @@ Output: spec/commands/_raw/parstruct.json, a dict:
 
 Usage:
   tools/extract-specs/parstruct.py [path/to/parstruct.c] [output.json]
-Defaults: legacy/dev/cdp2k/parstruct.c, spec/commands/_raw/parstruct.json
+Defaults: docs/legacy/dev/cdp2k/parstruct.c, spec/commands/_raw/parstruct.json
 """
 import json
 import re
@@ -184,7 +184,7 @@ def extract_function_body(text: str, signature_re: str) -> str:
 
 def main():
     src = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(
-        "legacy/dev/cdp2k/parstruct.c"
+        "docs/legacy/dev/cdp2k/parstruct.c"
     )
     out = Path(sys.argv[2]) if len(sys.argv) > 2 else Path(
         "spec/commands/_raw/parstruct.json"

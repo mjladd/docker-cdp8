@@ -7,7 +7,7 @@
 # Usage:
 #   tools/extract-specs/dump-usage.sh [docker-image-tag]
 #
-# If no image tag is given, builds one from legacy/ via
+# If no image tag is given, builds one from docs/legacy/ via
 # docker-cdp8/Dockerfile, tagged cdp8-spec-capture.
 #
 # Requires: docker.

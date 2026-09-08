@@ -38,13 +38,13 @@ RUN wget -q http://files.portaudio.com/archives/pa_stable_v190700_20210406.tgz \
 WORKDIR /cdp8
 COPY . .
 
-# Build CDP8 (the legacy C reference implementation lives under legacy/)
+# Build CDP8 (the legacy C reference implementation lives under docs/legacy/)
 RUN mkdir -p build \
     && cd build \
-    && cmake ../legacy \
+    && cmake ../docs/legacy \
     && make -j$(nproc)
 
-# The built binaries will be in /cdp8/legacy/NewRelease/
+# The built binaries will be in /cdp8/docs/legacy/NewRelease/
 
 # Runtime image with just the binaries
 FROM ubuntu:22.04 AS runtime
@@ -62,7 +62,7 @@ COPY --from=builder /usr/local/lib/libportaudio* /usr/local/lib/
 RUN ldconfig
 
 # Copy built CDP binaries
-COPY --from=builder /cdp8/legacy/NewRelease /opt/cdp/bin
+COPY --from=builder /cdp8/docs/legacy/NewRelease /opt/cdp/bin
 
 # Add CDP binaries to PATH
 ENV PATH="/opt/cdp/bin:${PATH}"

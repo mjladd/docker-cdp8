@@ -73,8 +73,8 @@ The final image is approximately 141MB.
 ```bash
 sudo apt-get update
 sudo apt-get install -y build-essential cmake libasound2-dev libjack-jackd2-dev pkg-config
-mkdir -p build && cd build && cmake ../legacy && make -j$(nproc)
-ls ../legacy/NewRelease   # binaries
+mkdir -p build && cd build && cmake ../docs/legacy && make -j$(nproc)
+ls ../docs/legacy/NewRelease   # binaries
 ```
 
 - **Permissions issues on Linux:** If mounting yields permission errors, try adding `:Z` or `:rw` options depending on your Docker setup, or run from a directory with appropriate permissions.
