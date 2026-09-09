@@ -161,6 +161,7 @@ impl From<cdp_params::ParamsError> for CdpError {
             E::InsufficientCmdlineParameters
             | E::InsufficientParameters
             | E::TooManyParameters
+            | E::HangingDash
             | E::UnknownFlag(_)
             | E::DuplicateOption(_)
             | E::OptionValueMissing(_)

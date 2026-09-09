@@ -21,12 +21,15 @@
 // <https://www.gnu.org/licenses/>.
 
 //! `sndinfo` (legacy: `legacy/dev/sndinfo`). The `props`, `len`,
-//! `smptime`, `timesmp` and `timediff` sub-commands are ported so far.
+//! `smptime`, `timesmp`, `timediff`, `lens` and `sumlen` sub-commands
+//! are ported so far.
 
 mod ctime;
 pub mod len;
+pub mod lens;
 pub mod props;
 pub mod smptime;
+pub mod sumlen;
 pub mod timediff;
 pub mod timesmp;
 
@@ -74,4 +77,112 @@ pub fn open_sound_infile(path: &str) -> Result<SoundFile, CdpError> {
         return Err(CdpError::new(ExitCategory::UsageOnly, WRONG_FILETYPE));
     }
     Ok(sf)
+}
+
+/// legacy: `"Insufficient input files for this process\n"`
+/// (`legacy/dev/cdp2k/mainfuncs.c`'s `count_and_allocate_for_infiles`,
+/// `MANY_SNDFILES`'s own `dz->infilecnt < 2` check) -- confirmed live
+/// for both `sndinfo lens infile -x` and `sndinfo sumlen infile -x5`
+/// (one real infile, one token that does not count as an infile
+/// because it looks like a flag). Distinct from the plain
+/// [`cdp_params::ParamsError::InsufficientParameters`] text a bare
+/// one-token invocation (`sndinfo lens infile`) produces instead --
+/// see [`lens`]'s module doc for why those two cases are not the
+/// same check.
+pub const INSUFFICIENT_INFILES: &str = "Insufficient input files for this process\n";
+
+/// Opens infile 2 or later of a multi-infile command (legacy:
+/// `handle_other_infile`/`open_checktype_getsize_and_compareheader`,
+/// `legacy/dev/cdp2k/readfiles.c`), whose open-failure and wrong-kind
+/// messages are both worded differently from infile 1's own
+/// ([`open_sound_infile`]) -- see [`timediff::open_infiles`]'s module
+/// doc, which established this same distinction for a fixed two-infile
+/// command; [`lens`] and [`sumlen`] reuse it for an unbounded list.
+pub(crate) fn open_other_sound_infile(path: &str) -> Result<SoundFile, CdpError> {
+    std::fs::File::open(path).map_err(|_| {
+        CdpError::new(
+            ExitCategory::DataError,
+            format!("cannot open input file {path} to read data."),
+        )
+    })?;
+    let sf = SoundFile::open(path).map_err(CdpError::from)?;
+    if !matches!(sf.file_kind, FileKind::Wave) {
+        return Err(CdpError::new(
+            ExitCategory::DataError,
+            format!("{path} is not a sound file."),
+        ));
+    }
+    Ok(sf)
+}
+
+/// legacy: `count_infiles`'s own unflagged-item test
+/// (`legacy/dev/cdp2k/mainfuncs.c`): `*(argv[0])!='-' ||
+/// !isalpha(argv[0][1])`. A token counts as flag-shaped (excluded from
+/// the infile count) only when it starts with `-` *and* its second
+/// character is alphabetic -- confirmed live a bare `-` is *not*
+/// flag-shaped by this test: `sndinfo lens infile infile2 -` treats
+/// the `-` as a third infile (whose name is literally `-`), not a
+/// flag, and fails with the ordinary
+/// [`open_other_sound_infile`]-style "cannot open input file - to
+/// read data.", not a flag-related error. `sndinfo lens infile infile2
+/// -x`, by contrast, correctly stops at `-x` (`x` is alphabetic).
+fn looks_like_flag(token: &str) -> bool {
+    let bytes = token.as_bytes();
+    bytes.first() == Some(&b'-') && bytes.get(1).is_some_and(u8::is_ascii_alphabetic)
+}
+
+/// Splits `args` into the leading run of infile-shaped tokens (every
+/// token up to but not including the first one [`looks_like_flag`]
+/// considers flag-shaped) and whatever remains -- shared by [`lens`]
+/// and [`sumlen`], the two `MANY_SNDFILES` commands ported so far. See
+/// [`lens`]'s module doc for why this is a deliberate simplification
+/// of legacy's own `count_infiles`, not a full reproduction of it (it
+/// does not model infiles and flags genuinely interspersed).
+pub fn split_infile_tokens<'a>(args: &'a [&'a str]) -> (&'a [&'a str], &'a [&'a str]) {
+    let n = args
+        .iter()
+        .take_while(|token| !looks_like_flag(token))
+        .count();
+    args.split_at(n)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn split_infile_tokens_stops_at_the_first_flag_shaped_token() {
+        let args = ["a.wav", "b.wav", "-x"];
+        let (infiles, rest) = split_infile_tokens(&args);
+        assert_eq!(infiles, ["a.wav", "b.wav"]);
+        assert_eq!(rest, ["-x"]);
+    }
+
+    #[test]
+    fn split_infile_tokens_takes_everything_when_no_flag_is_present() {
+        let args = ["a.wav", "b.wav", "c.wav"];
+        let (infiles, rest) = split_infile_tokens(&args);
+        assert_eq!(infiles, args);
+        assert!(rest.is_empty());
+    }
+
+    #[test]
+    fn split_infile_tokens_treats_a_bare_dash_as_an_infile_not_a_flag() {
+        // legacy: confirmed live -- see `looks_like_flag`'s own doc.
+        let args = ["a.wav", "b.wav", "-"];
+        let (infiles, rest) = split_infile_tokens(&args);
+        assert_eq!(infiles, ["a.wav", "b.wav", "-"]);
+        assert!(rest.is_empty());
+    }
+
+    #[test]
+    fn split_infile_tokens_treats_a_dash_digit_token_as_an_infile_not_a_flag() {
+        // legacy: `isalpha('5')` is false, so `-5` is not flag-shaped
+        // either -- inferred from the same `count_infiles` source, not
+        // independently confirmed live (no corpus file is named `-5`).
+        let args = ["a.wav", "b.wav", "-5"];
+        let (infiles, rest) = split_infile_tokens(&args);
+        assert_eq!(infiles, ["a.wav", "b.wav", "-5"]);
+        assert!(rest.is_empty());
+    }
 }

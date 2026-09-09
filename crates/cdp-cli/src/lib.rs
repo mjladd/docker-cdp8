@@ -29,7 +29,7 @@
 //! Current scope (see `docs/migration/STATUS.md`): `synth wave`
 //! ([`cdp_programs::synth::wave`], WP-1.5's one proof-of-life program),
 //! `pvoc anal` ([`cdp_programs::pvoc::anal`], WP-1.4, mode 1/mono only)
-//! and `sndinfo props`/`len`/`smptime`/`timesmp`/`timediff`
+//! and `sndinfo props`/`len`/`smptime`/`timesmp`/`timediff`/`lens`/`sumlen`
 //! ([`cdp_programs::sndinfo`], WP-2.1). Every other program name reports "not implemented yet" rather than
 //! legacy's own usage text, since this crate does not (yet) know the
 //! full set of legacy program/sub-command names -- that comes from
@@ -39,7 +39,7 @@
 use cdp_core::{CdpError, ExitCategory, report_and_exit};
 use cdp_params::{CommandSpec, parse, parse_mode};
 use cdp_programs::pvoc::anal;
-use cdp_programs::sndinfo::{len, props, smptime, timediff, timesmp};
+use cdp_programs::sndinfo::{len, lens, props, smptime, sumlen, timediff, timesmp};
 use cdp_programs::synth::wave::{self, Mode};
 use cdp_sf::SoundFile;
 
@@ -106,6 +106,8 @@ fn print_top_level_help() {
     println!("  sndinfo smptime convert a sample count to a duration");
     println!("  sndinfo timesmp convert a duration to a sample count");
     println!("  sndinfo timediff show the duration difference between two sound files");
+    println!("  sndinfo lens   list the duration of two or more sound files");
+    println!("  sndinfo sumlen sum the duration of two or more sound files");
 }
 
 fn dispatch(program: &str, args: &[String]) -> ! {
@@ -184,15 +186,17 @@ fn dispatch_sndinfo(args: &[String]) -> ! {
         Some((subcommand, rest)) if subcommand == "smptime" => dispatch_sndinfo_smptime(rest),
         Some((subcommand, rest)) if subcommand == "timesmp" => dispatch_sndinfo_timesmp(rest),
         Some((subcommand, rest)) if subcommand == "timediff" => dispatch_sndinfo_timediff(rest),
+        Some((subcommand, rest)) if subcommand == "lens" => dispatch_sndinfo_lens(rest),
+        Some((subcommand, rest)) if subcommand == "sumlen" => dispatch_sndinfo_sumlen(rest),
         Some((subcommand, _)) => {
             eprintln!(
-                "sndinfo: '{subcommand}' is not implemented yet (only 'props'/'len'/'smptime'/'timesmp'/'timediff' are)"
+                "sndinfo: '{subcommand}' is not implemented yet (only 'props'/'len'/'smptime'/'timesmp'/'timediff'/'lens'/'sumlen' are)"
             );
             std::process::exit(1);
         }
         None => {
             eprintln!(
-                "sndinfo: missing sub-command (only 'props'/'len'/'smptime'/'timesmp'/'timediff' are implemented)"
+                "sndinfo: missing sub-command (only 'props'/'len'/'smptime'/'timesmp'/'timediff'/'lens'/'sumlen' are implemented)"
             );
             std::process::exit(1);
         }
@@ -359,5 +363,85 @@ fn run_sndinfo_timediff(args: &[&str]) -> Result<(), CdpError> {
     }
     let (sf1, sf2) = timediff::open_infiles(args[0], args[1])?;
     print!("{}", timediff::format_timediff(&sf1, &sf2));
+    Ok(())
+}
+
+fn dispatch_sndinfo_lens(args: &[String]) -> ! {
+    if args.is_empty() {
+        // legacy: same bare-subcommand usage-text shape as `sndinfo
+        // props` -- see `dispatch_sndinfo_props`'s own comment.
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, lens::USAGE)));
+    }
+    if args.len() == 1 {
+        // legacy: same `argc<4` greeting rule as `sndinfo props`, but
+        // -- unlike `props`/`len` -- `sndinfo lens infile` (one token)
+        // still fails, with "Insufficient parameters on command
+        // line." rather than proceeding -- see `lens`'s own module
+        // doc for why.
+        print!("{}", lens::GREETING);
+    }
+    let args: Vec<&str> = args.iter().map(String::as_str).collect();
+    report_and_exit(run_sndinfo_lens(&args));
+}
+
+fn run_sndinfo_lens(args: &[&str]) -> Result<(), CdpError> {
+    // legacy: `lens`'s own module doc explains why this command's
+    // argument handling is written by hand instead of going through
+    // `cdp_params::parse`, and why exactly one token is a different,
+    // earlier error than two-or-more tokens that still add up to
+    // fewer than two real infiles.
+    if args.len() == 1 {
+        return Err(CdpError::from(
+            cdp_params::ParamsError::InsufficientParameters,
+        ));
+    }
+    let (paths, trailing) = cdp_programs::sndinfo::split_infile_tokens(args);
+    if paths.len() < 2 {
+        return Err(CdpError::new(
+            ExitCategory::UsageOnly,
+            cdp_programs::sndinfo::INSUFFICIENT_INFILES,
+        ));
+    }
+    let files = lens::open_infiles(paths)?;
+    if let Some(&token) = trailing.first() {
+        return Err(CdpError::from(cdp_params::classify_trailing_token(token)));
+    }
+    print!("{}", lens::format_lens(paths, &files));
+    Ok(())
+}
+
+fn dispatch_sndinfo_sumlen(args: &[String]) -> ! {
+    if args.is_empty() {
+        // legacy: same bare-subcommand usage-text shape as `sndinfo
+        // props` -- see `dispatch_sndinfo_props`'s own comment.
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, sumlen::USAGE)));
+    }
+    if args.len() == 1 {
+        // legacy: same `argc<4` greeting rule as `sndinfo lens` -- see
+        // `dispatch_sndinfo_lens`'s own comment.
+        print!("{}", sumlen::GREETING);
+    }
+    let args: Vec<&str> = args.iter().map(String::as_str).collect();
+    report_and_exit(run_sndinfo_sumlen(&args));
+}
+
+fn run_sndinfo_sumlen(args: &[&str]) -> Result<(), CdpError> {
+    // legacy: same shape as `run_sndinfo_lens` -- see that function's
+    // and `sumlen`'s own module doc.
+    if args.len() == 1 {
+        return Err(CdpError::from(
+            cdp_params::ParamsError::InsufficientParameters,
+        ));
+    }
+    let (paths, trailing) = cdp_programs::sndinfo::split_infile_tokens(args);
+    if paths.len() < 2 {
+        return Err(CdpError::new(
+            ExitCategory::UsageOnly,
+            cdp_programs::sndinfo::INSUFFICIENT_INFILES,
+        ));
+    }
+    let files = sumlen::open_infiles(paths)?;
+    let splice_ms = sumlen::parse_splice_ms(trailing)?;
+    print!("{}", sumlen::format_sumlen(&files, splice_ms));
     Ok(())
 }
