@@ -29,8 +29,9 @@
 //! Current scope (see `docs/migration/STATUS.md`): `synth wave`
 //! ([`cdp_programs::synth::wave`], WP-1.5's one proof-of-life program),
 //! `pvoc anal` ([`cdp_programs::pvoc::anal`], WP-1.4, mode 1/mono only)
-//! and `sndinfo props` ([`cdp_programs::sndinfo::props`], WP-2.1).
-//! Every other program name reports "not implemented yet" rather than
+//! and `sndinfo props`/`sndinfo len`
+//! ([`cdp_programs::sndinfo::props`]/[`cdp_programs::sndinfo::len`],
+//! WP-2.1). Every other program name reports "not implemented yet" rather than
 //! legacy's own usage text, since this crate does not (yet) know the
 //! full set of legacy program/sub-command names -- that comes from
 //! `spec/usage/`, captured by WP-0.2, one program at a time as each is
@@ -39,7 +40,7 @@
 use cdp_core::{CdpError, ExitCategory, report_and_exit};
 use cdp_params::{CommandSpec, parse, parse_mode};
 use cdp_programs::pvoc::anal;
-use cdp_programs::sndinfo::props;
+use cdp_programs::sndinfo::{len, props};
 use cdp_programs::synth::wave::{self, Mode};
 use cdp_sf::SoundFile;
 
@@ -102,6 +103,7 @@ fn print_top_level_help() {
     println!("  synth wave    generate a sine, square, sawtooth or ramp waveform");
     println!("  pvoc anal     analyse a sound file into a phase-vocoder file (mode 1, mono only)");
     println!("  sndinfo props display a sound or analysis file's properties");
+    println!("  sndinfo len   display a sound or analysis file's duration");
 }
 
 fn dispatch(program: &str, args: &[String]) -> ! {
@@ -176,12 +178,13 @@ fn dispatch_pvoc(args: &[String]) -> ! {
 fn dispatch_sndinfo(args: &[String]) -> ! {
     match args.split_first() {
         Some((subcommand, rest)) if subcommand == "props" => dispatch_sndinfo_props(rest),
+        Some((subcommand, rest)) if subcommand == "len" => dispatch_sndinfo_len(rest),
         Some((subcommand, _)) => {
-            eprintln!("sndinfo: '{subcommand}' is not implemented yet (only 'props' is)");
+            eprintln!("sndinfo: '{subcommand}' is not implemented yet (only 'props'/'len' are)");
             std::process::exit(1);
         }
         None => {
-            eprintln!("sndinfo: missing sub-command (only 'props' is implemented)");
+            eprintln!("sndinfo: missing sub-command (only 'props'/'len' are implemented)");
             std::process::exit(1);
         }
     }
@@ -238,6 +241,29 @@ fn run_sndinfo_props(args: &[&str]) -> Result<(), CdpError> {
     let parsed = parse(&CommandSpec::sndinfo_props(), args)?;
     let sf = SoundFile::open(&parsed.infiles[0])?;
     let text = props::format_props(&sf)?;
+    print!("{text}");
+    Ok(())
+}
+
+fn dispatch_sndinfo_len(args: &[String]) -> ! {
+    if args.is_empty() {
+        // legacy: same bare-subcommand usage-text shape as `sndinfo
+        // props` -- see `dispatch_sndinfo_props`'s own comment.
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, len::USAGE)));
+    }
+    if args.len() == 1 {
+        // legacy: same `argc<4` greeting rule as `sndinfo props` -- see
+        // `dispatch_sndinfo_props`'s own comment.
+        print!("{}", len::GREETING);
+    }
+    let args: Vec<&str> = args.iter().map(String::as_str).collect();
+    report_and_exit(run_sndinfo_len(&args));
+}
+
+fn run_sndinfo_len(args: &[&str]) -> Result<(), CdpError> {
+    let parsed = parse(&CommandSpec::sndinfo_len(), args)?;
+    let sf = SoundFile::open(&parsed.infiles[0])?;
+    let text = len::format_len(&sf)?;
     print!("{text}");
     Ok(())
 }

@@ -529,4 +529,21 @@ impl CommandSpec {
             unequal_sndfile: false,
         }
     }
+
+    /// `sndinfo len infile`. Same shape as [`Self::sndinfo_props`]
+    /// (`INFO_SFLEN`'s entry in `ap_sndinfo.c`'s `setup_process_logic`
+    /// table is `NO_OUTPUTFILE` too, and it takes no further parameters,
+    /// flags, or variants either); confirmed live the same way, a
+    /// trailing word after `infile` reports `"Too many parameters on
+    /// command line."`.
+    pub fn sndinfo_len() -> Self {
+        CommandSpec {
+            infile_count: 1,
+            has_outfile: false,
+            params: vec![],
+            flags: vec![],
+            variants: vec![],
+            unequal_sndfile: false,
+        }
+    }
 }
