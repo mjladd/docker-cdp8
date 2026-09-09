@@ -20,8 +20,9 @@
 // License along with this program. If not, see
 // <https://www.gnu.org/licenses/>.
 
-//! `sndinfo` (legacy: `legacy/dev/sndinfo`). Only the `props`
-//! sub-command is ported so far.
+//! `sndinfo` (legacy: `legacy/dev/sndinfo`). The `props` and `len`
+//! sub-commands are ported so far.
 
 mod ctime;
+pub mod len;
 pub mod props;
