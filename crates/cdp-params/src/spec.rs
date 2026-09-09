@@ -546,4 +546,61 @@ impl CommandSpec {
             unequal_sndfile: false,
         }
     }
+
+    /// `sndinfo smptime infile samplecnt [-g]` (`INFO_SAMPTOTIME`):
+    /// converts a sample count to a duration. legacy: `parstruct.c`'s
+    /// `set_param_data(ap,0,1,1,"i")` (one required plain `Int`,
+    /// `samplecnt`) and `set_vflgs(ap,"",0,"","g",1,0,"0")` (no
+    /// options, one boolean variant `-g`, same shape as
+    /// [`Self::synth_wave`]'s `-f`). `samplecnt`'s range is not a fixed
+    /// constant: `tklib1.c`'s `set_param_ranges` sets
+    /// `ap->hi[INFO_SAMPS] = insams` (the infile's own raw sample
+    /// total, confirmed live against a stereo file: `sndinfo smptime
+    /// clip5-all.wav 99999999999` reports `"...out of range (0.000000
+    /// to 18610752.000000)"`, that file's total individual sample
+    /// count, not its 9305376-frame duration-relevant count) -- so
+    /// `max_samples` is a parameter here, not a literal, the first
+    /// builder in this crate that needs one. `unequal_sndfile` is left
+    /// at its default (`false`): like [`Self::sndinfo_props`], the
+    /// distinction it controls is unreachable as wired (`cdp-cli`
+    /// intercepts a bare `sndinfo smptime` before calling
+    /// [`crate::parser::parse`] at all).
+    pub fn sndinfo_smptime(max_samples: f64) -> Self {
+        CommandSpec {
+            infile_count: 1,
+            has_outfile: false,
+            params: vec![ParamType::Int {
+                lo: 0.0,
+                hi: max_samples,
+                legacy_index: 1,
+            }],
+            flags: vec![],
+            variants: vec![Variant::Boolean { letter: 'g' }],
+            unequal_sndfile: false,
+        }
+    }
+
+    /// `sndinfo timesmp infile time [-g]` (`INFO_TIMETOSAMP`): converts
+    /// a duration to a sample count -- [`Self::sndinfo_smptime`]'s
+    /// inverse, and structurally identical except `time` is a plain
+    /// `Double` (`parstruct.c`'s `set_param_data(ap,0,1,1,"d")`) whose
+    /// range is the infile's own duration in seconds
+    /// (`tklib1.c`'s `ap->hi[INFO_TIME] = duration`, confirmed live:
+    /// `sndinfo timesmp marimba.wav 1.0017` -- just over that file's
+    /// own 1.001678-second duration -- reports `"...out of range
+    /// (0.000000 to 1.001678)"`).
+    pub fn sndinfo_timesmp(max_duration_secs: f64) -> Self {
+        CommandSpec {
+            infile_count: 1,
+            has_outfile: false,
+            params: vec![ParamType::Double {
+                lo: 0.0,
+                hi: max_duration_secs,
+                legacy_index: 1,
+            }],
+            flags: vec![],
+            variants: vec![Variant::Boolean { letter: 'g' }],
+            unequal_sndfile: false,
+        }
+    }
 }

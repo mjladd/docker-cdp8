@@ -303,12 +303,18 @@ fn parse_flags_and_variants(
         while i < rest.len() {
             let token = rest[i];
             let Some(after_dash) = token.strip_prefix('-') else {
-                return Err(ParamsError::UnknownParameter(token.to_string()));
+                // legacy: `get_variant_no`'s own non-dash check --
+                // `USER_ERROR`, distinct from phase 1's `get_option_no`
+                // equivalent above (`USAGE_ONLY`) -- see
+                // `ParamsError::UnknownParameterInVariantPhase`'s doc.
+                return Err(ParamsError::UnknownParameterInVariantPhase(
+                    token.to_string(),
+                ));
             };
             let letter = after_dash
                 .chars()
                 .next()
-                .ok_or_else(|| ParamsError::UnknownParameter(token.to_string()))?;
+                .ok_or_else(|| ParamsError::UnknownParameterInVariantPhase(token.to_string()))?;
             if let Some(variant) = spec.variants.iter().find(|v| v.letter() == letter) {
                 match variant {
                     Variant::Value(variant_spec) => {
@@ -341,6 +347,10 @@ fn parse_flags_and_variants(
                 }
             } else if spec.flags.iter().any(|f| f.letter == letter) {
                 return Err(ParamsError::OptionOutOfOrder(letter));
+            } else if spec.flags.is_empty() {
+                // legacy: `get_variant_no`'s `else` branch -- see
+                // `ParamsError::UnknownFlagNoOptions`'s doc.
+                return Err(ParamsError::UnknownFlagNoOptions(letter));
             } else {
                 return Err(ParamsError::UnknownVariantFlag(letter));
             }
@@ -367,7 +377,7 @@ fn parse_param(token: &str, param_type: ParamType, paramno: usize) -> Result<Par
     match param_type {
         ParamType::DoubleOrBreakpoint { lo, hi } => match token.parse::<f64>() {
             Ok(value) => {
-                check_range(value, lo, hi, paramno)?;
+                let value = check_range(value, lo, hi, paramno)?;
                 Ok(ParamValue::Number(value))
             }
             // legacy: a token that does not parse with `%lf` is
@@ -383,7 +393,7 @@ fn parse_param(token: &str, param_type: ParamType, paramno: usize) -> Result<Par
             legacy_index,
         } => {
             let value = parse_as_f64_or_cannot_read(token, legacy_index)?;
-            check_range(value, lo, hi, paramno)?;
+            let value = check_range(value, lo, hi, paramno)?;
             Ok(ParamValue::Number(value))
         }
         ParamType::Int {
@@ -392,7 +402,7 @@ fn parse_param(token: &str, param_type: ParamType, paramno: usize) -> Result<Par
             legacy_index,
         } => {
             let value = parse_as_f64_or_cannot_read(token, legacy_index)?;
-            check_range(value, lo, hi, paramno)?;
+            let value = check_range(value, lo, hi, paramno)?;
             // legacy: `(int)` cast of the range-checked double --
             // truncates toward zero, matching Rust's `as i64` here --
             // see `ParamType::Int`'s doc.
@@ -400,7 +410,7 @@ fn parse_param(token: &str, param_type: ParamType, paramno: usize) -> Result<Par
         }
         ParamType::IntOrBreakpoint { lo, hi } => match token.parse::<f64>() {
             Ok(value) => {
-                check_range(value, lo, hi, paramno)?;
+                let value = check_range(value, lo, hi, paramno)?;
                 Ok(ParamValue::Integer(value as i64))
             }
             Err(_) => Ok(ParamValue::Breakpoint(BreakpointTable::from_file(
@@ -425,7 +435,39 @@ fn parse_as_f64_or_cannot_read(token: &str, legacy_index: usize) -> Result<f64> 
     })
 }
 
-fn check_range(value: f64, lo: f64, hi: f64, paramno: usize) -> Result<()> {
+/// legacy: `FLTERR` (`0.000002`, `legacy/dev/include/globcon.h`),
+/// `flteq`'s tolerance (`legacy/dev/cdp2k/tklib1.c`).
+const FLTERR: f64 = 0.000002;
+
+/// legacy: `flteq` (`legacy/dev/cdp2k/tklib1.c`) -- `true` when `a`
+/// and `b` are within [`FLTERR`] of each other.
+fn flteq(a: f64, b: f64) -> bool {
+    (a - b).abs() <= FLTERR
+}
+
+/// legacy: `read_param_as_value_or_brkfile_and_check_range`'s own
+/// range check (`legacy/dev/cdp2k/readdata.c`), including a step every
+/// numeric [`ParamType`] range check missed until now -- confirmed
+/// live: `sndinfo timesmp marimba.wav 1.001678` (its infile's own
+/// exact duration, [`crate::CommandSpec::sndinfo_timesmp`]'s dynamic
+/// `hi`) succeeds, but the raw stored `f64` for that duration
+/// (`44174.0/44100.0`) is not bit-identical to the literal
+/// `1.001678`; legacy's own C code snaps `dz->param[paramno]` to
+/// `ap->lo`/`ap->hi` first (`if(flteq(dz->param[paramno],
+/// ap->hi[paramno])) dz->param[paramno] = ap->hi[paramno];`, and the
+/// same for `lo`), *before* the `>`/`<` comparison, so a value within
+/// [`FLTERR`] of either bound is accepted and clamped exactly to it,
+/// not compared against the bound's full, unclamped precision. Returns
+/// the (possibly snapped) value for the caller to store, matching
+/// legacy overwriting `dz->param[paramno]` in place.
+fn check_range(value: f64, lo: f64, hi: f64, paramno: usize) -> Result<f64> {
+    let mut value = value;
+    if flteq(value, lo) {
+        value = lo;
+    }
+    if flteq(value, hi) {
+        value = hi;
+    }
     if value < lo || value > hi {
         return Err(ParamsError::ValueOutOfRange {
             paramno,
@@ -434,7 +476,7 @@ fn check_range(value: f64, lo: f64, hi: f64, paramno: usize) -> Result<()> {
             hi,
         });
     }
-    Ok(())
+    Ok(value)
 }
 
 fn check_file_openable(path: &str) -> Result<()> {
@@ -1042,7 +1084,19 @@ mod tests {
     }
 
     #[test]
-    fn distort_repeat_leftover_non_flag_token_is_unknown_parameter() {
+    fn distort_repeat_leftover_non_flag_token_is_unknown_parameter_in_variant_phase() {
+        // legacy: unlike `synth_wave_leftover_non_flag_token_is_unknown_parameter`
+        // (whose trailing "extra" is still caught by phase 1's own loop,
+        // since `-a0.5` immediately precedes it there), `-s1` here makes
+        // phase 1 `break` early (`-s` is a variant letter, not an
+        // option), so phase 2 (`get_variants_and_flags`/`get_variant_no`)
+        // is the one that sees "extra" first. Corrected from
+        // `ParamsError::UnknownParameter` after a live run showed
+        // `"ERROR: INCORRECT USE"` ahead of the message (`USER_ERROR`,
+        // `get_variant_no`'s own non-dash check), not the header-less
+        // shape `UnknownParameter`/`USAGE_ONLY` produces -- confirmed via
+        // `docker run cdp8-postmerge distort repeat infile.wav out.wav 3
+        // -c2 -s1 extra`.
         let infile = existing_file();
         let spec = CommandSpec::distort_repeat();
         let args = [
@@ -1055,7 +1109,7 @@ mod tests {
         ];
         assert!(matches!(
             parse(&spec, &args),
-            Err(ParamsError::UnknownParameter(ref s)) if s == "extra"
+            Err(ParamsError::UnknownParameterInVariantPhase(ref s)) if s == "extra"
         ));
     }
 

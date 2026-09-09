@@ -64,7 +64,7 @@ USAGE: sndreport len infile
 /// corpus is long enough to reach the `mins`/`hrs` branches at all
 /// (the longest, `clip5-all.wav`, is a little over 3 minutes, enough
 /// to confirm the `mins` branch but not `hrs`).
-fn format_duration(mut secs: f64) -> String {
+pub(crate) fn format_duration(mut secs: f64) -> String {
     let mut mins: i64 = 0;
     let mut hrs: i64 = 0;
     if secs > 60.0 {
@@ -86,6 +86,17 @@ fn format_duration(mut secs: f64) -> String {
     out
 }
 
+/// legacy: `secs = (double)(dz->insams[0]/dz->infile->channels) *
+/// inverse_sr` (`compare.c`'s `case(INFO_SFLEN)`, `SNDFILE` branch) --
+/// integer division truncates *before* the cast to `double`. Shared
+/// with `crate::sndinfo::timesmp`, whose `time` parameter's dynamic
+/// range upper bound is this same value (`tklib1.c`'s
+/// `ap->hi[INFO_TIME] = duration`).
+pub fn wave_duration_secs(sf: &SoundFile) -> f64 {
+    let channels = sf.fmt.channels as u64;
+    (sf.sample_count() / channels) as f64 * (1.0 / sf.fmt.sample_rate as f64)
+}
+
 /// legacy: `case(INFO_SFLEN)` in `compare.c`. Returns the complete
 /// duration text, not including [`GREETING`] (the caller prints that
 /// separately -- see this module's doc).
@@ -96,11 +107,7 @@ pub fn format_len(sf: &SoundFile) -> Result<String, CdpError> {
     match sf.file_kind {
         FileKind::Wave => {
             out.push_str("A soundfile\n");
-            // legacy: `secs = (double)(dz->insams[0]/dz->infile->
-            // channels) * inverse_sr` -- integer division truncates
-            // *before* the cast to `double`.
-            let channels = sf.fmt.channels as u64;
-            let secs = (samples / channels) as f64 * (1.0 / sf.fmt.sample_rate as f64);
+            let secs = wave_duration_secs(sf);
             out.push_str("DURATION: ");
             out.push_str(&format_duration(secs));
             out.push_str(&format!("samples {samples}\n"));
