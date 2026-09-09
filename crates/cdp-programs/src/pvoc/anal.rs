@@ -270,7 +270,7 @@ mod tests {
     fn analyze_end_to_end_matches_the_real_capm_ana_corpus_file() {
         let cmd = ParsedCommand {
             infiles: vec![repo_path("docs/manual/sounds/capm.wav")],
-            outfile: "capm.ana".to_string(),
+            outfile: Some("capm.ana".to_string()),
             params: vec![],
             flags: std::collections::BTreeMap::new(),
         };

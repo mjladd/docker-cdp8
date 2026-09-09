@@ -20,16 +20,11 @@
 // License along with this program. If not, see
 // <https://www.gnu.org/licenses/>.
 
-//! One module per legacy program directory.
-//!
-//! This crate is part of WP-1.5 of the migration plan
-//! (`docs/migration/PLAN.md`), brought in early (rather than starting
-//! in its own later-phase program WPs) because WP-1.5's done-when
-//! needs one real program wired all the way from argument parsing to
-//! a written sound file to prove `cdp-core`'s lifecycle. Current
-//! scope (see `docs/migration/STATUS.md`): [`synth::wave`],
-//! [`pvoc::anal`] (mode 1, mono input only) and [`sndinfo::props`].
+//! The `sndinfo` legacy-name launcher (`docs/migration/PLAN.md`,
+//! decision D3): behaves as the real legacy `sndinfo` executable would
+//! for every sub-command this workspace has ported so far.
 
-pub mod pvoc;
-pub mod sndinfo;
-pub mod synth;
+fn main() {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    cdp_cli::run_launcher("sndinfo", &args);
+}

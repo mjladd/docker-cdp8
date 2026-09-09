@@ -454,7 +454,7 @@ mod tests {
     fn command(params: Vec<ParamValue>, flags: BTreeMap<char, ParamValue>) -> ParsedCommand {
         ParsedCommand {
             infiles: vec![],
-            outfile: "out.wav".to_string(),
+            outfile: Some("out.wav".to_string()),
             params,
             flags,
         }

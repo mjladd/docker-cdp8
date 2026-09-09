@@ -204,6 +204,18 @@ pub struct CommandSpec {
     /// a fixed input count (`modify loudness` always takes exactly
     /// one).
     pub infile_count: usize,
+    /// Whether the command line carries an output filename after the
+    /// input file(s). `true` for every mode ported so far except
+    /// [`Self::sndinfo_props`]: `sndinfo props infile` takes no
+    /// further positional argument at all -- confirmed live, including
+    /// that a trailing word after `infile` reports
+    /// [`crate::error::ParamsError::TooManyParameters`] (`"Too many
+    /// parameters on command line."`), the same message an empty-
+    /// params, empty-flags, empty-variants mode with an outfile
+    /// already reports for a leftover token, since `sndinfo_props` has
+    /// no flags or variants either and so falls into that same
+    /// existing check once `has_outfile` removes the outfile slot.
+    pub has_outfile: bool,
     pub params: Vec<ParamType>,
     pub flags: Vec<OptionFlag>,
     pub variants: Vec<Variant>,
@@ -240,6 +252,7 @@ impl CommandSpec {
     pub fn modify_loudness_gain() -> Self {
         CommandSpec {
             infile_count: 1,
+            has_outfile: true,
             params: vec![ParamType::DoubleOrBreakpoint {
                 lo: 0.0,
                 hi: 32767.0, // legacy: MAXSHORT
@@ -260,6 +273,7 @@ impl CommandSpec {
     pub fn modify_loudness_normalise() -> Self {
         CommandSpec {
             infile_count: 1,
+            has_outfile: true,
             params: vec![],
             flags: vec![OptionFlag {
                 letter: 'l',
@@ -307,6 +321,7 @@ impl CommandSpec {
     pub fn pvoc_anal() -> Self {
         CommandSpec {
             infile_count: 1,
+            has_outfile: true,
             params: vec![],
             flags: vec![
                 OptionFlag {
@@ -364,6 +379,7 @@ impl CommandSpec {
     pub fn distort_repeat() -> Self {
         CommandSpec {
             infile_count: 1,
+            has_outfile: true,
             params: vec![ParamType::IntOrBreakpoint {
                 lo: 2.0,
                 hi: 32767.0, // legacy: BIG_VALUE
@@ -422,6 +438,7 @@ impl CommandSpec {
     pub fn synth_wave() -> Self {
         CommandSpec {
             infile_count: 0,
+            has_outfile: true,
             params: vec![
                 ParamType::Int {
                     lo: 16000.0,
@@ -479,6 +496,37 @@ impl CommandSpec {
             // which is why the fifth `synth wave` slice's live
             // verification did not already catch this.
             unequal_sndfile: true,
+        }
+    }
+
+    /// `sndinfo props infile` (`INFO_PROPS`): prints a file's
+    /// properties and takes no output filename at all. legacy:
+    /// `parstruct.c`'s `set_param_data(ap,0,0,0,"")` (no required
+    /// positional parameters, matching [`Self::pvoc_anal`]'s shape)
+    /// and `set_vflgs(ap,"",0,"","",0,0,"")` (no flags or variants
+    /// either); `ap_sndinfo.c`'s `setup_process_logic(ALL_FILES,
+    /// OTHER_PROCESS, NO_OUTPUTFILE, dz)` -- `NO_OUTPUTFILE` is
+    /// [`Self::has_outfile`]`: false`. `unequal_sndfile` is set to its
+    /// default (`false`): the distinction it controls is unreachable
+    /// for this command as wired (`cdp-cli` intercepts a bare `sndinfo
+    /// props` with no infile at all before ever calling
+    /// [`crate::parser::parse`], the same way it does for
+    /// [`Self::synth_wave`]'s bare mode-only case), and `ALL_FILES`
+    /// (accepting a variable infile count) is a different axis from
+    /// `UNEQUAL_SNDFILE`/`EQUAL_SNDFILE` that this crate does not
+    /// model in general (see [`Self::unequal_sndfile`]'s own doc), so
+    /// there is no real command-line case to confirm a `true` value
+    /// against. Confirmed live: a trailing word after `infile` reports
+    /// `"Too many parameters on command line."`, not `"Unknown
+    /// parameter"` -- see [`Self::has_outfile`]'s doc.
+    pub fn sndinfo_props() -> Self {
+        CommandSpec {
+            infile_count: 1,
+            has_outfile: false,
+            params: vec![],
+            flags: vec![],
+            variants: vec![],
+            unequal_sndfile: false,
         }
     }
 }

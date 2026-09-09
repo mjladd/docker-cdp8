@@ -162,7 +162,10 @@ pub enum ParamValue {
 #[derive(Debug, Clone)]
 pub struct ParsedCommand {
     pub infiles: Vec<String>,
-    pub outfile: String,
+    /// `None` for a [`CommandSpec`] with `has_outfile: false` (an
+    /// info-only command like `sndinfo props`, which takes no output
+    /// filename at all) -- see that field's doc.
+    pub outfile: Option<String>,
     /// The required positional parameters, in order (empty for a mode
     /// whose [`CommandSpec::params`] is empty).
     pub params: Vec<ParamValue>,
@@ -182,7 +185,8 @@ pub struct ParsedCommand {
 /// Parses `args` (everything after the process name, subcommand and
 /// mode number) against `spec`.
 pub fn parse(spec: &CommandSpec, args: &[&str]) -> Result<ParsedCommand> {
-    let min_needed = spec.infile_count + 1; // + the output filename
+    let outfile_slot = if spec.has_outfile { 1 } else { 0 };
+    let min_needed = spec.infile_count + outfile_slot;
     if args.len() < min_needed {
         // legacy: `crate::spec::CommandSpec::unequal_sndfile`'s doc.
         return Err(if spec.unequal_sndfile {
@@ -197,8 +201,12 @@ pub fn parse(spec: &CommandSpec, args: &[&str]) -> Result<ParsedCommand> {
         check_file_openable(arg)?;
         infiles.push(arg.to_string());
     }
-    let outfile = args[spec.infile_count].to_string();
-    let rest = &args[spec.infile_count + 1..];
+    let outfile = if spec.has_outfile {
+        Some(args[spec.infile_count].to_string())
+    } else {
+        None
+    };
+    let rest = &args[spec.infile_count + outfile_slot..];
 
     if rest.len() < spec.params.len() {
         // legacy: zero tokens left is `read_parameters_and_flags`'s own
@@ -455,7 +463,7 @@ mod tests {
         let args = [infile.path().to_str().unwrap(), "out.wav", "0.5"];
         let parsed = parse(&spec, &args).unwrap();
         assert_eq!(parsed.infiles, vec![infile.path().to_str().unwrap()]);
-        assert_eq!(parsed.outfile, "out.wav");
+        assert_eq!(parsed.outfile.as_deref(), Some("out.wav"));
         assert!(matches!(parsed.params[0], ParamValue::Number(v) if v == 0.5));
     }
 
