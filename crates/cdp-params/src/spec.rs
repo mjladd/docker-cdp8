@@ -603,4 +603,36 @@ impl CommandSpec {
             unequal_sndfile: false,
         }
     }
+
+    /// `sndinfo units mode value` (`INFO_MUSUNITS`): converts one
+    /// musical unit to another. `INFO_MUSUNITS` is `NO_FILE_AT_ALL`
+    /// in `ap_sndinfo.c`, the first builder in this crate with no
+    /// infile at all. `value`'s range is not a fixed literal, but
+    /// depends on the mode (`tklib1.c`'s `set_param_ranges`, `case
+    /// (INFO_MUSUNITS): switch(mode)`) -- so, like
+    /// [`Self::sndinfo_smptime`]/[`Self::sndinfo_timesmp`]'s
+    /// infile-dependent bound, `lo`/`hi` are parameters here, supplied
+    /// by `cdp_programs::sndinfo::units::Mode::range` once the mode
+    /// number is known. `parstruct.json`'s `INFO_MUSUNITS` entry has
+    /// `param_list: "d"` (lower-case, no breakpoint-file fallback) for
+    /// every mode this crate implements so far, confirmed live: an
+    /// unparseable value reports `"Cannot read parameter 1 [...]:
+    /// brkpnt_files not permitted."`, at the same paramno
+    /// (`legacy_index: 1`) the value's own out-of-range error uses --
+    /// unlike `modify loudness`'s `-l` flag, these two numbers do not
+    /// diverge for this command.
+    pub fn sndinfo_units(lo: f64, hi: f64) -> Self {
+        CommandSpec {
+            infile_count: 0,
+            has_outfile: false,
+            params: vec![ParamType::Double {
+                lo,
+                hi,
+                legacy_index: 1,
+            }],
+            flags: vec![],
+            variants: vec![],
+            unequal_sndfile: false,
+        }
+    }
 }
