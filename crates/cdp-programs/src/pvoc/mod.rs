@@ -20,15 +20,7 @@
 // License along with this program. If not, see
 // <https://www.gnu.org/licenses/>.
 
-//! One module per legacy program directory.
-//!
-//! This crate is part of WP-1.5 of the migration plan
-//! (`docs/migration/PLAN.md`), brought in early (rather than starting
-//! in its own later-phase program WPs) because WP-1.5's done-when
-//! needs one real program wired all the way from argument parsing to
-//! a written sound file to prove `cdp-core`'s lifecycle. Current
-//! scope (see `docs/migration/STATUS.md`): [`synth::wave`] and
-//! [`pvoc::anal`] (mode 1, mono input only).
+//! `pvoc` (legacy: `legacy/dev/pv`). Only the `anal` sub-command is
+//! ported so far -- `synth` and `extract` are not.
 
-pub mod pvoc;
-pub mod synth;
+pub mod anal;

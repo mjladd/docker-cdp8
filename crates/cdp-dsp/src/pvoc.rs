@@ -166,8 +166,6 @@ fn convert_to_amp_freq(
     r_over_two_pi: f32,
     chan_freq: f32,
 ) -> Vec<(f32, f32)> {
-    let pi = crate::LEGACY_PI as f32;
-    let two_pi = LEGACY_TWOPI as f32;
     spectrum
         .iter()
         .enumerate()
@@ -191,13 +189,27 @@ fn convert_to_amp_freq(
                 old_in_phase[i] = phase;
                 angle_dif
             };
-            let angle_dif = if angle_dif > pi {
-                angle_dif - two_pi
-            } else if angle_dif < -pi {
-                angle_dif + two_pi
+            // legacy: `if (angleDif > PI) angleDif = (float)(angleDif -
+            // TWOPI); if (angleDif < -PI) angleDif = (float)(angleDif +
+            // TWOPI);` -- `PI`/`TWOPI` are plain (double-precision)
+            // literals (`globcon.h`), so C implicitly widens the
+            // `float angleDif` to `double` for both the comparison and
+            // the arithmetic, only narrowing back to `float` at the
+            // end. Rounding `PI`/`TWOPI` down to `f32` *before*
+            // comparing (as an earlier version of this function did)
+            // shifts the wrap boundary enough to misclassify some
+            // frames, flipping their frequency by a full `arate` step
+            // -- confirmed live against `cdp8-postmerge`'s `pvoc anal`
+            // output, not merely suspected from reading the C code.
+            let angle_dif_f64 = angle_dif as f64;
+            let angle_dif_f64 = if angle_dif_f64 > crate::LEGACY_PI {
+                angle_dif_f64 - LEGACY_TWOPI
+            } else if angle_dif_f64 < -crate::LEGACY_PI {
+                angle_dif_f64 + LEGACY_TWOPI
             } else {
-                angle_dif
+                angle_dif_f64
             };
+            let angle_dif = angle_dif_f64 as f32;
             let freq = angle_dif * r_over_two_pi + (i as f32) * chan_freq;
             (mag, freq)
         })
