@@ -63,6 +63,15 @@ pub enum ParamsError {
     #[error("Too many parameters on command line.")]
     TooManyParameters,
 
+    /// legacy: `read_parameters_and_flags`'s own final tail check
+    /// (`legacy/dev/cdp2k/readdata.c`), a bare `-` (nothing after the
+    /// dash) left over on the command line -- confirmed live:
+    /// `sndinfo props infile -`. Distinct from [`Self::TooManyParameters`]
+    /// (the same check's non-dash case) and from [`Self::UnknownFlag`]
+    /// (the same check's dash-plus-letter case).
+    #[error("Hanging '-' on command line.")]
+    HangingDash,
+
     /// legacy: `"Can't open file %s to read data.\n"` -- the generic
     /// file-arg open check, confirmed live for a missing `infile`.
     /// Distinct wording from [`cdp_data::DataError::CannotOpen`]

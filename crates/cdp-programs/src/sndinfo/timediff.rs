@@ -29,9 +29,18 @@
 //! independently-opened input files (`dz->infile`/`dz->otherfile`)
 //! rather than one -- `set_legal_infile_structure`'s `has_otherfile`
 //! lets the second file's sample rate and channel count differ from
-//! the first's. Confirmed live with `marimba.wav` (a 44100 Hz mono
-//! file) against `ws2/tsw1-2nd.aiff` (a different sample rate and
-//! format): `DIFFERENCE IS 4.465488 secs`, exactly `len::
+//! the first's (unlike `sndinfo sumlen`, whose own `has_otherfile ==
+//! FALSE` enforces both matching exactly -- see that command's module
+//! doc, WP-2.1's fifth slice, which is what surfaced this distinction:
+//! `marimba.wav` and `ws2/tsw1-2nd.aiff`, used below, in fact share
+//! one sample rate, 44100Hz, so this doc previously and incorrectly
+//! credited *them* with confirming the differing-properties case).
+//! Genuinely confirmed live instead: `sndinfo timediff marimba.wav
+//! clip5-all.wav` (mono against stereo) succeeds -- `sumlen`'s own
+//! equivalent pairing fails with `"Incompatible channel-count..."`.
+//! `marimba.wav` (a 44100Hz mono file) against `ws2/tsw1-2nd.aiff`
+//! (the same sample rate, a different container format, WAV vs AIFF):
+//! `DIFFERENCE IS 4.465488 secs`, exactly `len::
 //! wave_duration_secs`'s two independently-confirmed values
 //! subtracted.
 //!
@@ -177,6 +186,19 @@ mod tests {
         let sf = SoundFile::open(repo_path("docs/manual/sounds/marimba.wav")).unwrap();
         let sf2 = SoundFile::open(repo_path("docs/manual/sounds/marimba.wav")).unwrap();
         assert_eq!(format_timediff(&sf, &sf2), "DIFFERENCE IS 0.000000 secs \n");
+    }
+
+    #[test]
+    fn mismatched_channel_counts_are_allowed_unlike_sndinfo_sumlens_own_pairing() {
+        // legacy: confirmed live -- see this module's doc for why
+        // `marimba.wav`/`tsw1-2nd.aiff` (same sample rate, same
+        // channel count) do not actually exercise this.
+        let sf = SoundFile::open(repo_path("docs/manual/sounds/marimba.wav")).unwrap(); // mono
+        let sf2 = SoundFile::open(repo_path("docs/manual/sounds/clip5-all.wav")).unwrap(); // stereo
+        assert_eq!(
+            format_timediff(&sf, &sf2),
+            "DIFFERENCE IS 3 mins 30.004580 secs \n"
+        );
     }
 
     #[test]

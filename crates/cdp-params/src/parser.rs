@@ -230,8 +230,8 @@ pub fn parse(spec: &CommandSpec, args: &[&str]) -> Result<ParsedCommand> {
         // `get_options`/`get_variants_and_flags` at all, so a leftover
         // word falls to `read_parameters_and_flags`'s own final check
         // -- see the module doc's `modify loudness` mode 1 example.
-        if !after_params.is_empty() {
-            return Err(ParamsError::TooManyParameters);
+        if let Some(&token) = after_params.first() {
+            return Err(classify_trailing_token(token));
         }
         BTreeMap::new()
     } else {
@@ -244,6 +244,31 @@ pub fn parse(spec: &CommandSpec, args: &[&str]) -> Result<ParsedCommand> {
         params,
         flags,
     })
+}
+
+/// legacy: `read_parameters_and_flags`'s own final tail check
+/// (`legacy/dev/cdp2k/readdata.c`), reached directly (bypassing
+/// `get_options`/`get_variants_and_flags` entirely) for a mode whose
+/// [`CommandSpec::flags`] and [`CommandSpec::variants`] are both
+/// empty, once at least one token is left over after the required
+/// params. A `-<letter>` token (more than one character) is
+/// [`ParamsError::UnknownFlag`]; a bare `-` (exactly one character) is
+/// [`ParamsError::HangingDash`]; anything else is
+/// [`ParamsError::TooManyParameters`]. Confirmed live for `sndinfo
+/// props`/`sndinfo lens`, both zero-flags-zero-variants modes: a
+/// pre-existing gap here (this function did not previously exist, and
+/// every leftover token unconditionally produced
+/// [`ParamsError::TooManyParameters`]) went unnoticed because every
+/// mode ported before `sndinfo lens` was only ever confirmed live with
+/// a non-dash trailing word, never a `-`-prefixed one.
+pub fn classify_trailing_token(token: &str) -> ParamsError {
+    match token.strip_prefix('-') {
+        Some(rest) if !rest.is_empty() => {
+            ParamsError::UnknownFlag(rest.chars().next().expect("checked not empty above"))
+        }
+        Some(_) => ParamsError::HangingDash,
+        None => ParamsError::TooManyParameters,
+    }
 }
 
 /// legacy: `get_options` then, if any are declared,
@@ -540,6 +565,28 @@ mod tests {
             parse(&spec, &args),
             Err(ParamsError::TooManyParameters)
         ));
+    }
+
+    #[test]
+    fn extra_trailing_flag_on_a_zero_flags_zero_variants_mode_is_unknown_flag() {
+        // legacy: confirmed live via `sndinfo props infile -x` --
+        // `classify_trailing_token`'s own doc.
+        let infile = existing_file();
+        let spec = CommandSpec::modify_loudness_gain();
+        let args = [infile.path().to_str().unwrap(), "out.wav", "0.5", "-x"];
+        assert!(matches!(
+            parse(&spec, &args),
+            Err(ParamsError::UnknownFlag('x'))
+        ));
+    }
+
+    #[test]
+    fn extra_trailing_bare_dash_on_a_zero_flags_zero_variants_mode_is_hanging_dash() {
+        // legacy: confirmed live via `sndinfo props infile -`.
+        let infile = existing_file();
+        let spec = CommandSpec::modify_loudness_gain();
+        let args = [infile.path().to_str().unwrap(), "out.wav", "0.5", "-"];
+        assert!(matches!(parse(&spec, &args), Err(ParamsError::HangingDash)));
     }
 
     #[test]

@@ -50,5 +50,5 @@ pub mod spec;
 
 pub use error::{ParamsError, Result};
 pub use mode::parse_mode;
-pub use parser::{ParamValue, ParsedCommand, parse};
+pub use parser::{ParamValue, ParsedCommand, classify_trailing_token, parse};
 pub use spec::{CommandSpec, OptionFlag, ParamType, Variant};
