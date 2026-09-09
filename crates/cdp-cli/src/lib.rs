@@ -27,7 +27,8 @@
 //! launcher that behaves as the legacy `synth` executable would).
 //!
 //! Current scope (see `docs/migration/STATUS.md`): `synth wave`
-//! ([`cdp_programs::synth::wave`], WP-1.5's one proof-of-life program)
+//! ([`cdp_programs::synth::wave`], WP-1.5's one proof-of-life program),
+//! `pvoc anal` ([`cdp_programs::pvoc::anal`], WP-1.4, mode 1/mono only)
 //! and `sndinfo props` ([`cdp_programs::sndinfo::props`], WP-2.1).
 //! Every other program name reports "not implemented yet" rather than
 //! legacy's own usage text, since this crate does not (yet) know the
@@ -37,6 +38,7 @@
 
 use cdp_core::{CdpError, ExitCategory, report_and_exit};
 use cdp_params::{CommandSpec, parse, parse_mode};
+use cdp_programs::pvoc::anal;
 use cdp_programs::sndinfo::props;
 use cdp_programs::synth::wave::{self, Mode};
 use cdp_sf::SoundFile;
@@ -98,12 +100,14 @@ fn print_top_level_help() {
     println!();
     println!("Programs implemented so far:");
     println!("  synth wave    generate a sine, square, sawtooth or ramp waveform");
+    println!("  pvoc anal     analyse a sound file into a phase-vocoder file (mode 1, mono only)");
     println!("  sndinfo props display a sound or analysis file's properties");
 }
 
 fn dispatch(program: &str, args: &[String]) -> ! {
     match program {
         "synth" => dispatch_synth(args),
+        "pvoc" => dispatch_pvoc(args),
         "sndinfo" => dispatch_sndinfo(args),
         _ => {
             eprintln!("cdp: '{program}' is not implemented yet");
@@ -155,6 +159,20 @@ fn run_synth_wave(mode_token: &str, args: &[String]) -> Result<(), CdpError> {
     writer.finalize(&outfile).map_err(CdpError::from)
 }
 
+fn dispatch_pvoc(args: &[String]) -> ! {
+    match args.split_first() {
+        Some((subcommand, rest)) if subcommand == "anal" => dispatch_pvoc_anal(rest),
+        Some((subcommand, _)) => {
+            eprintln!("pvoc: '{subcommand}' is not implemented yet (only 'anal' is)");
+            std::process::exit(1);
+        }
+        None => {
+            eprintln!("pvoc: missing sub-command (only 'anal' is implemented)");
+            std::process::exit(1);
+        }
+    }
+}
+
 fn dispatch_sndinfo(args: &[String]) -> ! {
     match args.split_first() {
         Some((subcommand, rest)) if subcommand == "props" => dispatch_sndinfo_props(rest),
@@ -167,6 +185,30 @@ fn dispatch_sndinfo(args: &[String]) -> ! {
             std::process::exit(1);
         }
     }
+}
+
+fn dispatch_pvoc_anal(args: &[String]) -> ! {
+    let Some((mode_token, rest)) = args.split_first() else {
+        // legacy: same bare-subcommand usage-text shape as `synth
+        // wave` -- see `run_synth_wave`'s own comment on
+        // `ExitCategory::UsageOnly`.
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, anal::USAGE)));
+    };
+    report_and_exit(run_pvoc_anal(mode_token, rest))
+}
+
+fn run_pvoc_anal(mode_token: &str, args: &[String]) -> Result<(), CdpError> {
+    let mode_number = parse_mode(mode_token, anal::MAX_MODE)?;
+    let mode = anal::Mode::from_number(mode_number)
+        .expect("parse_mode already checked mode_number is in 1..=MAX_MODE");
+    let args: Vec<&str> = args.iter().map(String::as_str).collect();
+    let parsed = parse(&CommandSpec::pvoc_anal(), &args)?;
+    let outfile = parsed
+        .outfile
+        .clone()
+        .expect("CommandSpec::pvoc_anal has_outfile: true");
+    let writer = anal::analyze(mode, &parsed)?;
+    writer.finalize(&outfile).map_err(CdpError::from)
 }
 
 fn dispatch_sndinfo_props(args: &[String]) -> ! {

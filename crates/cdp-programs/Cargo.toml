@@ -12,6 +12,7 @@ workspace = true
 [dependencies]
 cdp-core = { path = "../cdp-core" }
 cdp-data = { path = "../cdp-data" }
+cdp-dsp = { path = "../cdp-dsp" }
 cdp-params = { path = "../cdp-params" }
 cdp-sf = { path = "../cdp-sf" }
 
