@@ -129,15 +129,14 @@ impl std::error::Error for CdpError {}
 /// legacy: every category this crate's `From` impls produce is
 /// confirmed against a live `legacy` run reading
 /// `legacy/dev/cdp2k/readdata.c` for the returned category alongside
-/// it (see each arm). One known, documented gap: `ParamsError::
-/// UnknownParameter` is produced by two different legacy call sites
-/// with two different categories (`get_option_no`, `USAGE_ONLY` --
-/// reachable today; `get_variant_no`, `USER_ERROR` -- unreachable by
-/// every `CommandSpec` in `cdp-params` so far, since it only fires for
-/// a mode with variants but no options, and no such mode is ported
-/// yet, see that crate's `CommandSpec::variants` doc). This impl
-/// always uses the reachable one; revisit if a future `CommandSpec`
-/// makes the other one reachable.
+/// it (see each arm). `get_option_no` and `get_variant_no` both
+/// produce a `"Unknown parameter '%s'"` non-dash-token check, with two
+/// different categories (`USAGE_ONLY`/`USER_ERROR` respectively) --
+/// `cdp_params::ParamsError::UnknownParameter` (the former) and
+/// `::UnknownParameterInVariantPhase` (the latter, first confirmed
+/// live and made reachable by `sndinfo smptime`/`timesmp`, WP-2.1's
+/// third slice) keep these apart for exactly this reason, closing a
+/// gap this doc used to note as open.
 impl From<cdp_params::ParamsError> for CdpError {
     fn from(err: cdp_params::ParamsError) -> Self {
         use cdp_params::ParamsError as E;
@@ -193,6 +192,14 @@ impl From<cdp_params::ParamsError> for CdpError {
             // infile.wav outfile.wav 3 -s1 -c2` (OptionOutOfOrder),
             // `distort repeat infile.wav outfile.wav 3 -c2 -z5`
             // (UnknownVariantFlag).
+            // legacy: `get_variant_no`'s own non-dash check --
+            // `USER_ERROR`, confirmed live: `sndinfo smptime infile.wav
+            // 44174 extra`.
+            E::UnknownParameterInVariantPhase(_) => ExitCategory::UserError,
+            // legacy: `get_variant_no`'s `else` branch, taken when the
+            // mode has variants but no options at all -- `USER_ERROR`,
+            // confirmed live: `sndinfo smptime infile.wav 44174 -z`.
+            E::UnknownFlagNoOptions(_) => ExitCategory::UserError,
             E::VariantValueMissing(_)
             | E::DuplicateFlag(_)
             | E::OptionOutOfOrder(_)

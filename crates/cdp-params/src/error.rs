@@ -152,13 +152,24 @@ pub enum ParamsError {
     OptionOutOfOrder(char),
 
     /// legacy: `"Unknown variant flag -%c\n"` (`get_variant_no`,
-    /// reached only when the mode has at least one option -- see that
-    /// function's `else` branch, `"Unknown flag '-%c'\n"`, for the
-    /// no-options case, not yet implemented since no confirmed command
-    /// exercises it). Confirmed live for `distort repeat infile
-    /// outfile 3 -c2 -z5`.
+    /// reached only when the mode has at least one option -- see
+    /// [`Self::UnknownFlagNoOptions`] for that function's `else`
+    /// branch, taken when the mode has none). Confirmed live for
+    /// `distort repeat infile outfile 3 -c2 -z5`.
     #[error("Unknown variant flag -{0}")]
     UnknownVariantFlag(char),
+
+    /// legacy: `"Unknown flag '-%c'\n"` (`get_variant_no`'s `else`
+    /// branch, taken when the mode has variants but `ap->option_cnt`
+    /// is zero -- distinct text from both [`Self::UnknownFlag`] (no
+    /// quotes, `"on command line."` suffix, `get_option_no`'s own
+    /// message for a mode *with* options) and
+    /// [`Self::UnknownVariantFlag`] (the mode-has-options case of this
+    /// same function). Confirmed live for `sndinfo smptime infile
+    /// samplecnt -z`, the first ported command with a variant (`-g`)
+    /// and no options at all.
+    #[error("Unknown flag '-{0}'")]
+    UnknownFlagNoOptions(char),
 
     /// legacy: `"option parameter missing with flag -%c\n"`,
     /// confirmed live both for a bare trailing `-l` and for `-l 0.5`
@@ -175,9 +186,26 @@ pub enum ParamsError {
     /// has none, nor recognised as a `-`-prefixed flag). Distinct
     /// from [`Self::TooManyParameters`], which is what a mode with a
     /// non-empty `params` list uses for the same underlying "extra
-    /// word" situation.
+    /// word" situation. legacy: `get_option_no`'s own non-dash check
+    /// (`USAGE_ONLY`) -- see [`Self::UnknownParameterInVariantPhase`]
+    /// for `get_variant_no`'s otherwise-identical-looking text.
     #[error("Unknown parameter '{0}'")]
     UnknownParameter(String),
+
+    /// legacy: the same `"Unknown parameter '%s'"` text as
+    /// [`Self::UnknownParameter`], but from `get_variant_no`'s own
+    /// non-dash check rather than `get_option_no`'s, which returns
+    /// `USER_ERROR`, not `USAGE_ONLY` -- a separate variant exists
+    /// solely because [`crate::error::CdpError`]'s `From` impl needs
+    /// to tell the two call sites apart to print the right header.
+    /// Confirmed live for `sndinfo smptime infile samplecnt extra`
+    /// (`"ERROR: INCORRECT USE"` precedes the message), the first
+    /// ported command with variants but no options -- until now this
+    /// call site was unreachable by any `CommandSpec` in this crate
+    /// (see the historical note this replaces in
+    /// `cdp_core::error::CdpError`'s `From<ParamsError>` impl).
+    #[error("Unknown parameter '{0}'")]
+    UnknownParameterInVariantPhase(String),
 
     /// legacy: `get_mode_from_cmdline` in `legacy/dev/cdp2k/tklib3.c`,
     /// `sscanf(str,"%d",&dz->mode)` finding no leading integer at all

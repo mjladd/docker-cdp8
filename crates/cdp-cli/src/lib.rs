@@ -40,7 +40,7 @@
 use cdp_core::{CdpError, ExitCategory, report_and_exit};
 use cdp_params::{CommandSpec, parse, parse_mode};
 use cdp_programs::pvoc::anal;
-use cdp_programs::sndinfo::{len, props};
+use cdp_programs::sndinfo::{len, props, smptime, timesmp};
 use cdp_programs::synth::wave::{self, Mode};
 use cdp_sf::SoundFile;
 
@@ -104,6 +104,8 @@ fn print_top_level_help() {
     println!("  pvoc anal     analyse a sound file into a phase-vocoder file (mode 1, mono only)");
     println!("  sndinfo props display a sound or analysis file's properties");
     println!("  sndinfo len   display a sound or analysis file's duration");
+    println!("  sndinfo smptime convert a sample count to a duration");
+    println!("  sndinfo timesmp convert a duration to a sample count");
 }
 
 fn dispatch(program: &str, args: &[String]) -> ! {
@@ -179,12 +181,18 @@ fn dispatch_sndinfo(args: &[String]) -> ! {
     match args.split_first() {
         Some((subcommand, rest)) if subcommand == "props" => dispatch_sndinfo_props(rest),
         Some((subcommand, rest)) if subcommand == "len" => dispatch_sndinfo_len(rest),
+        Some((subcommand, rest)) if subcommand == "smptime" => dispatch_sndinfo_smptime(rest),
+        Some((subcommand, rest)) if subcommand == "timesmp" => dispatch_sndinfo_timesmp(rest),
         Some((subcommand, _)) => {
-            eprintln!("sndinfo: '{subcommand}' is not implemented yet (only 'props'/'len' are)");
+            eprintln!(
+                "sndinfo: '{subcommand}' is not implemented yet (only 'props'/'len'/'smptime'/'timesmp' are)"
+            );
             std::process::exit(1);
         }
         None => {
-            eprintln!("sndinfo: missing sub-command (only 'props'/'len' are implemented)");
+            eprintln!(
+                "sndinfo: missing sub-command (only 'props'/'len'/'smptime'/'timesmp' are implemented)"
+            );
             std::process::exit(1);
         }
     }
@@ -265,5 +273,57 @@ fn run_sndinfo_len(args: &[&str]) -> Result<(), CdpError> {
     let sf = SoundFile::open(&parsed.infiles[0])?;
     let text = len::format_len(&sf)?;
     print!("{text}");
+    Ok(())
+}
+
+fn dispatch_sndinfo_smptime(args: &[String]) -> ! {
+    if args.is_empty() {
+        // legacy: same bare-subcommand usage-text shape as `sndinfo
+        // props` -- see `dispatch_sndinfo_props`'s own comment.
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, smptime::USAGE)));
+    }
+    if args.len() == 1 {
+        // legacy: same `argc<4` greeting rule as `sndinfo props` -- see
+        // `dispatch_sndinfo_props`'s own comment. Confirmed live even
+        // though this case goes on to fail with "Insufficient
+        // parameters on command line." (the required `samplecnt` is
+        // missing), since the greeting prints before that check runs.
+        print!("{}", smptime::GREETING);
+    }
+    let args: Vec<&str> = args.iter().map(String::as_str).collect();
+    report_and_exit(run_sndinfo_smptime(&args));
+}
+
+fn run_sndinfo_smptime(args: &[&str]) -> Result<(), CdpError> {
+    // legacy: the infile must be open (to compute `samplecnt`'s
+    // dynamic range) before `parse` itself can run -- see
+    // `cdp_programs::sndinfo::open_sound_infile`'s doc.
+    let sf = cdp_programs::sndinfo::open_sound_infile(args[0])?;
+    let spec = CommandSpec::sndinfo_smptime(sf.sample_count() as f64);
+    let parsed = parse(&spec, args)?;
+    print!("{}", smptime::format_smptime(&sf, &parsed));
+    Ok(())
+}
+
+fn dispatch_sndinfo_timesmp(args: &[String]) -> ! {
+    if args.is_empty() {
+        // legacy: same bare-subcommand usage-text shape as `sndinfo
+        // props` -- see `dispatch_sndinfo_props`'s own comment.
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, timesmp::USAGE)));
+    }
+    if args.len() == 1 {
+        // legacy: same `argc<4` greeting rule as `sndinfo smptime` --
+        // see `dispatch_sndinfo_smptime`'s own comment.
+        print!("{}", timesmp::GREETING);
+    }
+    let args: Vec<&str> = args.iter().map(String::as_str).collect();
+    report_and_exit(run_sndinfo_timesmp(&args));
+}
+
+fn run_sndinfo_timesmp(args: &[&str]) -> Result<(), CdpError> {
+    let sf = cdp_programs::sndinfo::open_sound_infile(args[0])?;
+    let spec = CommandSpec::sndinfo_timesmp(cdp_programs::sndinfo::len::wave_duration_secs(&sf));
+    let parsed = parse(&spec, args)?;
+    print!("{}", timesmp::format_timesmp(&sf, &parsed));
     Ok(())
 }
