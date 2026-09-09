@@ -375,15 +375,15 @@ at a wider tolerance must say why in its `notes`.
 Agent-days assume one agent per WP working with the oracle available.
 
 | Phase | WPs | Agent-days |
-|---|---|---|
-| 0 | 3 | 5 |
-| 1 | 7 | 40 |
-| 2 | 14 | 60 |
-| 3 | 15 | 45 |
-| 4 | about 150 | 300 |
-| 5 | 3 | 15 |
-| 6 | 4 | 15 |
-| Total | | about 480 |
+|-------|-----|------------|
+| 0     | 3   | 5          |
+| 1     | 7   | 40         |
+| 2     | 14  | 60         |
+| 3     | 15  | 45         |
+| 4     |~150 | 300        |
+| 5     | 3   | 15         |
+| 6     | 4   | 15         |
+| Total |     | about 480  |
 
 With ten agents in parallel during Phases 2 to 4 the calendar time is about
 three to four months after Phase 1 completes.
