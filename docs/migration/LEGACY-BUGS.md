@@ -65,3 +65,57 @@ doc in `crates/cdp-data/src/mix.rs` explains why. `legacy` `submix
 mix` runs a file-type auto-detection step first. In the normal CLI
 path, that step rejects a malformed mixfile before `setupmix.c` runs
 at all.
+
+## `sndinfo timediff` with one infile segfaults instead of reporting an error
+
+**Found while porting:** WP-2.1, `cdp-programs` `sndinfo timediff`
+(`crates/cdp-programs/src/sndinfo/timediff.rs`).
+
+**Where:** `legacy/dev/cdp2k/mainfuncs.c`, `handle_extra_infiles`.
+
+**The bug:** `INFO_TIMEDIFF` is a `TWO_SNDFILES` process.
+`count_and_allocate_for_infiles` sets `dz->infilecnt = 2` for it no
+matter how many file names the user actually typed. `handle_extra_
+infiles` then reads the second file name like this:
+
+```c
+if(dz->infilecnt > 1) {
+    for(n=1;n<dz->infilecnt;n++) {
+        filename = (*cmdline)[0];
+        switch(dz->process) {
+        ...
+        default:
+            if((exit_status = handle_other_infile(n,filename,dz))<0)
+                return(exit_status);
+            break;
+        }
+        (*cmdline)++;
+        (*cmdlinecnt)--;
+    }
+```
+
+The loop reads `(*cmdline)[0]` without a bounds check against
+`*cmdlinecnt`. With only one infile on the command line, `*cmdline`
+already points past the end of `argv`. The read is out of bounds.
+
+**Reproducer:** `sndinfo timediff infile.wav` (one infile, not two).
+A live run shows the crash. The process exits with signal 11
+(SIGSEGV, exit code 139). It prints nothing at all, not even the
+usual `argc<4` greeting line every other `sndinfo` sub-command prints
+first.
+
+**Ported behavior:** `run_sndinfo_timediff` in
+`crates/cdp-cli/src/lib.rs` counts the command-line tokens before it
+opens any file. With exactly one token, it returns
+`cdp_params::ParamsError::InsufficientCmdlineParameters`
+("Insufficient cmdline parameters."). This is the same clean error
+text every other too-few-infiles case in this crate already uses.
+Real legacy prints no text at all for this case, so this wording is
+this crate's own choice, not a captured legacy string.
+
+**Check performed:** a direct reading of `handle_extra_infiles` shows
+the missing bounds check. Rust's array indexing cannot reproduce this
+bug. An out-of-bounds slice read panics. It does not read adjacent
+memory the way the C code does. `run_sndinfo_timediff`'s own
+argument-count check also runs first, so this class of failure never
+reaches the unsafe read at all.
