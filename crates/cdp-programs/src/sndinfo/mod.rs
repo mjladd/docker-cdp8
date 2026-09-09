@@ -21,12 +21,13 @@
 // <https://www.gnu.org/licenses/>.
 
 //! `sndinfo` (legacy: `legacy/dev/sndinfo`). The `props`, `len`,
-//! `smptime` and `timesmp` sub-commands are ported so far.
+//! `smptime`, `timesmp` and `timediff` sub-commands are ported so far.
 
 mod ctime;
 pub mod len;
 pub mod props;
 pub mod smptime;
+pub mod timediff;
 pub mod timesmp;
 
 use cdp_core::{CdpError, ExitCategory};
@@ -35,7 +36,12 @@ use cdp_sf::{FileKind, SoundFile};
 /// legacy: `test_application_validity`'s generic infile-kind check
 /// (`legacy/dev/cdp2k/mainfuncs.c`), confirmed live for `sndinfo
 /// smptime`/`sndinfo timesmp` against `docs/manual/data/capm.ana` --
-/// see [`smptime`]'s module doc.
+/// see [`smptime`]'s module doc. Also the check `timediff`'s infile1
+/// uses (`INFO_TIMEDIFF` is `TWO_SNDFILES`, a different
+/// `input_data_type` from `SNDFILES_ONLY`, but both route through this
+/// same generic per-filetype validity table before either command's
+/// own logic runs) -- see [`timediff`]'s module doc for infile2's own,
+/// different check.
 pub const WRONG_FILETYPE: &str = "Application doesn't work with this type of infile.\n";
 
 /// Opens `path` as a [`SoundFile`], reproducing the same
@@ -53,7 +59,9 @@ pub const WRONG_FILETYPE: &str = "Application doesn't work with this type of inf
 /// this crate so far -- this duplicates
 /// [`cdp_params::ParamsError::CannotOpenFile`]'s own check (not
 /// exported from that crate) rather than calling `parse` twice with a
-/// placeholder range.
+/// placeholder range. Reused by [`timediff::open_infiles`] for its
+/// infile1 for the same reason `timediff` bypasses `cdp_params::parse`
+/// entirely -- see that module's doc.
 pub fn open_sound_infile(path: &str) -> Result<SoundFile, CdpError> {
     std::fs::File::open(path).map_err(|source| {
         CdpError::from(cdp_params::ParamsError::CannotOpenFile {

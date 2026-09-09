@@ -29,9 +29,8 @@
 //! Current scope (see `docs/migration/STATUS.md`): `synth wave`
 //! ([`cdp_programs::synth::wave`], WP-1.5's one proof-of-life program),
 //! `pvoc anal` ([`cdp_programs::pvoc::anal`], WP-1.4, mode 1/mono only)
-//! and `sndinfo props`/`sndinfo len`
-//! ([`cdp_programs::sndinfo::props`]/[`cdp_programs::sndinfo::len`],
-//! WP-2.1). Every other program name reports "not implemented yet" rather than
+//! and `sndinfo props`/`len`/`smptime`/`timesmp`/`timediff`
+//! ([`cdp_programs::sndinfo`], WP-2.1). Every other program name reports "not implemented yet" rather than
 //! legacy's own usage text, since this crate does not (yet) know the
 //! full set of legacy program/sub-command names -- that comes from
 //! `spec/usage/`, captured by WP-0.2, one program at a time as each is
@@ -40,7 +39,7 @@
 use cdp_core::{CdpError, ExitCategory, report_and_exit};
 use cdp_params::{CommandSpec, parse, parse_mode};
 use cdp_programs::pvoc::anal;
-use cdp_programs::sndinfo::{len, props, smptime, timesmp};
+use cdp_programs::sndinfo::{len, props, smptime, timediff, timesmp};
 use cdp_programs::synth::wave::{self, Mode};
 use cdp_sf::SoundFile;
 
@@ -106,6 +105,7 @@ fn print_top_level_help() {
     println!("  sndinfo len   display a sound or analysis file's duration");
     println!("  sndinfo smptime convert a sample count to a duration");
     println!("  sndinfo timesmp convert a duration to a sample count");
+    println!("  sndinfo timediff show the duration difference between two sound files");
 }
 
 fn dispatch(program: &str, args: &[String]) -> ! {
@@ -183,15 +183,16 @@ fn dispatch_sndinfo(args: &[String]) -> ! {
         Some((subcommand, rest)) if subcommand == "len" => dispatch_sndinfo_len(rest),
         Some((subcommand, rest)) if subcommand == "smptime" => dispatch_sndinfo_smptime(rest),
         Some((subcommand, rest)) if subcommand == "timesmp" => dispatch_sndinfo_timesmp(rest),
+        Some((subcommand, rest)) if subcommand == "timediff" => dispatch_sndinfo_timediff(rest),
         Some((subcommand, _)) => {
             eprintln!(
-                "sndinfo: '{subcommand}' is not implemented yet (only 'props'/'len'/'smptime'/'timesmp' are)"
+                "sndinfo: '{subcommand}' is not implemented yet (only 'props'/'len'/'smptime'/'timesmp'/'timediff' are)"
             );
             std::process::exit(1);
         }
         None => {
             eprintln!(
-                "sndinfo: missing sub-command (only 'props'/'len'/'smptime'/'timesmp' are implemented)"
+                "sndinfo: missing sub-command (only 'props'/'len'/'smptime'/'timesmp'/'timediff' are implemented)"
             );
             std::process::exit(1);
         }
@@ -325,5 +326,38 @@ fn run_sndinfo_timesmp(args: &[&str]) -> Result<(), CdpError> {
     let spec = CommandSpec::sndinfo_timesmp(cdp_programs::sndinfo::len::wave_duration_secs(&sf));
     let parsed = parse(&spec, args)?;
     print!("{}", timesmp::format_timesmp(&sf, &parsed));
+    Ok(())
+}
+
+fn dispatch_sndinfo_timediff(args: &[String]) -> ! {
+    if args.is_empty() {
+        // legacy: same bare-subcommand usage-text shape as `sndinfo
+        // props` -- see `dispatch_sndinfo_props`'s own comment.
+        // `timediff::USAGE`'s own doc explains why this is the *only*
+        // case that ever prints the greeting for `timediff`, unlike
+        // every other `sndinfo` sub-command ported so far.
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, timediff::USAGE)));
+    }
+    let args: Vec<&str> = args.iter().map(String::as_str).collect();
+    report_and_exit(run_sndinfo_timediff(&args));
+}
+
+fn run_sndinfo_timediff(args: &[&str]) -> Result<(), CdpError> {
+    // legacy: `timediff::open_infiles`'s own module doc explains why
+    // this command's argument handling is written by hand instead of
+    // going through `cdp_params::parse` -- including why a single
+    // infile reports a clean error here rather than reproducing a
+    // real legacy segfault.
+    match args.len() {
+        1 => {
+            return Err(CdpError::from(
+                cdp_params::ParamsError::InsufficientCmdlineParameters,
+            ));
+        }
+        2 => {}
+        _ => return Err(CdpError::from(cdp_params::ParamsError::TooManyParameters)),
+    }
+    let (sf1, sf2) = timediff::open_infiles(args[0], args[1])?;
+    print!("{}", timediff::format_timediff(&sf1, &sf2));
     Ok(())
 }
