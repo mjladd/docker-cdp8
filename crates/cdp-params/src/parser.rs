@@ -187,6 +187,22 @@ pub struct ParsedCommand {
 pub fn parse(spec: &CommandSpec, args: &[&str]) -> Result<ParsedCommand> {
     let outfile_slot = if spec.has_outfile { 1 } else { 0 };
     let min_needed = spec.infile_count + outfile_slot;
+
+    // legacy: `count_and_allocate_for_infiles` opens every infile
+    // before `read_parameters_and_flags` ever checks whether enough
+    // further tokens remain for the outfile/params -- confirmed live:
+    // `housekeep copy 1 nonexistent.wav` (missing both the outfile
+    // and a real infile) reports the infile-open error
+    // (`ParamsError::CannotOpenFile`), not
+    // `InsufficientCmdlineParameters`, even though both are missing.
+    // Checked here, ahead of the `min_needed` check below, for as
+    // many infile tokens as are actually present (never more than
+    // `spec.infile_count`, so a command whose infiles alone outnumber
+    // the given tokens -- not reachable by any command in this crate
+    // so far -- does not index out of bounds).
+    for &arg in &args[..args.len().min(spec.infile_count)] {
+        check_file_openable(arg)?;
+    }
     if args.len() < min_needed {
         // legacy: `crate::spec::CommandSpec::unequal_sndfile`'s doc.
         return Err(if spec.unequal_sndfile {
@@ -196,11 +212,10 @@ pub fn parse(spec: &CommandSpec, args: &[&str]) -> Result<ParsedCommand> {
         });
     }
 
-    let mut infiles = Vec::with_capacity(spec.infile_count);
-    for &arg in &args[..spec.infile_count] {
-        check_file_openable(arg)?;
-        infiles.push(arg.to_string());
-    }
+    let infiles: Vec<String> = args[..spec.infile_count]
+        .iter()
+        .map(|s| s.to_string())
+        .collect();
     let outfile = if spec.has_outfile {
         Some(args[spec.infile_count].to_string())
     } else {
