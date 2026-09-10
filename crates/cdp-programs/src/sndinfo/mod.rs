@@ -21,8 +21,8 @@
 // <https://www.gnu.org/licenses/>.
 
 //! `sndinfo` (legacy: `legacy/dev/sndinfo`). The `props`, `len`,
-//! `smptime`, `timesmp`, `timediff`, `lens` and `sumlen` sub-commands
-//! are ported so far.
+//! `smptime`, `timesmp`, `timediff`, `lens`, `sumlen` and (modes 1/2
+//! only) `units` sub-commands are ported so far.
 
 mod ctime;
 pub mod len;
@@ -32,6 +32,7 @@ pub mod smptime;
 pub mod sumlen;
 pub mod timediff;
 pub mod timesmp;
+pub mod units;
 
 use cdp_core::{CdpError, ExitCategory};
 use cdp_sf::{FileKind, SoundFile};
