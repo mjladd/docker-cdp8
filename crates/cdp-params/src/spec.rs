@@ -635,4 +635,26 @@ impl CommandSpec {
             unequal_sndfile: false,
         }
     }
+
+    /// `sndinfo maxsamp infile [-f]` (`INFO_MAXSAMP`): reports a
+    /// file's largest-magnitude sample. legacy: `parstruct.c`'s
+    /// `set_param_data(ap,0,0,0,"")` (no required positional
+    /// parameters, same shape as [`Self::sndinfo_props`]) and
+    /// `set_vflgs(ap,"",0,"","f",1,0,"0")` (no options, one boolean
+    /// variant `-f`, same shape as [`Self::synth_wave`]'s `-f`).
+    /// Confirmed live: an unrecognised flag reports `"Unknown flag
+    /// '-%c'"` (the same no-options-at-all category
+    /// `sndinfo_smptime`/`sndinfo_timesmp`'s `-g` already established),
+    /// and a trailing non-flag token reports `"Unknown parameter
+    /// 'extra'"`.
+    pub fn sndinfo_maxsamp() -> Self {
+        CommandSpec {
+            infile_count: 1,
+            has_outfile: false,
+            params: vec![],
+            flags: vec![],
+            variants: vec![Variant::Boolean { letter: 'f' }],
+            unequal_sndfile: false,
+        }
+    }
 }

@@ -21,12 +21,13 @@
 // <https://www.gnu.org/licenses/>.
 
 //! `sndinfo` (legacy: `legacy/dev/sndinfo`). The `props`, `len`,
-//! `smptime`, `timesmp`, `timediff`, `lens`, `sumlen` and (modes 1/2
-//! only) `units` sub-commands are ported so far.
+//! `smptime`, `timesmp`, `timediff`, `lens`, `sumlen`, `maxsamp` and
+//! (modes 1/2 only) `units` sub-commands are ported so far.
 
 mod ctime;
 pub mod len;
 pub mod lens;
+pub mod maxsamp;
 pub mod props;
 pub mod smptime;
 pub mod sumlen;
