@@ -30,7 +30,7 @@
 //! ([`cdp_programs::synth::wave`], WP-1.5's one proof-of-life program),
 //! `pvoc anal` ([`cdp_programs::pvoc::anal`], WP-1.4, mode 1/mono only)
 //! and `sndinfo props`/`len`/`smptime`/`timesmp`/`timediff`/`lens`/`sumlen`/
-//! `units` (modes 1/2 only) ([`cdp_programs::sndinfo`], WP-2.1). Every other program name reports "not implemented yet" rather than
+//! `maxsamp`/`units` (modes 1/2 only) ([`cdp_programs::sndinfo`], WP-2.1). Every other program name reports "not implemented yet" rather than
 //! legacy's own usage text, since this crate does not (yet) know the
 //! full set of legacy program/sub-command names -- that comes from
 //! `spec/usage/`, captured by WP-0.2, one program at a time as each is
@@ -39,7 +39,7 @@
 use cdp_core::{CdpError, ExitCategory, report_and_exit};
 use cdp_params::{CommandSpec, ParamValue, parse, parse_mode};
 use cdp_programs::pvoc::anal;
-use cdp_programs::sndinfo::{len, lens, props, smptime, sumlen, timediff, timesmp, units};
+use cdp_programs::sndinfo::{len, lens, maxsamp, props, smptime, sumlen, timediff, timesmp, units};
 use cdp_programs::synth::wave::{self, Mode};
 use cdp_sf::SoundFile;
 
@@ -109,6 +109,7 @@ fn print_top_level_help() {
     println!("  sndinfo lens   list the duration of two or more sound files");
     println!("  sndinfo sumlen sum the duration of two or more sound files");
     println!("  sndinfo units  convert between musical units (modes 1/2 only)");
+    println!("  sndinfo maxsamp find the maximum sample in a sound or binary data file");
 }
 
 fn dispatch(program: &str, args: &[String]) -> ! {
@@ -190,15 +191,16 @@ fn dispatch_sndinfo(args: &[String]) -> ! {
         Some((subcommand, rest)) if subcommand == "lens" => dispatch_sndinfo_lens(rest),
         Some((subcommand, rest)) if subcommand == "sumlen" => dispatch_sndinfo_sumlen(rest),
         Some((subcommand, rest)) if subcommand == "units" => dispatch_sndinfo_units(rest),
+        Some((subcommand, rest)) if subcommand == "maxsamp" => dispatch_sndinfo_maxsamp(rest),
         Some((subcommand, _)) => {
             eprintln!(
-                "sndinfo: '{subcommand}' is not implemented yet (only 'props'/'len'/'smptime'/'timesmp'/'timediff'/'lens'/'sumlen'/'units' are)"
+                "sndinfo: '{subcommand}' is not implemented yet (only 'props'/'len'/'smptime'/'timesmp'/'timediff'/'lens'/'sumlen'/'units'/'maxsamp' are)"
             );
             std::process::exit(1);
         }
         None => {
             eprintln!(
-                "sndinfo: missing sub-command (only 'props'/'len'/'smptime'/'timesmp'/'timediff'/'lens'/'sumlen'/'units' are implemented)"
+                "sndinfo: missing sub-command (only 'props'/'len'/'smptime'/'timesmp'/'timediff'/'lens'/'sumlen'/'units'/'maxsamp' are implemented)"
             );
             std::process::exit(1);
         }
@@ -479,4 +481,29 @@ fn run_sndinfo_units(mode_token: &str, args: &[&str]) -> Result<(), CdpError> {
         _ => unreachable!("CommandSpec::sndinfo_units's only param is ParamType::Double"),
     };
     units::run(mode, value)
+}
+
+fn dispatch_sndinfo_maxsamp(args: &[String]) -> ! {
+    if args.is_empty() {
+        // legacy: same bare-subcommand usage-text shape as `sndinfo
+        // props` -- see `dispatch_sndinfo_props`'s own comment.
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, maxsamp::USAGE)));
+    }
+    if args.len() == 1 {
+        // legacy: same `argc<4` greeting rule as `sndinfo props` --
+        // see `dispatch_sndinfo_props`'s own comment (`sndinfo maxsamp
+        // infile`, with no `-f`, is argc 3).
+        print!("{}", maxsamp::GREETING);
+    }
+    let args: Vec<&str> = args.iter().map(String::as_str).collect();
+    report_and_exit(run_sndinfo_maxsamp(&args));
+}
+
+fn run_sndinfo_maxsamp(args: &[&str]) -> Result<(), CdpError> {
+    let parsed = parse(&CommandSpec::sndinfo_maxsamp(), args)?;
+    let sf = SoundFile::open(&parsed.infiles[0])?;
+    let force_scan = parsed.flags.contains_key(&'f');
+    let text = maxsamp::format_maxsamp(&sf, force_scan)?;
+    print!("{text}");
+    Ok(())
 }
