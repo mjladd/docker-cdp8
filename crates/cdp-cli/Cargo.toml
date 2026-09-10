@@ -25,6 +25,10 @@ path = "src/bin/synth.rs"
 name = "sndinfo"
 path = "src/bin/sndinfo.rs"
 
+[[bin]]
+name = "housekeep"
+path = "src/bin/housekeep.rs"
+
 [dependencies]
 cdp-core = { path = "../cdp-core" }
 cdp-params = { path = "../cdp-params" }

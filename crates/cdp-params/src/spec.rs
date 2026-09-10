@@ -657,4 +657,28 @@ impl CommandSpec {
             unequal_sndfile: false,
         }
     }
+
+    /// `housekeep copy 1 infile outfile` (`HOUSE_COPY`, mode
+    /// `COPYSF`): writes an unmodified copy of infile's samples.
+    /// legacy: `parstruct.json`'s `HOUSE_COPY`/`COPYSF` entry has
+    /// `param_cnt: 0` and `vflag_cnt: 0` -- no required positional
+    /// parameters, flags, or variants beyond infile/outfile, the same
+    /// shape as [`Self::sndinfo_props`] but with `has_outfile: true`
+    /// (`ap_house.c`'s `assign_process_logic` sets `SNDFILE_OUT` for
+    /// this mode). Confirmed live: a missing outfile reports
+    /// `"Insufficient cmdline parameters."`; a trailing extra token
+    /// reports `"Too many parameters on command line."`
+    /// (`unequal_sndfile: false`, matching every other command so far
+    /// that takes a plain, fixed infile/outfile pair with nothing
+    /// else).
+    pub fn housekeep_copy_once() -> Self {
+        CommandSpec {
+            infile_count: 1,
+            has_outfile: true,
+            params: vec![],
+            flags: vec![],
+            variants: vec![],
+            unequal_sndfile: false,
+        }
+    }
 }
