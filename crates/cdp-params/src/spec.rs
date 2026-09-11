@@ -753,4 +753,28 @@ impl CommandSpec {
             unequal_sndfile: false,
         }
     }
+
+    /// `housekeep chans 4 infile outfile [-p]` (`HOUSE_CHANS`, mode
+    /// `STOM`): mixes a stereo infile down to mono. legacy:
+    /// `parstruct.json`'s `HOUSE_CHANS`/`STOM` entry has `param_cnt: 0`
+    /// and one boolean variant, `-p` (`CHAN_INVERT_PHASE`) -- the same
+    /// shape [`Self::synth_wave`]'s own `-f` established. `-p` needs no
+    /// `legacy_index`/range, matching every other boolean variant in
+    /// this crate. `unequal_sndfile` is left at its default (`false`)
+    /// for the same reason, and with the same caveat, as
+    /// [`Self::housekeep_chans_mtos`]'s own doc: confirmed live,
+    /// `housekeep chans 4 infile` (missing the outfile) reports
+    /// `"Insufficient cmdline parameters."`, not the `UNEQUAL_SNDFILE`-
+    /// shaped text `ap_house.c`'s own classification for this mode
+    /// would suggest.
+    pub fn housekeep_chans_stom() -> Self {
+        CommandSpec {
+            infile_count: 1,
+            has_outfile: true,
+            params: vec![],
+            flags: vec![],
+            variants: vec![Variant::Boolean { letter: 'p' }],
+            unequal_sndfile: false,
+        }
+    }
 }

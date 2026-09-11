@@ -32,7 +32,6 @@
 
 use crate::error::{Result, SfError};
 use crate::props::{ChannelPeak, PROPCNKSIZE, PropertyBlock, SampleType};
-use crate::reader::MAXSHORT;
 use crate::riff;
 use std::path::Path;
 
@@ -181,18 +180,31 @@ impl SoundFileWriter {
 fn encode_pcm16(samples: &[f32]) -> Vec<u8> {
     let mut out = Vec::with_capacity(samples.len() * 2);
     for &s in samples {
-        // legacy: fputshortEx computes
-        //   (short) cdp_round(sample * MAXSHORT)
-        // where cdp_round is lround (round-half-away-from-zero) and
-        // the (short) cast truncates on overflow rather than
-        // saturating. This does not clip: a sample outside
-        // -1.0..=1.0 wraps here exactly as the legacy (short) cast
-        // does (both this cast and `as i16` on an out-of-range i32
-        // take the low 16 bits). Callers that need clipping, e.g. the
-        // legacy `gain` process's clip-before-write behaviour, must
-        // do it before calling write_frames, matching where the
-        // legacy code does it.
-        let v = (s * MAXSHORT).round() as i32;
+        // legacy: `fputfloatEx` (`legacy/dev/newsfsys/snd.c`) computes
+        //   (short) cdp_round(*fp * MAXSHORT)
+        // where `MAXSHORT` is `(32767.0)`, an unsuffixed C floating
+        // literal and therefore `double`, and `cdp_round` takes a
+        // `double` argument (`return lround(fval);`) -- so `*fp *
+        // MAXSHORT` promotes the `float` sample to `double` *before*
+        // multiplying, and the whole multiply-and-round happens in
+        // double precision, not float. Confirmed live: this matters,
+        // not just in principle -- `housekeep chans 4`'s stereo
+        // average of a real corpus file lands exactly on `0.5` after
+        // an all-`f32` multiply by `MAXSHORT` (rounding up to `1`),
+        // but the same value multiplied in `f64` (matching legacy's
+        // actual promotion) comes out as `0.4999999995...` (rounding
+        // down to `0`, legacy's own real output) -- a genuine,
+        // observable divergence this crate's earlier all-`f32` version
+        // had, not a merely theoretical one. `cdp_round` itself is
+        // `lround` (round-half-away-from-zero); the final `(short)`
+        // cast truncates on overflow rather than saturating. This does
+        // not clip: a sample outside -1.0..=1.0 wraps here exactly as
+        // the legacy `(short)` cast does (both this cast and `as i16`
+        // on an out-of-range `i32` take the low 16 bits). Callers that
+        // need clipping, e.g. the legacy `gain` process's clip-before-
+        // write behaviour, must do it before calling `write_frames`,
+        // matching where the legacy code does it.
+        let v = ((s as f64) * 32767.0).round() as i32;
         let wrapped = v as i16;
         out.extend_from_slice(&wrapped.to_le_bytes());
     }
