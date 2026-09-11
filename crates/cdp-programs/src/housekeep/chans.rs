@@ -20,19 +20,20 @@
 // License along with this program. If not, see
 // <https://www.gnu.org/licenses/>.
 
-//! `housekeep chans mode infile ...` (`HOUSE_CHANS`). Only mode 1
+//! `housekeep chans mode infile ...` (`HOUSE_CHANS`). Modes 1
 //! (`HOUSE_CHANNEL`, `housekeep chans 1 infile channo`: extracts one
-//! channel to a new, auto-named mono file) is ported so far. Modes
-//! 2-5 (extract all channels, zero one channel, mix down to mono,
-//! mono to stereo) report a plain `ProgramError`.
+//! channel to a new, auto-named mono file) and 5 (`MTOS`, `housekeep
+//! chans 5 infile outfile`: doubles a mono infile's samples into a
+//! stereo outfile) are ported so far. Modes 2-4 (extract all
+//! channels, zero one channel, mix down to mono) report a plain
+//! `ProgramError`.
 //!
 //! legacy: `legacy/dev/houskeep/channels.c`'s `do_channels`,
-//! `case(HOUSE_CHANNEL)` (shared with `HOUSE_CHANNELS`, mode 2, not
-//! ported: that mode's own loop bounds, `start_chan=0`/
-//! `end_chan=dz->infile->channels`, are a small, confirmed-live-shaped
-//! change from mode 1's `start_chan=CHAN_NO`/`end_chan=CHAN_NO+1`, but
-//! its own output-naming loop needs the [`extract_channel`]-per-
-//! channel behaviour repeated once per channel, not yet confirmed
+//! `case(HOUSE_CHANNEL)` and (for mode 5) `case(MTOS)` (shared with
+//! `HOUSE_ZCHANNEL`/`STOM` -- mode 2, `HOUSE_CHANNELS`, has its own,
+//! not-yet-ported loop bounds change: `start_chan=0`/
+//! `end_chan=dz->infile->channels`, but needs [`extract_channel`]'s
+//! per-channel behaviour repeated once per channel, not yet confirmed
 //! live for a real multi-channel file).
 //!
 //! Takes no outfile on the command line at all -- unlike `copy`, the
@@ -109,10 +110,12 @@ pub const MAX_MODE: u32 = 5;
 pub enum Mode {
     /// legacy: `HOUSE_CHANNEL`.
     ExtractChannel,
+    /// legacy: `MTOS`.
+    MonoToStereo,
 }
 
 impl Mode {
-    /// `None` for modes 2-5 (not implemented yet) -- the caller maps
+    /// `None` for modes 2-4 (not implemented yet) -- the caller maps
     /// that to a plain `ProgramError`, the same shape
     /// `cdp_programs::sndinfo::units::Mode::from_number` already
     /// established for a mode `1..=MAX_MODE` in range but not yet
@@ -120,6 +123,7 @@ impl Mode {
     pub fn from_number(mode: u32) -> Option<Self> {
         match mode {
             1 => Some(Mode::ExtractChannel),
+            5 => Some(Mode::MonoToStereo),
             _ => None,
         }
     }
@@ -189,12 +193,118 @@ pub fn extract_channel(sf: &SoundFile, infile_path: &str, channo: i64) -> Result
     Ok(outfile_path)
 }
 
+/// legacy: `do_channels`'s `case(MTOS)`, `case(MONO)` branch (the
+/// only branch this port implements -- see this module's doc). A
+/// stereo infile reports `"This file is already stereo!!"`
+/// (`GOAL_FAILED`, confirmed live); any other channel count reports
+/// `"This process does not work with multichannel files!!"`, ported
+/// from source but not confirmed live (no corpus file has more than 2
+/// channels).
+///
+/// legacy quirk, confirmed live and ported as observed: this mode's
+/// own outfile-creation path (`sndcreat_formatted`, not the `WAVE_EX`
+/// branch `dz->outfile->channels > 2` would take) checks
+/// `if(dz->ofd < 0) return DATA_ERROR;` with no `sprintf(errstr,...)`
+/// call at all on that path, so an already-existing outfile reports a
+/// bare `"ERROR: INVALID DATA"` header with an *empty* detail message
+/// -- confirmed live, this is not the `"Cannot open output file
+/// %s\n"` text [`check_outfile_does_not_exist`] produces for `copy`/
+/// mode 1's own outfile-creation path, so this function does not use
+/// that helper.
+pub fn mono_to_stereo(sf: &SoundFile, outfile_path: &str) -> Result<(), CdpError> {
+    if !matches!(sf.file_kind, FileKind::Wave) {
+        return Err(CdpError::new(
+            ExitCategory::ProgramError,
+            "housekeep chans: only sound files are implemented yet",
+        ));
+    }
+    if !matches!(
+        sf.fmt.sample_type,
+        SampleType::Short16 | SampleType::Float32
+    ) {
+        return Err(CdpError::new(
+            ExitCategory::ProgramError,
+            "housekeep chans: this sample format is not implemented yet",
+        ));
+    }
+    match sf.fmt.channels {
+        1 => {}
+        2 => {
+            return Err(CdpError::new(
+                ExitCategory::GoalFailed,
+                "This file is already stereo!!\n",
+            ));
+        }
+        _ => {
+            return Err(CdpError::new(
+                ExitCategory::GoalFailed,
+                "This process does not work with multichannel files!!\n",
+            ));
+        }
+    }
+    if std::path::Path::new(outfile_path).exists() {
+        return Err(CdpError::new(ExitCategory::DataError, ""));
+    }
+    let mono = sf.samples_f32().map_err(CdpError::from)?;
+    let mut stereo = Vec::with_capacity(mono.len() * 2);
+    for &s in &mono {
+        stereo.push(s);
+        stereo.push(s);
+    }
+    write_wave_file(
+        2,
+        sf.fmt.sample_rate,
+        sf.fmt.sample_type,
+        &stereo,
+        outfile_path,
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     fn repo_path(rel: &str) -> String {
         format!("{}/../../{}", env!("CARGO_MANIFEST_DIR"), rel)
+    }
+
+    #[test]
+    fn mono_to_stereo_doubles_marimba_into_both_channels() {
+        let sf = SoundFile::open(repo_path("docs/manual/sounds/marimba.wav")).unwrap();
+        let out_path = scratch_dir("mtos").join("marimba_stereo.wav");
+        let _ = std::fs::remove_file(&out_path);
+        mono_to_stereo(&sf, out_path.to_str().unwrap()).unwrap();
+        let out = SoundFile::open(&out_path).unwrap();
+        assert_eq!(out.fmt.channels, 2);
+        let mono = sf.samples_f32().unwrap();
+        let stereo = out.samples_f32().unwrap();
+        let left: Vec<f32> = stereo.iter().step_by(2).copied().collect();
+        let right: Vec<f32> = stereo.iter().skip(1).step_by(2).copied().collect();
+        assert_eq!(left, mono);
+        assert_eq!(right, mono);
+        let _ = std::fs::remove_file(&out_path);
+    }
+
+    #[test]
+    fn mono_to_stereo_rejects_an_already_stereo_infile() {
+        let sf = SoundFile::open(repo_path("docs/manual/sounds/clashmixtest.wav")).unwrap();
+        let err = mono_to_stereo(&sf, "irrelevant.wav").unwrap_err();
+        assert_eq!(err.category, ExitCategory::GoalFailed);
+        assert_eq!(err.to_string(), "This file is already stereo!!\n");
+    }
+
+    #[test]
+    fn mono_to_stereo_existing_outfile_is_a_bare_data_error_with_no_message() {
+        // legacy quirk, confirmed live -- see `mono_to_stereo`'s own
+        // doc: unlike `copy`/`extract_channel`, this mode's own
+        // overwrite-refusal carries no detail text at all.
+        let sf = SoundFile::open(repo_path("docs/manual/sounds/marimba.wav")).unwrap();
+        let out_path = scratch_dir("mtos_exists").join("exists.wav");
+        std::fs::write(&out_path, b"not a real sound file").unwrap();
+        let err = mono_to_stereo(&sf, out_path.to_str().unwrap()).unwrap_err();
+        assert_eq!(err.category, ExitCategory::DataError);
+        assert_eq!(err.to_string(), "");
+        let _ = std::fs::remove_file(&out_path);
     }
 
     fn scratch_dir(name: &str) -> std::path::PathBuf {
