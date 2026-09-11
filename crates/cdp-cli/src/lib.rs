@@ -627,5 +627,15 @@ fn run_housekeep_chans(mode_token: &str, args: &[String]) -> Result<(), CdpError
             chans::extract_channel(&sf, &parsed.infiles[0], channo)?;
             Ok(())
         }
+        chans::Mode::MonoToStereo => {
+            let args: Vec<&str> = args.iter().map(String::as_str).collect();
+            let parsed = parse(&CommandSpec::housekeep_chans_mtos(), &args)?;
+            let sf = SoundFile::open(&parsed.infiles[0])?;
+            let outfile = parsed
+                .outfile
+                .clone()
+                .expect("CommandSpec::housekeep_chans_mtos has_outfile: true");
+            chans::mono_to_stereo(&sf, &outfile)
+        }
     }
 }

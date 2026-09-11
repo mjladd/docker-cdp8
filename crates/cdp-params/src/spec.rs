@@ -720,4 +720,37 @@ impl CommandSpec {
             unequal_sndfile: false,
         }
     }
+
+    /// `housekeep chans 5 infile outfile` (`HOUSE_CHANS`, mode
+    /// `MTOS`): doubles a mono infile into a stereo outfile. legacy:
+    /// `parstruct.json`'s `HOUSE_CHANS`/`MTOS` entry has `param_cnt:
+    /// 0` and no flags or variants -- the same zero-params shape as
+    /// [`Self::housekeep_copy_once`]. `unequal_sndfile` is left at its
+    /// default (`false`) even though `ap_house.c`'s
+    /// `assign_process_logic` sets this mode's real classification to
+    /// `UNEQUAL_SNDFILE` (like [`Self::housekeep_chans_channel`]'s own
+    /// note) -- but here the difference is directly observable, not
+    /// merely unreachable: confirmed live, `housekeep chans 5 infile`
+    /// (missing the outfile) reports `"Insufficient cmdline
+    /// parameters."`, the `false`/`EQUAL_SNDFILE`-shaped text, not
+    /// `"Insufficient parameters on command line."` the way `distort
+    /// repeat`'s own confirmed `UNEQUAL_SNDFILE` case does. This
+    /// crate's `unequal_sndfile` flag is evidently not a faithful
+    /// general model of legacy's real `EQUAL_SNDFILE`/
+    /// `UNEQUAL_SNDFILE` distinction (which routes through
+    /// `count_infiles`, a variable-infile-count mechanism this crate
+    /// does not implement at all -- see that field's own doc); `false`
+    /// is set here because it is the value confirmed live for this
+    /// specific command, not because the true classification is
+    /// `EQUAL_SNDFILE`.
+    pub fn housekeep_chans_mtos() -> Self {
+        CommandSpec {
+            infile_count: 1,
+            has_outfile: true,
+            params: vec![],
+            flags: vec![],
+            variants: vec![],
+            unequal_sndfile: false,
+        }
+    }
 }
