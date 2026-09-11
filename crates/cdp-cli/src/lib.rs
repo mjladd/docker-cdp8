@@ -31,7 +31,7 @@
 //! `pvoc anal` ([`cdp_programs::pvoc::anal`], WP-1.4, mode 1/mono only),
 //! `sndinfo props`/`len`/`smptime`/`timesmp`/`timediff`/`lens`/`sumlen`/
 //! `maxsamp`/`units` (modes 1/2 only) ([`cdp_programs::sndinfo`], WP-2.1)
-//! and `housekeep copy` (mode 1 only) ([`cdp_programs::housekeep`],
+//! and `housekeep copy`/`chans` (mode 1 only, each) ([`cdp_programs::housekeep`],
 //! WP-2.2). Every other program name reports "not implemented yet" rather than
 //! legacy's own usage text, since this crate does not (yet) know the
 //! full set of legacy program/sub-command names -- that comes from
@@ -40,7 +40,7 @@
 
 use cdp_core::{CdpError, ExitCategory, report_and_exit};
 use cdp_params::{CommandSpec, ParamValue, ParamsError, parse, parse_mode};
-use cdp_programs::housekeep::{self, copy};
+use cdp_programs::housekeep::{self, chans, copy};
 use cdp_programs::pvoc::anal;
 use cdp_programs::sndinfo::{len, lens, maxsamp, props, smptime, sumlen, timediff, timesmp, units};
 use cdp_programs::synth::wave::{self, Mode};
@@ -115,6 +115,7 @@ fn print_top_level_help() {
     println!("  sndinfo units  convert between musical units (modes 1/2 only)");
     println!("  sndinfo maxsamp find the maximum sample in a sound or binary data file");
     println!("  housekeep copy 1  write an unmodified copy of a sound file");
+    println!("  housekeep chans 1 extract one channel of a sound file");
 }
 
 fn dispatch(program: &str, args: &[String]) -> ! {
@@ -517,8 +518,9 @@ fn run_sndinfo_maxsamp(args: &[&str]) -> Result<(), CdpError> {
 fn dispatch_housekeep(args: &[String]) -> ! {
     match args.split_first() {
         Some((subcommand, rest)) if subcommand == "copy" => dispatch_housekeep_copy(rest),
+        Some((subcommand, rest)) if subcommand == "chans" => dispatch_housekeep_chans(rest),
         Some((subcommand, _)) => {
-            eprintln!("housekeep: '{subcommand}' is not implemented yet (only 'copy' is)");
+            eprintln!("housekeep: '{subcommand}' is not implemented yet (only 'copy'/'chans' are)");
             std::process::exit(1);
         }
         None => {
@@ -574,6 +576,56 @@ fn run_housekeep_copy(mode_token: &str, args: &[String]) -> Result<(), CdpError>
                 .clone()
                 .expect("CommandSpec::housekeep_copy_once has_outfile: true");
             copy::copy_once(&sf, &outfile)
+        }
+    }
+}
+
+fn dispatch_housekeep_chans(args: &[String]) -> ! {
+    let Some((mode_token, rest)) = args.split_first() else {
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, chans::USAGE)));
+    };
+    if rest.is_empty() {
+        // legacy: same argc<4 rule as `housekeep copy` -- see
+        // `dispatch_housekeep_copy`'s own comment.
+        print!("{}", chans::GREETING);
+        report_and_exit(Err(CdpError::from(ParamsError::InsufficientParameters)));
+    }
+    report_and_exit(run_housekeep_chans(mode_token, rest));
+}
+
+fn run_housekeep_chans(mode_token: &str, args: &[String]) -> Result<(), CdpError> {
+    let mode_number = parse_mode(mode_token, chans::MAX_MODE)?;
+    let Some(mode) = chans::Mode::from_number(mode_number) else {
+        return Err(CdpError::new(
+            ExitCategory::ProgramError,
+            format!("housekeep chans: mode {mode_number} is not implemented yet"),
+        ));
+    };
+    match mode {
+        chans::Mode::ExtractChannel => {
+            // legacy: `channo`'s range depends on the infile's own
+            // channel count, so the infile must be open first -- see
+            // `cdp_params::CommandSpec::housekeep_chans_channel`'s
+            // doc. `SNDFILES_ONLY`, confirmed live: a real analysis
+            // file reports the shared
+            // `"Application doesn't work with this type of infile."`
+            // text `cdp_programs::sndinfo::open_sound_infile` already
+            // produces.
+            let infile_path = args.first().ok_or(ParamsError::InsufficientParameters)?;
+            let sf = cdp_programs::sndinfo::open_sound_infile(infile_path)?;
+            let spec = CommandSpec::housekeep_chans_channel(sf.fmt.channels as f64);
+            let args: Vec<&str> = args.iter().map(String::as_str).collect();
+            let parsed = parse(&spec, &args)?;
+            let channo = match parsed.params[0] {
+                ParamValue::Integer(n) => n,
+                _ => unreachable!(
+                    "CommandSpec::housekeep_chans_channel's only param is ParamType::Int"
+                ),
+            };
+            // legacy: confirmed live, a successful `housekeep chans
+            // 1` prints nothing to stdout at all.
+            chans::extract_channel(&sf, &parsed.infiles[0], channo)?;
+            Ok(())
         }
     }
 }

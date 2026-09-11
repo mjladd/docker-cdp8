@@ -681,4 +681,43 @@ impl CommandSpec {
             unequal_sndfile: false,
         }
     }
+
+    /// `housekeep chans 1 infile channo` (`HOUSE_CHANS`, mode
+    /// `HOUSE_CHANNEL`): extracts one channel. legacy:
+    /// `parstruct.json`'s `HOUSE_CHANS`/`HOUSE_CHANNEL` entry has
+    /// `param_cnt: 1`, `param_list: "i"` (a plain `Int`, no
+    /// breakpoint-file fallback -- confirmed live, an unparseable
+    /// `channo` reports `"Cannot read parameter 1 [...]: brkpnt_files
+    /// not permitted."`) and no flags or variants. `channo`'s range is
+    /// not a fixed literal but the infile's own channel count
+    /// (`tklib1.c`'s `ap->hi[CHAN_NO] = (double)channels`), the same
+    /// "range is a parameter, not a literal" shape
+    /// [`Self::sndinfo_smptime`]/[`Self::sndinfo_timesmp`] already
+    /// established for an infile-dependent bound. Takes no outfile at
+    /// all (`has_outfile: false`): the output filename is derived
+    /// from the infile's own path, not given on the command line --
+    /// see `cdp_programs::housekeep::chans`'s module doc.
+    /// `unequal_sndfile` is left at its default (`false`) even though
+    /// `ap_house.c`'s `assign_process_logic` sets this mode's real
+    /// classification to `UNEQUAL_SNDFILE`: with `infile_count: 1`
+    /// and `has_outfile: false`, `min_needed` is always `1`, so the
+    /// field's own branch is unreachable once a bare `housekeep chans
+    /// 1` (zero further tokens) is already intercepted by `cdp-cli`'s
+    /// own mode-dispatch before `parse` ever runs -- the same
+    /// unreachable-as-wired shape [`Self::sndinfo_props`]'s own doc
+    /// already established for a different field.
+    pub fn housekeep_chans_channel(channels: f64) -> Self {
+        CommandSpec {
+            infile_count: 1,
+            has_outfile: false,
+            params: vec![ParamType::Int {
+                lo: 1.0,
+                hi: channels,
+                legacy_index: 1,
+            }],
+            flags: vec![],
+            variants: vec![],
+            unequal_sndfile: false,
+        }
+    }
 }
