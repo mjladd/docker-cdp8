@@ -75,8 +75,9 @@
 //! this slice did not fix, since those two commands belong to
 //! WP-1.4/WP-1.5, not this one.
 
+use super::{check_outfile_does_not_exist, write_wave_file};
 use cdp_core::{CdpError, ExitCategory};
-use cdp_sf::{FileKind, PropertyBlock, SampleType, SoundFile, SoundFileWriter, WriteSpec};
+use cdp_sf::{FileKind, SampleType, SoundFile};
 
 /// legacy: `legacy/dev/houskeep/main.c`'s `make_initial_cmdline_check`
 /// -- see `cdp_programs::sndinfo::props::GREETING`'s doc, which this
@@ -126,34 +127,6 @@ impl Mode {
     }
 }
 
-/// legacy: `Cannot open output file %s\n` (`DATA_ERROR`) -- see this
-/// module's doc for why [`copy_once`] checks this itself rather than
-/// relying on [`SoundFileWriter::finalize`].
-fn check_outfile_does_not_exist(path: &str) -> Result<(), CdpError> {
-    if std::path::Path::new(path).exists() {
-        return Err(CdpError::new(
-            ExitCategory::DataError,
-            format!("Cannot open output file {path}\n"),
-        ));
-    }
-    Ok(())
-}
-
-/// legacy: `PropertyBlock` new files gain -- a fresh `DATE`, the
-/// current wall-clock time, encoded the same way
-/// `cdp_sf::SoundFileWriter`'s own `PEAK`-chunk timestamp already is.
-/// Not a fixed value: every live comparison this slice ran had to
-/// compare everything else in the copy byte-for-byte and only sanity-
-/// check that `DATE` decodes to a plausible, current timestamp,
-/// since legacy's own copy produces a different exact `DATE` on every
-/// run too.
-fn now_unix_timestamp() -> i32 {
-    std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .map(|d| d.as_secs() as i32)
-        .unwrap_or(0)
-}
-
 /// legacy: `do_duplicates`'s `case(COPYSF)` default branch (plain
 /// `SNDFILE`/`ANALFILE` sample data, read via `read_samps` and
 /// written back via `write_exact_samps`, unchanged).
@@ -175,18 +148,13 @@ pub fn copy_once(sf: &SoundFile, outfile_path: &str) -> Result<(), CdpError> {
     }
     check_outfile_does_not_exist(outfile_path)?;
     let samples = sf.samples_f32().map_err(CdpError::from)?;
-    let mut properties = PropertyBlock::new();
-    properties.set_i32("DATE", now_unix_timestamp());
-    let mut writer = SoundFileWriter::new(WriteSpec {
-        channels: sf.fmt.channels,
-        sample_rate: sf.fmt.sample_rate,
-        sample_type: sf.fmt.sample_type,
-        write_peaks: true,
-        properties,
-        write_cue_chunk: true,
-    });
-    writer.write_frames(&samples);
-    writer.finalize(outfile_path).map_err(CdpError::from)
+    write_wave_file(
+        sf.fmt.channels,
+        sf.fmt.sample_rate,
+        sf.fmt.sample_type,
+        &samples,
+        outfile_path,
+    )
 }
 
 #[cfg(test)]
