@@ -257,7 +257,19 @@ pub fn mono_to_stereo(sf: &SoundFile, outfile_path: &str) -> Result<(), CdpError
         sf.fmt.sample_type,
         &stereo,
         outfile_path,
-    )
+    )?;
+    // legacy: `display_virtual_time`'s `SNDFILE_OUT` branch -- `secs =
+    // samps_sent/(infile->srate * infile->channels)`, using the
+    // *interleaved stereo* sample count written but the *mono*
+    // infile's own channel count (1) as the divisor, confirmed live
+    // to report double the file's real duration
+    // (`"\r0 min  2.00 sec"` for `marimba.wav`, a real 1.00-second
+    // file) -- see `super::print_virtual_time`'s own doc for what
+    // this simplifies.
+    super::print_virtual_time(
+        stereo.len() as f64 / (sf.fmt.sample_rate as f64 * sf.fmt.channels as f64),
+    );
+    Ok(())
 }
 
 #[cfg(test)]

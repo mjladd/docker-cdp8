@@ -69,6 +69,46 @@ pub(crate) fn now_unix_timestamp() -> i32 {
         .unwrap_or(0)
 }
 
+/// legacy: `display_virtual_time` (`legacy/dev/cdp2k/writedata.c`),
+/// called from `write_exact_samps`/`write_samps` after every buffer
+/// of samples is written, as `"\r%d min %5.2lf sec"` with no trailing
+/// newline (confirmed live byte-for-byte, including the leading `\r`
+/// and the `%5.2lf` field width). `seconds` is caller-computed, since
+/// the divisor differs by process/mode (see [`copy::copy_once`]/
+/// [`chans::mono_to_stereo`]'s own call sites).
+///
+/// legacy calls this once per internal buffer of samples written, not
+/// once per command -- confirmed live, a large enough infile
+/// (`docs/manual/sounds/clashmixtest.wav`, 2.49s, via `housekeep chans
+/// 4`) prints several `\r`-separated ticks with increasing values, not
+/// one. That buffer size (`create_sndbufs`'s `bigbufsize =
+/// Malloc(-1)`, `legacy/dev/cdp2k/tklib3.c`) is the *largest available
+/// block of free memory* at the time, not a fixed constant -- an
+/// environment-dependent quantity this crate's byte-for-byte live
+/// comparisons cannot reproduce in general, the same fundamental
+/// non-determinism `disk`'s own free-space report has (see
+/// `housekeep::mod`'s doc). This function is called exactly once per
+/// command, with the final, complete sample count, deliberately
+/// approximating legacy's *last* tick (the only one that would remain
+/// visible in a real terminal, since each `\r` overwrites the
+/// previous one) rather than attempting to reproduce every
+/// intermediate one. Every corpus file this crate's tests use is
+/// small enough that real legacy only emits one tick for it too
+/// (confirmed live for `copy`/`chans` mode 5's own golden-path files),
+/// so this simplification is not observable for any case this crate's
+/// tests actually cover.
+pub(crate) fn print_virtual_time(seconds: f64) {
+    print!("{}", format_virtual_time(seconds));
+    use std::io::Write;
+    let _ = std::io::stdout().flush();
+}
+
+fn format_virtual_time(seconds: f64) -> String {
+    let mins = (seconds / 60.0) as i64;
+    let secs = seconds - (mins * 60) as f64;
+    format!("\r{mins} min {secs:5.2} sec")
+}
+
 /// Writes `samples` (already-decoded, interleaved `f32` frames) as a
 /// complete `WAVE` file at `outfile_path`, with a freshly-computed
 /// `PEAK` chunk and a fresh `DATE` property -- the shape every
@@ -116,3 +156,21 @@ bakup    gate    batchexpand    endclicks    deglitch
 
 Type 'housekeep chans'  for more info on housekeep chans option... ETC.
 ";
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn format_virtual_time_matches_the_real_legacy_output() {
+        // legacy: confirmed live -- see `print_virtual_time`'s doc.
+        assert_eq!(format_virtual_time(1.001678), "\r0 min  1.00 sec");
+        assert_eq!(format_virtual_time(2.003356), "\r0 min  2.00 sec");
+        assert_eq!(format_virtual_time(5.467166), "\r0 min  5.47 sec");
+    }
+
+    #[test]
+    fn format_virtual_time_rolls_seconds_into_minutes() {
+        assert_eq!(format_virtual_time(61.5), "\r1 min  1.50 sec");
+    }
+}
