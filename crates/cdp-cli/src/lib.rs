@@ -637,5 +637,16 @@ fn run_housekeep_chans(mode_token: &str, args: &[String]) -> Result<(), CdpError
                 .expect("CommandSpec::housekeep_chans_mtos has_outfile: true");
             chans::mono_to_stereo(&sf, &outfile)
         }
+        chans::Mode::MixToMono => {
+            let args: Vec<&str> = args.iter().map(String::as_str).collect();
+            let parsed = parse(&CommandSpec::housekeep_chans_stom(), &args)?;
+            let sf = SoundFile::open(&parsed.infiles[0])?;
+            let outfile = parsed
+                .outfile
+                .clone()
+                .expect("CommandSpec::housekeep_chans_stom has_outfile: true");
+            let invert_phase = parsed.flags.contains_key(&'p');
+            chans::mix_to_mono(&sf, &outfile, invert_phase)
+        }
     }
 }

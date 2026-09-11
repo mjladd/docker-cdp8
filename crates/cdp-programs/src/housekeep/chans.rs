@@ -22,19 +22,25 @@
 
 //! `housekeep chans mode infile ...` (`HOUSE_CHANS`). Modes 1
 //! (`HOUSE_CHANNEL`, `housekeep chans 1 infile channo`: extracts one
-//! channel to a new, auto-named mono file) and 5 (`MTOS`, `housekeep
-//! chans 5 infile outfile`: doubles a mono infile's samples into a
-//! stereo outfile) are ported so far. Modes 2-4 (extract all
-//! channels, zero one channel, mix down to mono) report a plain
+//! channel to a new, auto-named mono file), 4 (`STOM`, `housekeep
+//! chans 4 infile outfile [-p]`: mixes a stereo infile down to mono)
+//! and 5 (`MTOS`, `housekeep chans 5 infile outfile`: doubles a mono
+//! infile's samples into a stereo outfile) are ported so far. Modes 2
+//! (extract all channels) and 3 (zero one channel) report a plain
 //! `ProgramError`.
 //!
 //! legacy: `legacy/dev/houskeep/channels.c`'s `do_channels`,
-//! `case(HOUSE_CHANNEL)` and (for mode 5) `case(MTOS)` (shared with
-//! `HOUSE_ZCHANNEL`/`STOM` -- mode 2, `HOUSE_CHANNELS`, has its own,
-//! not-yet-ported loop bounds change: `start_chan=0`/
+//! `case(HOUSE_CHANNEL)` and (for modes 4/5) `case(STOM)`/`case(MTOS)`
+//! (shared with `HOUSE_ZCHANNEL` -- mode 2, `HOUSE_CHANNELS`, has its
+//! own, not-yet-ported loop bounds change: `start_chan=0`/
 //! `end_chan=dz->infile->channels`, but needs [`extract_channel`]'s
 //! per-channel behaviour repeated once per channel, not yet confirmed
-//! live for a real multi-channel file).
+//! live for a real multi-channel file). `STOM` also has its own,
+//! not-yet-ported "thumbnail" multichannel branch (a two-pass,
+//! normalising downmix for more than two channels) -- not confirmed
+//! live, since no corpus file has more than two channels; `MTOS`'s own
+//! multichannel case is a plain error, already ported (see
+//! [`mono_to_stereo`]'s doc).
 //!
 //! Takes no outfile on the command line at all -- unlike `copy`, the
 //! output filename is derived from the infile's own path, confirmed
@@ -110,12 +116,14 @@ pub const MAX_MODE: u32 = 5;
 pub enum Mode {
     /// legacy: `HOUSE_CHANNEL`.
     ExtractChannel,
+    /// legacy: `STOM`.
+    MixToMono,
     /// legacy: `MTOS`.
     MonoToStereo,
 }
 
 impl Mode {
-    /// `None` for modes 2-4 (not implemented yet) -- the caller maps
+    /// `None` for modes 2-3 (not implemented yet) -- the caller maps
     /// that to a plain `ProgramError`, the same shape
     /// `cdp_programs::sndinfo::units::Mode::from_number` already
     /// established for a mode `1..=MAX_MODE` in range but not yet
@@ -123,6 +131,7 @@ impl Mode {
     pub fn from_number(mode: u32) -> Option<Self> {
         match mode {
             1 => Some(Mode::ExtractChannel),
+            4 => Some(Mode::MixToMono),
             5 => Some(Mode::MonoToStereo),
             _ => None,
         }
@@ -191,6 +200,91 @@ pub fn extract_channel(sf: &SoundFile, infile_path: &str, channo: i64) -> Result
         &outfile_path,
     )?;
     Ok(outfile_path)
+}
+
+/// legacy: `do_channels`'s `case(STOM)`, `case(STEREO)` branch (the
+/// only branch this port implements -- see this module's doc). A mono
+/// infile reports `"This file is already mono!!"` (`GOAL_FAILED`,
+/// confirmed live); any other channel count would take the
+/// "thumbnail" multichannel-downmix branch (a two-pass, normalising
+/// algorithm), not ported -- reports a plain `ProgramError` instead of
+/// the (unconfirmed) source text, since this is a real port gap, not
+/// an observed legacy behaviour. `invert_phase` is legacy's `-p`
+/// variant (`CHAN_INVERT_PHASE`): averages the two channels when
+/// `false` (`(L+R)/2.0`), takes their half-difference when `true`
+/// (`(L-R)/2.0`) -- both confirmed live, bit-exact, against
+/// `docs/manual/sounds/clashmixtest.wav`.
+///
+/// legacy quirk, confirmed live, the same one [`mono_to_stereo`]'s own
+/// doc describes: an already-existing outfile reports a bare
+/// `"ERROR: INVALID DATA"` with an *empty* detail message, not
+/// [`check_outfile_does_not_exist`]'s `"Cannot open output file
+/// %s\n"`.
+pub fn mix_to_mono(sf: &SoundFile, outfile_path: &str, invert_phase: bool) -> Result<(), CdpError> {
+    if !matches!(sf.file_kind, FileKind::Wave) {
+        return Err(CdpError::new(
+            ExitCategory::ProgramError,
+            "housekeep chans: only sound files are implemented yet",
+        ));
+    }
+    if !matches!(
+        sf.fmt.sample_type,
+        SampleType::Short16 | SampleType::Float32
+    ) {
+        return Err(CdpError::new(
+            ExitCategory::ProgramError,
+            "housekeep chans: this sample format is not implemented yet",
+        ));
+    }
+    match sf.fmt.channels {
+        1 => {
+            return Err(CdpError::new(
+                ExitCategory::GoalFailed,
+                "This file is already mono!!\n",
+            ));
+        }
+        2 => {}
+        _ => {
+            return Err(CdpError::new(
+                ExitCategory::ProgramError,
+                "housekeep chans: mixing down more than two channels is not implemented yet",
+            ));
+        }
+    }
+    if std::path::Path::new(outfile_path).exists() {
+        return Err(CdpError::new(ExitCategory::DataError, ""));
+    }
+    let stereo = sf.samples_f32().map_err(CdpError::from)?;
+    let mono: Vec<f32> = stereo
+        .as_chunks::<2>()
+        .0
+        .iter()
+        .map(|pair| {
+            if invert_phase {
+                (pair[0] - pair[1]) / 2.0
+            } else {
+                (pair[0] + pair[1]) / 2.0
+            }
+        })
+        .collect();
+    write_wave_file(
+        1,
+        sf.fmt.sample_rate,
+        sf.fmt.sample_type,
+        &mono,
+        outfile_path,
+    )?;
+    // legacy: `display_virtual_time`'s `SNDFILE_OUT` branch -- `secs =
+    // samps_sent/(infile->srate * infile->channels)`, using the
+    // *mono* output sample count written but the *stereo* infile's
+    // own channel count (2) as the divisor, confirmed live to report
+    // exactly half the file's real duration (`"\r0 min  1.25 sec"`
+    // for `clashmixtest.wav`, a real 2.49-second file) -- see
+    // `super::print_virtual_time`'s own doc for what this simplifies.
+    super::print_virtual_time(
+        mono.len() as f64 / (sf.fmt.sample_rate as f64 * sf.fmt.channels as f64),
+    );
+    Ok(())
 }
 
 /// legacy: `do_channels`'s `case(MTOS)`, `case(MONO)` branch (the
@@ -278,6 +372,77 @@ mod tests {
 
     fn repo_path(rel: &str) -> String {
         format!("{}/../../{}", env!("CARGO_MANIFEST_DIR"), rel)
+    }
+
+    /// legacy writes every output sample through a 16-bit PCM encode
+    /// (`(short)cdp_round(sample*MAXSHORT)`, `cdp_sf::writer`'s
+    /// `encode_pcm16`), so a value this test *computes* (rather than
+    /// merely passes through unmodified, like
+    /// `stereo_clashmixtest_channel_2_matches...` below) must be
+    /// quantised the same way before comparing against the real
+    /// written-then-read-back file.
+    fn quantize_i16(sample: f32) -> f32 {
+        // legacy: `cdp_sf::writer`'s `encode_pcm16` multiplies and
+        // rounds in `f64` (matching `fputfloatEx`'s own `double`
+        // promotion of `MAXSHORT`), not `f32` -- see its own doc.
+        const MAXSHORT: f64 = 32767.0;
+        (((sample as f64) * MAXSHORT).round() / MAXSHORT) as f32
+    }
+
+    #[test]
+    fn mix_to_mono_averages_left_and_right() {
+        let sf = SoundFile::open(repo_path("docs/manual/sounds/clashmixtest.wav")).unwrap();
+        let out_path = scratch_dir("stom").join("clash_mono.wav");
+        let _ = std::fs::remove_file(&out_path);
+        mix_to_mono(&sf, out_path.to_str().unwrap(), false).unwrap();
+        let out = SoundFile::open(&out_path).unwrap();
+        assert_eq!(out.fmt.channels, 1);
+        let stereo = sf.samples_f32().unwrap();
+        let expected: Vec<f32> = stereo
+            .as_chunks::<2>()
+            .0
+            .iter()
+            .map(|p| quantize_i16((p[0] + p[1]) / 2.0))
+            .collect();
+        assert_eq!(out.samples_f32().unwrap(), expected);
+        let _ = std::fs::remove_file(&out_path);
+    }
+
+    #[test]
+    fn mix_to_mono_with_invert_phase_takes_the_half_difference() {
+        let sf = SoundFile::open(repo_path("docs/manual/sounds/clashmixtest.wav")).unwrap();
+        let out_path = scratch_dir("stom_invert").join("clash_mono_p.wav");
+        let _ = std::fs::remove_file(&out_path);
+        mix_to_mono(&sf, out_path.to_str().unwrap(), true).unwrap();
+        let out = SoundFile::open(&out_path).unwrap();
+        let stereo = sf.samples_f32().unwrap();
+        let expected: Vec<f32> = stereo
+            .as_chunks::<2>()
+            .0
+            .iter()
+            .map(|p| quantize_i16((p[0] - p[1]) / 2.0))
+            .collect();
+        assert_eq!(out.samples_f32().unwrap(), expected);
+        let _ = std::fs::remove_file(&out_path);
+    }
+
+    #[test]
+    fn mix_to_mono_rejects_an_already_mono_infile() {
+        let sf = SoundFile::open(repo_path("docs/manual/sounds/marimba.wav")).unwrap();
+        let err = mix_to_mono(&sf, "irrelevant.wav", false).unwrap_err();
+        assert_eq!(err.category, ExitCategory::GoalFailed);
+        assert_eq!(err.to_string(), "This file is already mono!!\n");
+    }
+
+    #[test]
+    fn mix_to_mono_existing_outfile_is_a_bare_data_error_with_no_message() {
+        let sf = SoundFile::open(repo_path("docs/manual/sounds/clashmixtest.wav")).unwrap();
+        let out_path = scratch_dir("stom_exists").join("exists.wav");
+        std::fs::write(&out_path, b"not a real sound file").unwrap();
+        let err = mix_to_mono(&sf, out_path.to_str().unwrap(), false).unwrap_err();
+        assert_eq!(err.category, ExitCategory::DataError);
+        assert_eq!(err.to_string(), "");
+        let _ = std::fs::remove_file(&out_path);
     }
 
     #[test]
