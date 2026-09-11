@@ -154,7 +154,17 @@ pub fn copy_once(sf: &SoundFile, outfile_path: &str) -> Result<(), CdpError> {
         sf.fmt.sample_type,
         &samples,
         outfile_path,
-    )
+    )?;
+    // legacy: `display_virtual_time`'s `dz->process==HOUSE_COPY &&
+    // dz->mode==COPYSF` branch -- `secs = samps_sent/(infile->srate *
+    // infile->channels)`, confirmed live (`"\r0 min  1.00 sec"` for
+    // `marimba.wav`, a 1.001678-second file) -- see
+    // `super::print_virtual_time`'s own doc for what this
+    // simplifies.
+    super::print_virtual_time(
+        samples.len() as f64 / (sf.fmt.sample_rate as f64 * sf.fmt.channels as f64),
+    );
+    Ok(())
 }
 
 #[cfg(test)]
