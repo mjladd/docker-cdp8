@@ -22,25 +22,32 @@
 
 //! `housekeep chans mode infile ...` (`HOUSE_CHANS`). Modes 1
 //! (`HOUSE_CHANNEL`, `housekeep chans 1 infile channo`: extracts one
-//! channel to a new, auto-named mono file), 4 (`STOM`, `housekeep
-//! chans 4 infile outfile [-p]`: mixes a stereo infile down to mono)
-//! and 5 (`MTOS`, `housekeep chans 5 infile outfile`: doubles a mono
-//! infile's samples into a stereo outfile) are ported so far. Modes 2
-//! (extract all channels) and 3 (zero one channel) report a plain
+//! channel to a new, auto-named mono file), 3 (`HOUSE_ZCHANNEL`,
+//! `housekeep chans 3 infile outfile channo`: zeroes one channel), 4
+//! (`STOM`, `housekeep chans 4 infile outfile [-p]`: mixes a stereo
+//! infile down to mono) and 5 (`MTOS`, `housekeep chans 5 infile
+//! outfile`: doubles a mono infile's samples into a stereo outfile)
+//! are ported so far. Mode 2 (extract all channels) reports a plain
 //! `ProgramError`.
 //!
 //! legacy: `legacy/dev/houskeep/channels.c`'s `do_channels`,
-//! `case(HOUSE_CHANNEL)` and (for modes 4/5) `case(STOM)`/`case(MTOS)`
-//! (shared with `HOUSE_ZCHANNEL` -- mode 2, `HOUSE_CHANNELS`, has its
-//! own, not-yet-ported loop bounds change: `start_chan=0`/
+//! `case(HOUSE_CHANNEL)`, `case(HOUSE_ZCHANNEL)` and (for modes 4/5)
+//! `case(STOM)`/`case(MTOS)` (mode 2, `HOUSE_CHANNELS`, has its own,
+//! not-yet-ported loop bounds change: `start_chan=0`/
 //! `end_chan=dz->infile->channels`, but needs [`extract_channel`]'s
 //! per-channel behaviour repeated once per channel, not yet confirmed
-//! live for a real multi-channel file). `STOM` also has its own,
-//! not-yet-ported "thumbnail" multichannel branch (a two-pass,
-//! normalising downmix for more than two channels) -- not confirmed
-//! live, since no corpus file has more than two channels; `MTOS`'s own
-//! multichannel case is a plain error, already ported (see
-//! [`mono_to_stereo`]'s doc).
+//! live for a real multi-channel file). `STOM`/`HOUSE_ZCHANNEL` also
+//! have their own, not-yet-ported "thumbnail"/generalised multichannel
+//! branches -- not confirmed live, since no corpus file has more than
+//! two channels; `MTOS`'s own multichannel case is a plain error,
+//! already ported (see [`mono_to_stereo`]'s doc).
+//!
+//! `HOUSE_ZCHANNEL`'s own mono-infile branch has a real, confirmed
+//! legacy bug (`docs/migration/LEGACY-BUGS.md`): its in-place backward
+//! expansion loop corrupts the first sample of every internal read
+//! buffer to `0` instead of the real (non-zeroed) channel's value.
+//! [`zero_channel`] ports the intended behavior (no corruption), not
+//! the bug, per that file's own rule.
 //!
 //! Takes no outfile on the command line at all -- unlike `copy`, the
 //! output filename is derived from the infile's own path, confirmed
@@ -116,6 +123,8 @@ pub const MAX_MODE: u32 = 5;
 pub enum Mode {
     /// legacy: `HOUSE_CHANNEL`.
     ExtractChannel,
+    /// legacy: `HOUSE_ZCHANNEL`.
+    ZeroChannel,
     /// legacy: `STOM`.
     MixToMono,
     /// legacy: `MTOS`.
@@ -123,7 +132,7 @@ pub enum Mode {
 }
 
 impl Mode {
-    /// `None` for modes 2-3 (not implemented yet) -- the caller maps
+    /// `None` for mode 2 (not implemented yet) -- the caller maps
     /// that to a plain `ProgramError`, the same shape
     /// `cdp_programs::sndinfo::units::Mode::from_number` already
     /// established for a mode `1..=MAX_MODE` in range but not yet
@@ -131,6 +140,7 @@ impl Mode {
     pub fn from_number(mode: u32) -> Option<Self> {
         match mode {
             1 => Some(Mode::ExtractChannel),
+            3 => Some(Mode::ZeroChannel),
             4 => Some(Mode::MixToMono),
             5 => Some(Mode::MonoToStereo),
             _ => None,
@@ -200,6 +210,107 @@ pub fn extract_channel(sf: &SoundFile, infile_path: &str, channo: i64) -> Result
         &outfile_path,
     )?;
     Ok(outfile_path)
+}
+
+/// legacy: `do_channels`'s `case(HOUSE_ZCHANNEL)` (`legacy/dev/
+/// houskeep/channels.c`). `channo` is the 1-based channel to zero,
+/// already range-checked by `cdp_params::parse` against
+/// `1..=sf.fmt.channels` (the same dynamic bound [`extract_channel`]
+/// uses). Scope: mono and stereo infiles only, matching every other
+/// mode in this module -- more than two channels would take this
+/// mode's own generalised `default:` branch (zero every `channo`th
+/// sample across an arbitrary channel count), not confirmed live
+/// since no corpus file has more than two channels, so it reports a
+/// plain `ProgramError` instead.
+///
+/// Mono infile: output is stereo, one side zero and the other the
+/// original mono signal -- `channo` picks which side (legacy:
+/// `zeroed`/`not_zeroed` are `0`/`1` swapped by `channo`, but a mono
+/// infile's own range check only ever allows `channo == 1`, confirmed
+/// live, so `not_zeroed` is always `1` in practice: the real signal
+/// always lands on the second, right channel). legacy's own in-place
+/// backward-expansion loop for this case has a real, confirmed bug
+/// (`docs/migration/LEGACY-BUGS.md`) that corrupts the first sample of
+/// every internal read buffer to `0`; this port builds the expanded
+/// buffer fresh instead, avoiding it entirely (the intended behavior,
+/// not the bug).
+///
+/// Stereo infile: output stays stereo, with the named channel zeroed
+/// throughout and the other left untouched -- confirmed live,
+/// byte-for-byte, against `docs/manual/sounds/clashmixtest.wav`, no
+/// equivalent bug (a plain forward loop, no in-place aliasing).
+///
+/// legacy quirk, confirmed live, the same one [`mono_to_stereo`]'s own
+/// doc describes: an already-existing outfile reports a bare
+/// `"ERROR: INVALID DATA"` with an *empty* detail message, not
+/// [`check_outfile_does_not_exist`]'s `"Cannot open output file
+/// %s\n"`.
+pub fn zero_channel(sf: &SoundFile, outfile_path: &str, channo: i64) -> Result<(), CdpError> {
+    if !matches!(sf.file_kind, FileKind::Wave) {
+        return Err(CdpError::new(
+            ExitCategory::ProgramError,
+            "housekeep chans: only sound files are implemented yet",
+        ));
+    }
+    if !matches!(
+        sf.fmt.sample_type,
+        SampleType::Short16 | SampleType::Float32
+    ) {
+        return Err(CdpError::new(
+            ExitCategory::ProgramError,
+            "housekeep chans: this sample format is not implemented yet",
+        ));
+    }
+    if sf.fmt.channels > 2 {
+        return Err(CdpError::new(
+            ExitCategory::ProgramError,
+            "housekeep chans: zeroing a channel in more than two is not implemented yet",
+        ));
+    }
+    if std::path::Path::new(outfile_path).exists() {
+        return Err(CdpError::new(ExitCategory::DataError, ""));
+    }
+    let zero_index = (channo - 1) as usize;
+    let (out_channels, samples) = if sf.fmt.channels == 1 {
+        let mono = sf.samples_f32().map_err(CdpError::from)?;
+        let mut stereo = Vec::with_capacity(mono.len() * 2);
+        for &s in &mono {
+            if zero_index == 0 {
+                stereo.push(0.0);
+                stereo.push(s);
+            } else {
+                stereo.push(s);
+                stereo.push(0.0);
+            }
+        }
+        (2u16, stereo)
+    } else {
+        let mut stereo = sf.samples_f32().map_err(CdpError::from)?;
+        for (i, sample) in stereo.iter_mut().enumerate() {
+            if i % 2 == zero_index {
+                *sample = 0.0;
+            }
+        }
+        (2u16, stereo)
+    };
+    write_wave_file(
+        out_channels,
+        sf.fmt.sample_rate,
+        sf.fmt.sample_type,
+        &samples,
+        outfile_path,
+    )?;
+    // legacy: `display_virtual_time`'s `SNDFILE_OUT` branch -- `secs =
+    // samps_sent/(infile->srate * infile->channels)`. For a mono
+    // infile this doubles the real duration (the expanded stereo
+    // sample count divided by the mono infile's own channel count,
+    // `1`), the same skew `mono_to_stereo` already established; for a
+    // stereo infile the counts already match, giving the real
+    // duration exactly -- both confirmed live.
+    super::print_virtual_time(
+        samples.len() as f64 / (sf.fmt.sample_rate as f64 * sf.fmt.channels as f64),
+    );
+    Ok(())
 }
 
 /// legacy: `do_channels`'s `case(STOM)`, `case(STEREO)` branch (the
@@ -387,6 +498,56 @@ mod tests {
         // promotion of `MAXSHORT`), not `f32` -- see its own doc.
         const MAXSHORT: f64 = 32767.0;
         (((sample as f64) * MAXSHORT).round() / MAXSHORT) as f32
+    }
+
+    #[test]
+    fn zero_channel_mono_infile_zeros_left_and_keeps_right() {
+        let sf = SoundFile::open(repo_path("docs/manual/sounds/marimba.wav")).unwrap();
+        let out_path = scratch_dir("zchan_mono").join("marimba_z1.wav");
+        let _ = std::fs::remove_file(&out_path);
+        zero_channel(&sf, out_path.to_str().unwrap(), 1).unwrap();
+        let out = SoundFile::open(&out_path).unwrap();
+        assert_eq!(out.fmt.channels, 2);
+        let mono = sf.samples_f32().unwrap();
+        let stereo = out.samples_f32().unwrap();
+        let left: Vec<f32> = stereo.iter().step_by(2).copied().collect();
+        let right: Vec<f32> = stereo.iter().skip(1).step_by(2).copied().collect();
+        // legacy bug (docs/migration/LEGACY-BUGS.md): the real C loop
+        // corrupts the first sample of every internal read buffer to
+        // 0. This port avoids that bug entirely, so `right` matches
+        // `mono` bit-exactly, including at index 0.
+        assert!(left.iter().all(|&v| v == 0.0));
+        assert_eq!(right, mono);
+        let _ = std::fs::remove_file(&out_path);
+    }
+
+    #[test]
+    fn zero_channel_stereo_infile_zeros_only_the_named_channel() {
+        let sf = SoundFile::open(repo_path("docs/manual/sounds/clashmixtest.wav")).unwrap();
+        let out_path = scratch_dir("zchan_stereo").join("clash_z2.wav");
+        let _ = std::fs::remove_file(&out_path);
+        zero_channel(&sf, out_path.to_str().unwrap(), 2).unwrap();
+        let out = SoundFile::open(&out_path).unwrap();
+        assert_eq!(out.fmt.channels, 2);
+        let orig = sf.samples_f32().unwrap();
+        let zeroed = out.samples_f32().unwrap();
+        let orig_left: Vec<f32> = orig.iter().step_by(2).copied().collect();
+        let zeroed_left: Vec<f32> = zeroed.iter().step_by(2).copied().collect();
+        let zeroed_right: Vec<f32> = zeroed.iter().skip(1).step_by(2).copied().collect();
+        assert_eq!(zeroed_left, orig_left);
+        assert!(zeroed_right.iter().all(|&v| v == 0.0));
+        let _ = std::fs::remove_file(&out_path);
+    }
+
+    #[test]
+    fn zero_channel_existing_outfile_is_a_bare_data_error_with_no_message() {
+        let sf = SoundFile::open(repo_path("docs/manual/sounds/marimba.wav")).unwrap();
+        let out_path = scratch_dir("zchan_exists").join("exists.wav");
+        std::fs::write(&out_path, b"not a real sound file").unwrap();
+        let err = zero_channel(&sf, out_path.to_str().unwrap(), 1).unwrap_err();
+        assert_eq!(err.category, ExitCategory::DataError);
+        assert_eq!(err.to_string(), "");
+        let _ = std::fs::remove_file(&out_path);
     }
 
     #[test]

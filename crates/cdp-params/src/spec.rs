@@ -777,4 +777,30 @@ impl CommandSpec {
             unequal_sndfile: false,
         }
     }
+
+    /// `housekeep chans 3 infile outfile channo` (`HOUSE_CHANS`, mode
+    /// `HOUSE_ZCHANNEL`): zeroes one channel. legacy: `parstruct.json`'s
+    /// `HOUSE_CHANS`/`HOUSE_ZCHANNEL` entry has `param_cnt: 1`,
+    /// `param_list: "i"` (a plain `Int`, no breakpoint-file fallback,
+    /// the same shape [`Self::housekeep_chans_channel`] already
+    /// established for `channo`) and no flags or variants. Unlike mode
+    /// 1, this mode *does* take an outfile on the command line (`ap_
+    /// house.c`'s `assign_process_logic` sets `SNDFILE_OUT`, not
+    /// `NO_OUTPUTFILE`, for this mode). `channo`'s range is the
+    /// infile's own channel count, the same infile-dependent-bound
+    /// shape [`Self::housekeep_chans_channel`] uses.
+    pub fn housekeep_chans_zchannel(channels: f64) -> Self {
+        CommandSpec {
+            infile_count: 1,
+            has_outfile: true,
+            params: vec![ParamType::Int {
+                lo: 1.0,
+                hi: channels,
+                legacy_index: 1,
+            }],
+            flags: vec![],
+            variants: vec![],
+            unequal_sndfile: false,
+        }
+    }
 }
