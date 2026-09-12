@@ -648,5 +648,28 @@ fn run_housekeep_chans(mode_token: &str, args: &[String]) -> Result<(), CdpError
             let invert_phase = parsed.flags.contains_key(&'p');
             chans::mix_to_mono(&sf, &outfile, invert_phase)
         }
+        chans::Mode::ZeroChannel => {
+            // legacy: `channo`'s range depends on the infile's own
+            // channel count, so the infile must be open first -- see
+            // `cdp_params::CommandSpec::housekeep_chans_zchannel`'s
+            // doc, the same shape `ExtractChannel` above already
+            // established.
+            let infile_path = args.first().ok_or(ParamsError::InsufficientParameters)?;
+            let sf = cdp_programs::sndinfo::open_sound_infile(infile_path)?;
+            let spec = CommandSpec::housekeep_chans_zchannel(sf.fmt.channels as f64);
+            let args: Vec<&str> = args.iter().map(String::as_str).collect();
+            let parsed = parse(&spec, &args)?;
+            let outfile = parsed
+                .outfile
+                .clone()
+                .expect("CommandSpec::housekeep_chans_zchannel has_outfile: true");
+            let channo = match parsed.params[0] {
+                ParamValue::Integer(n) => n,
+                _ => unreachable!(
+                    "CommandSpec::housekeep_chans_zchannel's only param is ParamType::Int"
+                ),
+            };
+            chans::zero_channel(&sf, &outfile, channo)
+        }
     }
 }
