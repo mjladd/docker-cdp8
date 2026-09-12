@@ -803,4 +803,27 @@ impl CommandSpec {
             unequal_sndfile: false,
         }
     }
+
+    /// `housekeep chans 2 infile` (`HOUSE_CHANS`, mode
+    /// `HOUSE_CHANNELS`): extracts every channel to its own auto-named
+    /// mono file. legacy: `parstruct.json`'s `HOUSE_CHANS`/
+    /// `HOUSE_CHANNELS` entry has `param_cnt: 0` and no flags or
+    /// variants -- the same zero-params shape as
+    /// [`Self::housekeep_chans_channel`], minus `channo` (this mode
+    /// has no fixed channel to name; it processes all of them). Takes
+    /// no outfile either, the same `NO_OUTPUTFILE` classification mode
+    /// 1 has. Confirmed live: a trailing extra token reports `"Too
+    /// many parameters on command line."`, the same shape every other
+    /// zero-params/zero-flags/zero-variants command in this crate
+    /// uses.
+    pub fn housekeep_chans_channels() -> Self {
+        CommandSpec {
+            infile_count: 1,
+            has_outfile: false,
+            params: vec![],
+            flags: vec![],
+            variants: vec![],
+            unequal_sndfile: false,
+        }
+    }
 }
