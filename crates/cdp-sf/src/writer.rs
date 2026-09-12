@@ -144,13 +144,31 @@ impl SoundFileWriter {
         let block_align = channels * (bits_per_sample / 8);
         let byte_rate = self.spec.sample_rate * block_align as u32;
 
-        let mut fmt = Vec::with_capacity(16);
+        let mut fmt = Vec::with_capacity(18);
         fmt.extend_from_slice(&format_tag.to_le_bytes());
         fmt.extend_from_slice(&channels.to_le_bytes());
         fmt.extend_from_slice(&self.spec.sample_rate.to_le_bytes());
         fmt.extend_from_slice(&byte_rate.to_le_bytes());
         fmt.extend_from_slice(&block_align.to_le_bytes());
         fmt.extend_from_slice(&bits_per_sample.to_le_bytes());
+        // legacy: any non-PCM format tag uses the extended
+        // `WAVEFORMATEX` shape, an 18-byte `fmt ` chunk with a
+        // trailing `cbSize` field (here always `0`, no
+        // format-specific extra data), not the older 16-byte
+        // `PCMWAVEFORMAT` shape `WAVE_FORMAT_PCM` alone may still use.
+        // Confirmed live: `housekeep respec 2`'s real `IEEE_FLOAT`
+        // output has an 18-byte `fmt ` chunk, 2 bytes longer than
+        // every `WAVE_FORMAT_PCM` output this crate already writes
+        // and has already confirmed byte-for-byte elsewhere -- the
+        // first command in this crate to actually write a
+        // `SampleType::Float32` file, so this gap was invisible until
+        // now. `cdp_sf::props::parse_fmt_chunk` already tolerates a
+        // `fmt ` chunk longer than 16 bytes (it only reads the fixed
+        // fields it needs), so this is a pure addition, not a breaking
+        // change to this crate's own reader.
+        if format_tag != WAVE_FORMAT_PCM {
+            fmt.extend_from_slice(&0u16.to_le_bytes());
+        }
 
         let mut body = Vec::new();
         body.extend_from_slice(&riff::WAVE.0);

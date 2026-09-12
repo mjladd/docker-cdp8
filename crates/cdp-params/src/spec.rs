@@ -826,4 +826,86 @@ impl CommandSpec {
             unequal_sndfile: false,
         }
     }
+
+    /// `housekeep respec 2 infile outfile` (`HOUSE_SPEC`, mode
+    /// `HOUSE_CONVERT`): toggles a sound file's sample type between
+    /// 16-bit integer and 32-bit float. legacy: `parstruct.json`'s
+    /// `HOUSE_SPEC`/`HOUSE_CONVERT` entry has `param_cnt: 0` and no
+    /// flags or variants -- the same zero-params shape as
+    /// [`Self::housekeep_copy_once`]. `ap_house.c`'s
+    /// `assign_process_logic` classifies this mode `UNEQUAL_SNDFILE`,
+    /// but confirmed live, a missing outfile reports `"Insufficient
+    /// cmdline parameters."`, the `unequal_sndfile: false`-shaped
+    /// text -- the same confirmed mismatch between this crate's own
+    /// `unequal_sndfile` flag and legacy's real classification that
+    /// [`Self::housekeep_chans_mtos`]'s own doc already established
+    /// for a different mode.
+    pub fn housekeep_respec_convert() -> Self {
+        CommandSpec {
+            infile_count: 1,
+            has_outfile: true,
+            params: vec![],
+            flags: vec![],
+            variants: vec![],
+            unequal_sndfile: false,
+        }
+    }
+
+    /// `housekeep respec 3 infile outfile [-ssrate] [-cchannels]`
+    /// (`HOUSE_SPEC`, mode `HOUSE_REPROP`): changes a sound file's
+    /// declared sample rate and/or channel count without resampling
+    /// or rechanneling the data itself. legacy: `parstruct.json`'s
+    /// `HOUSE_SPEC`/`HOUSE_REPROP` entry has `param_cnt: 0` and two
+    /// optional flags, `opt_flags: "sc"`, `opt_list: "ii"` (both plain
+    /// `Int`, no breakpoint-file fallback, confirmed live by their own
+    /// `"Cannot read parameter N [...]: brkpnt_files not permitted."`
+    /// text), no variants. `-s`'s range (`16000` to `96000`) and
+    /// `-c`'s (`1` to `16`) are both fixed literals
+    /// (`legacy/dev/include/srates.h`'s `IS_LOSR`/`IS_HISR`,
+    /// `legacy/dev/cdp2k/tklib1.c`'s `MAX_SNDFILE_OUTCHANS`), not
+    /// infile-dependent bounds, unlike [`Self::housekeep_chans_channel`]'s
+    /// own `channo`. Confirmed live, `-c` is paramno/`legacy_index` 1
+    /// and `-s` is 2, matching `opt_flags`'s own `"sc"` order; errors
+    /// for both flags together are reported in command-line order, not
+    /// by paramno, the same rule [`Self::pvoc_anal`]'s own doc already
+    /// established. Beyond this crate's own generic range check, this
+    /// mode's own `reprop_process` (`legacy/dev/houskeep/respec.c`)
+    /// layers two further, discrete-value checks this crate's
+    /// `cdp_programs::housekeep::respec` module implements directly
+    /// rather than through `cdp_params`: `-s`/`-c` must each land on
+    /// one of a fixed, small set of values, not merely inside the
+    /// generic range (confirmed live: `-s44099`, in range but not on
+    /// the grid, and `-c3`, likewise, each report their own distinct
+    /// `"Invalid sample rate/channel count [%d]"` text, `DataError`,
+    /// checked only after this crate's own generic range check
+    /// passes).
+    pub fn housekeep_respec_reprop() -> Self {
+        CommandSpec {
+            infile_count: 1,
+            has_outfile: true,
+            params: vec![],
+            flags: vec![
+                OptionFlag {
+                    letter: 's',
+                    value_type: ParamType::Int {
+                        lo: 16000.0,
+                        hi: 96000.0,
+                        legacy_index: 1,
+                    },
+                    range_check_paramno: 1,
+                },
+                OptionFlag {
+                    letter: 'c',
+                    value_type: ParamType::Int {
+                        lo: 1.0,
+                        hi: 16.0,
+                        legacy_index: 2,
+                    },
+                    range_check_paramno: 2,
+                },
+            ],
+            variants: vec![],
+            unequal_sndfile: false,
+        }
+    }
 }

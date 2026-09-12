@@ -20,14 +20,16 @@
 // License along with this program. If not, see
 // <https://www.gnu.org/licenses/>.
 
-//! `housekeep` (legacy: `legacy/dev/houskeep`, WP-2.2). `copy` mode 1
-//! and `chans` mode 1 are ported so far, of the thirteen sub-commands
-//! `get_process_no` (`legacy/dev/houskeep/ap_house.c`) recognises:
-//! `copy`, `remove`, `chans`, `bundle`, `sort`, `respec`, `extract`,
-//! `bakup`, `gate`, `disk`, `batchexpand`, `endclicks`, `deglitch`.
+//! `housekeep` (legacy: `legacy/dev/houskeep`, WP-2.2). `copy` mode 1,
+//! all five `chans` modes, and `respec` modes 2/3 are ported so far,
+//! of the thirteen sub-commands `get_process_no`
+//! (`legacy/dev/houskeep/ap_house.c`) recognises: `copy`, `remove`,
+//! `chans`, `bundle`, `sort`, `respec`, `extract`, `bakup`, `gate`,
+//! `disk`, `batchexpand`, `endclicks`, `deglitch`.
 
 pub mod chans;
 pub mod copy;
+pub mod respec;
 
 use cdp_core::{CdpError, ExitCategory};
 use cdp_sf::{PropertyBlock, SampleType, SoundFileWriter, WriteSpec};

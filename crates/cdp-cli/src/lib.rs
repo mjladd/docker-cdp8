@@ -31,7 +31,7 @@
 //! `pvoc anal` ([`cdp_programs::pvoc::anal`], WP-1.4, mode 1/mono only),
 //! `sndinfo props`/`len`/`smptime`/`timesmp`/`timediff`/`lens`/`sumlen`/
 //! `maxsamp`/`units` (modes 1/2 only) ([`cdp_programs::sndinfo`], WP-2.1)
-//! and `housekeep copy`/`chans` (mode 1 only, each) ([`cdp_programs::housekeep`],
+//! and `housekeep copy`/`chans`/`respec` ([`cdp_programs::housekeep`],
 //! WP-2.2). Every other program name reports "not implemented yet" rather than
 //! legacy's own usage text, since this crate does not (yet) know the
 //! full set of legacy program/sub-command names -- that comes from
@@ -40,7 +40,7 @@
 
 use cdp_core::{CdpError, ExitCategory, report_and_exit};
 use cdp_params::{CommandSpec, ParamValue, ParamsError, parse, parse_mode};
-use cdp_programs::housekeep::{self, chans, copy};
+use cdp_programs::housekeep::{self, chans, copy, respec};
 use cdp_programs::pvoc::anal;
 use cdp_programs::sndinfo::{len, lens, maxsamp, props, smptime, sumlen, timediff, timesmp, units};
 use cdp_programs::synth::wave::{self, Mode};
@@ -116,6 +116,8 @@ fn print_top_level_help() {
     println!("  sndinfo maxsamp find the maximum sample in a sound or binary data file");
     println!("  housekeep copy 1  write an unmodified copy of a sound file");
     println!("  housekeep chans 1 extract one channel of a sound file");
+    println!("  housekeep respec 2 toggle a sound file between 16-bit and float");
+    println!("  housekeep respec 3 change a sound file's declared srate/channels");
 }
 
 fn dispatch(program: &str, args: &[String]) -> ! {
@@ -519,8 +521,11 @@ fn dispatch_housekeep(args: &[String]) -> ! {
     match args.split_first() {
         Some((subcommand, rest)) if subcommand == "copy" => dispatch_housekeep_copy(rest),
         Some((subcommand, rest)) if subcommand == "chans" => dispatch_housekeep_chans(rest),
+        Some((subcommand, rest)) if subcommand == "respec" => dispatch_housekeep_respec(rest),
         Some((subcommand, _)) => {
-            eprintln!("housekeep: '{subcommand}' is not implemented yet (only 'copy'/'chans' are)");
+            eprintln!(
+                "housekeep: '{subcommand}' is not implemented yet (only 'copy'/'chans'/'respec' are)"
+            );
             std::process::exit(1);
         }
         None => {
@@ -680,6 +685,61 @@ fn run_housekeep_chans(mode_token: &str, args: &[String]) -> Result<(), CdpError
                 ),
             };
             chans::zero_channel(&sf, &outfile, channo)
+        }
+    }
+}
+
+fn dispatch_housekeep_respec(args: &[String]) -> ! {
+    let Some((mode_token, rest)) = args.split_first() else {
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, respec::USAGE)));
+    };
+    if rest.is_empty() {
+        // legacy: same argc<4 rule as every other `housekeep`
+        // sub-command -- see `dispatch_housekeep_copy`'s own comment.
+        print!("{}", respec::GREETING);
+        report_and_exit(Err(CdpError::from(ParamsError::InsufficientParameters)));
+    }
+    report_and_exit(run_housekeep_respec(mode_token, rest));
+}
+
+fn run_housekeep_respec(mode_token: &str, args: &[String]) -> Result<(), CdpError> {
+    let mode_number = parse_mode(mode_token, respec::MAX_MODE)?;
+    let Some(mode) = respec::Mode::from_number(mode_number) else {
+        return Err(CdpError::new(
+            ExitCategory::ProgramError,
+            format!("housekeep respec: mode {mode_number} is not implemented yet"),
+        ));
+    };
+    match mode {
+        respec::Mode::Convert => {
+            let args: Vec<&str> = args.iter().map(String::as_str).collect();
+            let parsed = parse(&CommandSpec::housekeep_respec_convert(), &args)?;
+            let sf = cdp_programs::sndinfo::open_sound_infile(&parsed.infiles[0])?;
+            let outfile = parsed
+                .outfile
+                .clone()
+                .expect("CommandSpec::housekeep_respec_convert has_outfile: true");
+            respec::convert(&sf, &outfile)
+        }
+        respec::Mode::Reprop => {
+            let args: Vec<&str> = args.iter().map(String::as_str).collect();
+            let parsed = parse(&CommandSpec::housekeep_respec_reprop(), &args)?;
+            let sf = cdp_programs::sndinfo::open_sound_infile(&parsed.infiles[0])?;
+            let outfile = parsed
+                .outfile
+                .clone()
+                .expect("CommandSpec::housekeep_respec_reprop has_outfile: true");
+            let srate = match parsed.flags.get(&'s') {
+                Some(ParamValue::Integer(n)) => Some(*n),
+                Some(_) => unreachable!("-s is ParamType::Int"),
+                None => None,
+            };
+            let channels = match parsed.flags.get(&'c') {
+                Some(ParamValue::Integer(n)) => Some(*n),
+                Some(_) => unreachable!("-c is ParamType::Int"),
+                None => None,
+            };
+            respec::reprop(&sf, &outfile, srate, channels)
         }
     }
 }
