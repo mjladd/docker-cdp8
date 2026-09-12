@@ -627,6 +627,16 @@ fn run_housekeep_chans(mode_token: &str, args: &[String]) -> Result<(), CdpError
             chans::extract_channel(&sf, &parsed.infiles[0], channo)?;
             Ok(())
         }
+        chans::Mode::ExtractAllChannels => {
+            // legacy: `SNDFILES_ONLY`, the same infile-kind
+            // restriction mode 1 has -- see `ExtractChannel`'s own
+            // comment above.
+            let args: Vec<&str> = args.iter().map(String::as_str).collect();
+            let parsed = parse(&CommandSpec::housekeep_chans_channels(), &args)?;
+            let sf = cdp_programs::sndinfo::open_sound_infile(&parsed.infiles[0])?;
+            chans::extract_all_channels(&sf, &parsed.infiles[0])?;
+            Ok(())
+        }
         chans::Mode::MonoToStereo => {
             let args: Vec<&str> = args.iter().map(String::as_str).collect();
             let parsed = parse(&CommandSpec::housekeep_chans_mtos(), &args)?;

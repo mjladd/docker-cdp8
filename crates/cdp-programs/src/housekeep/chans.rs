@@ -20,25 +20,23 @@
 // License along with this program. If not, see
 // <https://www.gnu.org/licenses/>.
 
-//! `housekeep chans mode infile ...` (`HOUSE_CHANS`). Modes 1
-//! (`HOUSE_CHANNEL`, `housekeep chans 1 infile channo`: extracts one
-//! channel to a new, auto-named mono file), 3 (`HOUSE_ZCHANNEL`,
-//! `housekeep chans 3 infile outfile channo`: zeroes one channel), 4
-//! (`STOM`, `housekeep chans 4 infile outfile [-p]`: mixes a stereo
-//! infile down to mono) and 5 (`MTOS`, `housekeep chans 5 infile
-//! outfile`: doubles a mono infile's samples into a stereo outfile)
-//! are ported so far. Mode 2 (extract all channels) reports a plain
-//! `ProgramError`.
+//! `housekeep chans mode infile ...` (`HOUSE_CHANS`). All five modes
+//! are now ported: 1 (`HOUSE_CHANNEL`, `housekeep chans 1 infile
+//! channo`: extracts one channel to a new, auto-named mono file), 2
+//! (`HOUSE_CHANNELS`, `housekeep chans 2 infile`: extracts every
+//! channel, each to its own auto-named mono file), 3
+//! (`HOUSE_ZCHANNEL`, `housekeep chans 3 infile outfile channo`:
+//! zeroes one channel), 4 (`STOM`, `housekeep chans 4 infile outfile
+//! [-p]`: mixes a stereo infile down to mono) and 5 (`MTOS`,
+//! `housekeep chans 5 infile outfile`: doubles a mono infile's
+//! samples into a stereo outfile).
 //!
 //! legacy: `legacy/dev/houskeep/channels.c`'s `do_channels`,
-//! `case(HOUSE_CHANNEL)`, `case(HOUSE_ZCHANNEL)` and (for modes 4/5)
-//! `case(STOM)`/`case(MTOS)` (mode 2, `HOUSE_CHANNELS`, has its own,
-//! not-yet-ported loop bounds change: `start_chan=0`/
-//! `end_chan=dz->infile->channels`, but needs [`extract_channel`]'s
-//! per-channel behaviour repeated once per channel, not yet confirmed
-//! live for a real multi-channel file). `STOM`/`HOUSE_ZCHANNEL` also
-//! have their own, not-yet-ported "thumbnail"/generalised multichannel
-//! branches -- not confirmed live, since no corpus file has more than
+//! `case(HOUSE_CHANNEL)`/`case(HOUSE_CHANNELS)` (one shared code
+//! block), `case(HOUSE_ZCHANNEL)` and `case(STOM)`/`case(MTOS)`.
+//! `STOM`/`HOUSE_ZCHANNEL` each have their own, not-yet-ported
+//! "thumbnail"/generalised multichannel branch for more than two
+//! channels -- not confirmed live, since no corpus file has more than
 //! two channels; `MTOS`'s own multichannel case is a plain error,
 //! already ported (see [`mono_to_stereo`]'s doc).
 //!
@@ -123,6 +121,8 @@ pub const MAX_MODE: u32 = 5;
 pub enum Mode {
     /// legacy: `HOUSE_CHANNEL`.
     ExtractChannel,
+    /// legacy: `HOUSE_CHANNELS`.
+    ExtractAllChannels,
     /// legacy: `HOUSE_ZCHANNEL`.
     ZeroChannel,
     /// legacy: `STOM`.
@@ -132,14 +132,10 @@ pub enum Mode {
 }
 
 impl Mode {
-    /// `None` for mode 2 (not implemented yet) -- the caller maps
-    /// that to a plain `ProgramError`, the same shape
-    /// `cdp_programs::sndinfo::units::Mode::from_number` already
-    /// established for a mode `1..=MAX_MODE` in range but not yet
-    /// ported.
     pub fn from_number(mode: u32) -> Option<Self> {
         match mode {
             1 => Some(Mode::ExtractChannel),
+            2 => Some(Mode::ExtractAllChannels),
             3 => Some(Mode::ZeroChannel),
             4 => Some(Mode::MixToMono),
             5 => Some(Mode::MonoToStereo),
@@ -210,6 +206,52 @@ pub fn extract_channel(sf: &SoundFile, infile_path: &str, channo: i64) -> Result
         &outfile_path,
     )?;
     Ok(outfile_path)
+}
+
+/// legacy: `do_channels`'s `case(HOUSE_CHANNELS)` (`legacy/dev/
+/// houskeep/channels.c`), the same code block as [`extract_channel`]
+/// but with `start_chan=0`/`end_chan=infile.channels` instead of one
+/// fixed `channo` -- extracts every channel of `infile`, each to its
+/// own auto-named mono file (`inname_c1.wav`, `inname_c2.wav`, ...).
+/// Confirmed live: legacy processes channels in order and stops at
+/// the first one whose own output file already exists, leaving every
+/// channel already written in place rather than rolling them back --
+/// this port reproduces that by simply calling [`extract_channel`]
+/// once per channel and returning on its first error, which already
+/// has this exact stop-in-place shape by construction. Scope,
+/// per-channel content and the overwrite-refusal message text are
+/// all identical to [`extract_channel`]'s own (same code path).
+///
+/// legacy quirk, confirmed live but not traced to its exact
+/// mechanism in the available source (`do_channels`'s
+/// `case(HOUSE_CHANNEL)`/`case(HOUSE_CHANNELS)` share one code block,
+/// with no `dz->mode` branch anywhere near the sample-copy loop or
+/// its `display_virtual_time` calls): a successful, complete run of
+/// this mode prints legacy's `"\r%d min %5.2lf sec"` progress text
+/// (several ticks, ending at the infile's own real duration) when and
+/// only when the infile has more than one channel; a mono infile
+/// prints nothing at all (matching [`extract_channel`]'s own
+/// confirmed-silent behaviour for *every* infile channel count, mono
+/// or multichannel); and a run that fails partway through (a later
+/// channel's outfile already exists) prints nothing at all either,
+/// even for the channels it did successfully write before failing.
+/// This port reproduces the two confirmed endpoints -- silent for a
+/// mono infile or a failing run, one final progress line (not every
+/// intermediate tick, the same simplification
+/// [`super::print_virtual_time`]'s own doc already establishes for
+/// legacy's real multi-tick output) for a fully successful
+/// multichannel run -- without asserting the exact intermediate C
+/// mechanism producing the split.
+pub fn extract_all_channels(sf: &SoundFile, infile_path: &str) -> Result<Vec<String>, CdpError> {
+    let channels = sf.fmt.channels;
+    let mut written = Vec::with_capacity(channels as usize);
+    for channo in 1..=channels as i64 {
+        written.push(extract_channel(sf, infile_path, channo)?);
+    }
+    if channels > 1 {
+        super::print_virtual_time(sf.frame_count() as f64 / sf.fmt.sample_rate as f64);
+    }
+    Ok(written)
 }
 
 /// legacy: `do_channels`'s `case(HOUSE_ZCHANNEL)` (`legacy/dev/
@@ -666,6 +708,73 @@ mod tests {
             "/dir/marimba_c2.wav"
         );
         assert_eq!(numbered_channel_filename("noext", 1), "noext_c1");
+    }
+
+    #[test]
+    fn extract_all_channels_mono_writes_one_file_matching_the_infile() {
+        let dir = scratch_dir("all_mono");
+        let infile = dir.join("marimba.wav");
+        std::fs::copy(repo_path("docs/manual/sounds/marimba.wav"), &infile).unwrap();
+        let out_path = dir.join("marimba_c1.wav");
+        let _ = std::fs::remove_file(&out_path);
+        let sf = SoundFile::open(&infile).unwrap();
+        let written = extract_all_channels(&sf, infile.to_str().unwrap()).unwrap();
+        assert_eq!(written, vec![out_path.to_str().unwrap().to_string()]);
+        let out = SoundFile::open(&out_path).unwrap();
+        assert_eq!(out.samples_f32().unwrap(), sf.samples_f32().unwrap());
+        let _ = std::fs::remove_file(&out_path);
+    }
+
+    #[test]
+    fn extract_all_channels_stereo_writes_one_file_per_channel() {
+        let dir = scratch_dir("all_stereo");
+        let infile = dir.join("clashmixtest.wav");
+        std::fs::copy(repo_path("docs/manual/sounds/clashmixtest.wav"), &infile).unwrap();
+        let out1 = dir.join("clashmixtest_c1.wav");
+        let out2 = dir.join("clashmixtest_c2.wav");
+        let _ = std::fs::remove_file(&out1);
+        let _ = std::fs::remove_file(&out2);
+        let sf = SoundFile::open(&infile).unwrap();
+        let written = extract_all_channels(&sf, infile.to_str().unwrap()).unwrap();
+        assert_eq!(
+            written,
+            vec![
+                out1.to_str().unwrap().to_string(),
+                out2.to_str().unwrap().to_string()
+            ]
+        );
+        let stereo = sf.samples_f32().unwrap();
+        let left: Vec<f32> = stereo.iter().step_by(2).copied().collect();
+        let right: Vec<f32> = stereo.iter().skip(1).step_by(2).copied().collect();
+        assert_eq!(SoundFile::open(&out1).unwrap().samples_f32().unwrap(), left);
+        assert_eq!(
+            SoundFile::open(&out2).unwrap().samples_f32().unwrap(),
+            right
+        );
+        let _ = std::fs::remove_file(&out1);
+        let _ = std::fs::remove_file(&out2);
+    }
+
+    #[test]
+    fn extract_all_channels_stops_at_the_first_existing_outfile() {
+        let dir = scratch_dir("all_stop");
+        let infile = dir.join("clashmixtest.wav");
+        std::fs::copy(repo_path("docs/manual/sounds/clashmixtest.wav"), &infile).unwrap();
+        let out1 = dir.join("clashmixtest_c1.wav");
+        let out2 = dir.join("clashmixtest_c2.wav");
+        let _ = std::fs::remove_file(&out1);
+        std::fs::write(&out2, b"pre-existing").unwrap();
+        let sf = SoundFile::open(&infile).unwrap();
+        let err = extract_all_channels(&sf, infile.to_str().unwrap()).unwrap_err();
+        assert_eq!(
+            err.to_string(),
+            format!("Cannot open output file {}\n", out2.to_str().unwrap())
+        );
+        // legacy: confirmed live -- channel 1 was already written
+        // before the failure on channel 2, and is left in place.
+        assert!(out1.exists());
+        let _ = std::fs::remove_file(&out1);
+        let _ = std::fs::remove_file(&out2);
     }
 
     #[test]
