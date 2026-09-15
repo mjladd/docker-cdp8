@@ -20,12 +20,11 @@
 // License along with this program. If not, see
 // <https://www.gnu.org/licenses/>.
 
-//! `housekeep copy mode infile ...` (`HOUSE_COPY`). Only mode 1
-//! (`COPYSF`, `housekeep copy 1 infile outfile`: writes an
-//! unmodified copy of infile's samples to outfile) is ported so far.
-//! Mode 2 (`DUPL`, `housekeep copy 2 infile count [-i]`: writes
-//! `count` auto-named copies, `X_001.wav`, `X_002.wav`, ...) reports a
-//! plain `ProgramError`.
+//! `housekeep copy mode infile ...` (`HOUSE_COPY`). Modes 1 and 2
+//! are ported. Mode 1 (`COPYSF`, `housekeep copy 1 infile outfile`:
+//! writes an unmodified copy of infile's samples to outfile). Mode 2
+//! (`DUPL`, `housekeep copy 2 infile count [-i]`: writes `count`
+//! auto-named copies, `X_001.wav`, `X_002.wav`, ...).
 //!
 //! legacy: `legacy/dev/houskeep/dupl.c`'s `do_duplicates`,
 //! `case(COPYSF)`.
@@ -111,17 +110,15 @@ pub const MAX_MODE: u32 = 2;
 pub enum Mode {
     /// legacy: `COPYSF`.
     Once,
+    /// legacy: `DUPL`.
+    Many,
 }
 
 impl Mode {
-    /// `None` for mode 2 (`DUPL`, not implemented yet) -- the caller
-    /// maps that to a plain `ProgramError`, the same shape
-    /// `cdp_programs::sndinfo::units::Mode::from_number` already
-    /// established for a mode `1..=MAX_MODE` in range but not yet
-    /// ported.
     pub fn from_number(mode: u32) -> Option<Self> {
         match mode {
             1 => Some(Mode::Once),
+            2 => Some(Mode::Many),
             _ => None,
         }
     }
@@ -164,7 +161,93 @@ pub fn copy_once(sf: &SoundFile, outfile_path: &str) -> Result<(), CdpError> {
     super::print_virtual_time(
         samples.len() as f64 / (sf.fmt.sample_rate as f64 * sf.fmt.channels as f64),
     );
+    println!();
     Ok(())
+}
+
+/// legacy: `do_duplicates`'s `case(DUPL)` branch. Creates `count`
+/// numbered copies of infile with names like `X_001.wav`, `X_002.wav`, etc.
+/// If `ignore_existing` is true, skips files that already exist; otherwise
+/// reports an error and stops.
+pub fn copy_many(
+    sf: &SoundFile,
+    infile_path: &str,
+    count: u32,
+    ignore_existing: bool,
+) -> Result<(), CdpError> {
+    if !matches!(sf.file_kind, FileKind::Wave) {
+        return Err(CdpError::new(
+            ExitCategory::ProgramError,
+            "housekeep copy: only sound files are implemented yet",
+        ));
+    }
+    if !matches!(
+        sf.fmt.sample_type,
+        SampleType::Short16 | SampleType::Float32
+    ) {
+        return Err(CdpError::new(
+            ExitCategory::ProgramError,
+            "housekeep copy: this sample format is not implemented yet",
+        ));
+    }
+
+    if count == 0 || count > 999 {
+        return Err(CdpError::new(
+            ExitCategory::ProgramError,
+            "housekeep copy: count must be between 1 and 999",
+        ));
+    }
+
+    let samples = sf.samples_f32().map_err(CdpError::from)?;
+    let sample_duration =
+        samples.len() as f64 / (sf.fmt.sample_rate as f64 * sf.fmt.channels as f64);
+
+    for n in 1..=count {
+        let outfile = numbered_filename(infile_path, n);
+
+        if std::path::Path::new(&outfile).exists() {
+            if ignore_existing {
+                eprintln!("INFO: Soundfile {outfile} already exists");
+                continue;
+            } else {
+                return Err(CdpError::new(
+                    ExitCategory::GoalFailed,
+                    format!("Soundfile {outfile} already exists: Made {count} duplicates only.\n"),
+                ));
+            }
+        }
+
+        write_wave_file(
+            sf.fmt.channels,
+            sf.fmt.sample_rate,
+            sf.fmt.sample_type,
+            &samples,
+            &outfile,
+        )?;
+    }
+
+    super::print_virtual_time(sample_duration * count as f64);
+    println!();
+    Ok(())
+}
+
+/// Generate a numbered filename from a source filename and a number.
+/// Examples: `file.wav` + 1 -> `file_001.wav`, `file.wav` + 12 -> `file_012.wav`,
+/// `file.wav` + 123 -> `file_123.wav`
+fn numbered_filename(source: &str, number: u32) -> String {
+    let number_str = match number {
+        1..=9 => format!("_00{number}"),
+        10..=99 => format!("_0{number}"),
+        _ => format!("_{number}"),
+    };
+
+    // Find the last dot for the extension
+    if let Some(dot_pos) = source.rfind('.') {
+        let (base, ext) = source.split_at(dot_pos);
+        format!("{base}{number_str}{ext}")
+    } else {
+        format!("{source}{number_str}")
+    }
 }
 
 #[cfg(test)]
@@ -182,6 +265,38 @@ mod tests {
             std::process::id()
         ));
         p
+    }
+
+    #[test]
+    fn numbered_filename_pads_single_digits_with_two_zeros() {
+        assert_eq!(numbered_filename("file.wav", 1), "file_001.wav");
+        assert_eq!(numbered_filename("file.wav", 9), "file_009.wav");
+    }
+
+    #[test]
+    fn numbered_filename_pads_double_digits_with_one_zero() {
+        assert_eq!(numbered_filename("file.wav", 10), "file_010.wav");
+        assert_eq!(numbered_filename("file.wav", 99), "file_099.wav");
+    }
+
+    #[test]
+    fn numbered_filename_no_padding_for_triple_digits() {
+        assert_eq!(numbered_filename("file.wav", 100), "file_100.wav");
+        assert_eq!(numbered_filename("file.wav", 999), "file_999.wav");
+    }
+
+    #[test]
+    fn numbered_filename_preserves_path_and_extension() {
+        assert_eq!(
+            numbered_filename("/path/to/file.wav", 1),
+            "/path/to/file_001.wav"
+        );
+        assert_eq!(numbered_filename("dir/file.aiff", 42), "dir/file_042.aiff");
+    }
+
+    #[test]
+    fn numbered_filename_handles_files_without_extension() {
+        assert_eq!(numbered_filename("file", 1), "file_001");
     }
 
     #[test]

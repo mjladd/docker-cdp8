@@ -583,6 +583,32 @@ fn run_housekeep_copy(mode_token: &str, args: &[String]) -> Result<(), CdpError>
                 .expect("CommandSpec::housekeep_copy_once has_outfile: true");
             copy::copy_once(&sf, &outfile)
         }
+        copy::Mode::Many => {
+            // legacy: `housekeep copy 2 infile count [-i]`
+            // `count` is a required positional param, `-i` is an optional flag
+            if args.is_empty() {
+                return Err(CdpError::from(ParamsError::InsufficientParameters));
+            }
+            let infile_path = &args[0];
+            let sf = SoundFile::open(infile_path)?;
+            if args.len() < 2 {
+                return Err(CdpError::new(
+                    ExitCategory::UsageOnly,
+                    "insufficient parameters on command line.".to_string(),
+                ));
+            }
+            let count_str = &args[1];
+            let count: u32 = count_str.parse().map_err(|_| {
+                CdpError::new(
+                    ExitCategory::UsageOnly,
+                    format!("Cannot read parameter 1 [{count_str}]: count must be a number."),
+                )
+            })?;
+
+            let ignore_existing = args.len() > 2 && args[2] == "-i";
+
+            copy::copy_many(&sf, infile_path, count, ignore_existing)
+        }
     }
 }
 
