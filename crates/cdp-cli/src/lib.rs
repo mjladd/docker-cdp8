@@ -40,7 +40,7 @@
 
 use cdp_core::{CdpError, ExitCategory, report_and_exit};
 use cdp_params::{CommandSpec, ParamValue, ParamsError, parse, parse_mode};
-use cdp_programs::housekeep::{self, chans, copy, respec};
+use cdp_programs::housekeep::{self, bakup, chans, copy, respec};
 use cdp_programs::pvoc::anal;
 use cdp_programs::sndinfo::{len, lens, maxsamp, props, smptime, sumlen, timediff, timesmp, units};
 use cdp_programs::synth::wave::{self, Mode};
@@ -519,12 +519,13 @@ fn run_sndinfo_maxsamp(args: &[&str]) -> Result<(), CdpError> {
 
 fn dispatch_housekeep(args: &[String]) -> ! {
     match args.split_first() {
+        Some((subcommand, rest)) if subcommand == "bakup" => dispatch_housekeep_bakup(rest),
         Some((subcommand, rest)) if subcommand == "copy" => dispatch_housekeep_copy(rest),
         Some((subcommand, rest)) if subcommand == "chans" => dispatch_housekeep_chans(rest),
         Some((subcommand, rest)) if subcommand == "respec" => dispatch_housekeep_respec(rest),
         Some((subcommand, _)) => {
             eprintln!(
-                "housekeep: '{subcommand}' is not implemented yet (only 'copy'/'chans'/'respec' are)"
+                "housekeep: '{subcommand}' is not implemented yet (only 'bakup'/'copy'/'chans'/'respec' are)"
             );
             std::process::exit(1);
         }
@@ -583,6 +584,33 @@ fn run_housekeep_copy(mode_token: &str, args: &[String]) -> Result<(), CdpError>
             copy::copy_once(&sf, &outfile)
         }
     }
+}
+
+fn dispatch_housekeep_bakup(args: &[String]) -> ! {
+    // legacy: `bakup`'s own module doc explains why this command's
+    // argument handling is written by hand instead of going through
+    // `cdp_params::parse`: it takes an arbitrary number of infiles.
+    if args.len() < 2 {
+        print!("{}", bakup::GREETING);
+        report_and_exit(Err(CdpError::from(
+            cdp_params::ParamsError::InsufficientParameters,
+        )));
+    }
+    report_and_exit(run_housekeep_bakup(args));
+}
+
+fn run_housekeep_bakup(args: &[String]) -> Result<(), CdpError> {
+    let infiles = args[..args.len() - 1].to_vec();
+    let outfile = args[args.len() - 1].clone();
+
+    let parsed = cdp_params::ParsedCommand {
+        infiles,
+        outfile: Some(outfile),
+        params: vec![],
+        flags: std::collections::BTreeMap::new(),
+    };
+
+    bakup::bakup(&parsed)
 }
 
 fn dispatch_housekeep_chans(args: &[String]) -> ! {
