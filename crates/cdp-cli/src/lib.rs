@@ -40,7 +40,7 @@
 
 use cdp_core::{CdpError, ExitCategory, report_and_exit};
 use cdp_params::{CommandSpec, ParamValue, ParamsError, parse, parse_mode};
-use cdp_programs::housekeep::{self, bakup, chans, copy, respec};
+use cdp_programs::housekeep::{self, bakup, bundle, chans, copy, respec};
 use cdp_programs::pvoc::anal;
 use cdp_programs::sndinfo::{len, lens, maxsamp, props, smptime, sumlen, timediff, timesmp, units};
 use cdp_programs::synth::wave::{self, Mode};
@@ -520,12 +520,13 @@ fn run_sndinfo_maxsamp(args: &[&str]) -> Result<(), CdpError> {
 fn dispatch_housekeep(args: &[String]) -> ! {
     match args.split_first() {
         Some((subcommand, rest)) if subcommand == "bakup" => dispatch_housekeep_bakup(rest),
+        Some((subcommand, rest)) if subcommand == "bundle" => dispatch_housekeep_bundle(rest),
         Some((subcommand, rest)) if subcommand == "copy" => dispatch_housekeep_copy(rest),
         Some((subcommand, rest)) if subcommand == "chans" => dispatch_housekeep_chans(rest),
         Some((subcommand, rest)) if subcommand == "respec" => dispatch_housekeep_respec(rest),
         Some((subcommand, _)) => {
             eprintln!(
-                "housekeep: '{subcommand}' is not implemented yet (only 'bakup'/'copy'/'chans'/'respec' are)"
+                "housekeep: '{subcommand}' is not implemented yet (only 'bakup'/'bundle'/'copy'/'chans'/'respec' are)"
             );
             std::process::exit(1);
         }
@@ -637,6 +638,45 @@ fn run_housekeep_bakup(args: &[String]) -> Result<(), CdpError> {
     };
 
     bakup::bakup(&parsed)
+}
+
+fn dispatch_housekeep_bundle(args: &[String]) -> ! {
+    let Some((mode_token, rest)) = args.split_first() else {
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, bundle::USAGE)));
+    };
+    if rest.is_empty() {
+        // legacy: same argc<4 rule as `housekeep copy` -- see
+        // `dispatch_housekeep_copy`'s own comment.
+        print!("{}", bundle::GREETING);
+        report_and_exit(Err(CdpError::from(ParamsError::InsufficientParameters)));
+    }
+    report_and_exit(run_housekeep_bundle(mode_token, rest));
+}
+
+fn run_housekeep_bundle(mode_token: &str, args: &[String]) -> Result<(), CdpError> {
+    let mode_number = parse_mode(mode_token, 5)?;
+    let Some(mode) = bundle::Mode::from_number(mode_number) else {
+        return Err(CdpError::new(
+            ExitCategory::ProgramError,
+            format!("housekeep bundle: mode {mode_number} is not implemented yet"),
+        ));
+    };
+
+    if args.len() < 2 {
+        return Err(CdpError::from(ParamsError::InsufficientParameters));
+    }
+
+    let infiles = args[..args.len() - 1].to_vec();
+    let outfile = args[args.len() - 1].clone();
+
+    let parsed = cdp_params::ParsedCommand {
+        infiles,
+        outfile: Some(outfile),
+        params: vec![],
+        flags: std::collections::BTreeMap::new(),
+    };
+
+    bundle::bundle(&parsed, mode)
 }
 
 fn dispatch_housekeep_chans(args: &[String]) -> ! {
