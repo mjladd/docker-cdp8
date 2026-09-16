@@ -20,14 +20,15 @@
 // License along with this program. If not, see
 // <https://www.gnu.org/licenses/>.
 
-//! `housekeep` (legacy: `legacy/dev/houskeep`, WP-2.2). `copy` mode 1,
-//! all five `chans` modes, `respec` modes 2/3, and `bakup` are ported so far,
+//! `housekeep` (legacy: `legacy/dev/houskeep`, WP-2.2). `copy` modes 1-2,
+//! all five `chans` modes, `bundle` modes 1-5, `respec` modes 2/3, and `bakup` are ported so far,
 //! of the thirteen sub-commands `get_process_no`
 //! (`legacy/dev/houskeep/ap_house.c`) recognises: `copy`, `remove`,
 //! `chans`, `bundle`, `sort`, `respec`, `extract`, `bakup`, `gate`,
 //! `disk`, `batchexpand`, `endclicks`, `deglitch`.
 
 pub mod bakup;
+pub mod bundle;
 pub mod chans;
 pub mod copy;
 pub mod respec;
