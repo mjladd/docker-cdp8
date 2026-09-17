@@ -40,7 +40,7 @@
 
 use cdp_core::{CdpError, ExitCategory, report_and_exit};
 use cdp_params::{CommandSpec, ParamValue, ParamsError, parse, parse_mode};
-use cdp_programs::housekeep::{self, bakup, bundle, chans, copy, extract, respec};
+use cdp_programs::housekeep::{self, bakup, bundle, chans, copy, extract, remove, respec};
 use cdp_programs::pvoc::anal;
 use cdp_programs::sndinfo::{len, lens, maxsamp, props, smptime, sumlen, timediff, timesmp, units};
 use cdp_programs::synth::wave::{self, Mode};
@@ -522,6 +522,7 @@ fn dispatch_housekeep(args: &[String]) -> ! {
         Some((subcommand, rest)) if subcommand == "bakup" => dispatch_housekeep_bakup(rest),
         Some((subcommand, rest)) if subcommand == "bundle" => dispatch_housekeep_bundle(rest),
         Some((subcommand, rest)) if subcommand == "extract" => dispatch_housekeep_extract(rest),
+        Some((subcommand, rest)) if subcommand == "remove" => dispatch_housekeep_remove(rest),
         Some((subcommand, rest)) if subcommand == "copy" => dispatch_housekeep_copy(rest),
         Some((subcommand, rest)) if subcommand == "chans" => dispatch_housekeep_chans(rest),
         Some((subcommand, rest)) if subcommand == "respec" => dispatch_housekeep_respec(rest),
@@ -708,6 +709,25 @@ fn run_housekeep_extract(mode_token: &str, args: &[String]) -> Result<(), CdpErr
     };
 
     extract::extract(&parsed, mode)
+}
+
+fn dispatch_housekeep_remove(args: &[String]) -> ! {
+    if args.is_empty() {
+        print!("{}", remove::GREETING);
+        report_and_exit(Err(CdpError::from(ParamsError::InsufficientParameters)));
+    }
+    report_and_exit(run_housekeep_remove(args));
+}
+
+fn run_housekeep_remove(args: &[String]) -> Result<(), CdpError> {
+    let parsed = cdp_params::ParsedCommand {
+        infiles: args.to_vec(),
+        outfile: None,
+        params: vec![],
+        flags: std::collections::BTreeMap::new(),
+    };
+
+    remove::remove(&parsed)
 }
 
 fn dispatch_housekeep_chans(args: &[String]) -> ! {
