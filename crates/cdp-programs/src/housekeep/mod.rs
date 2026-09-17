@@ -32,6 +32,7 @@ pub mod bundle;
 pub mod chans;
 pub mod copy;
 pub mod extract;
+pub mod remove;
 pub mod respec;
 
 use cdp_core::{CdpError, ExitCategory};
