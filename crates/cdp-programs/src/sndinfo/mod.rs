@@ -28,6 +28,7 @@ mod ctime;
 pub mod len;
 pub mod lens;
 pub mod maxsamp;
+pub mod prntsnd;
 pub mod props;
 pub mod smptime;
 pub mod sumlen;
