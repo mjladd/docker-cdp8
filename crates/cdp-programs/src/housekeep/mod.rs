@@ -34,6 +34,7 @@ pub mod copy;
 pub mod extract;
 pub mod remove;
 pub mod respec;
+pub mod sort;
 
 use cdp_core::{CdpError, ExitCategory};
 use cdp_sf::{PropertyBlock, SampleType, SoundFileWriter, WriteSpec};
