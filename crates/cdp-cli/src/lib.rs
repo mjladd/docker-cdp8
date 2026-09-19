@@ -43,7 +43,7 @@ use cdp_params::{CommandSpec, ParamValue, ParamsError, parse, parse_mode};
 use cdp_programs::housekeep::{self, bakup, bundle, chans, copy, extract, remove, respec, sort};
 use cdp_programs::pvoc::anal;
 use cdp_programs::sndinfo::{
-    len, lens, maxsamp, prntsnd, props, smptime, sumlen, timediff, timesmp, units,
+    findhole, len, lens, maxsamp, prntsnd, props, smptime, sumlen, timediff, timesmp, units,
 };
 use cdp_programs::synth::wave::{self, Mode};
 use cdp_sf::SoundFile;
@@ -196,6 +196,7 @@ fn dispatch_sndinfo(args: &[String]) -> ! {
     match args.split_first() {
         Some((subcommand, rest)) if subcommand == "props" => dispatch_sndinfo_props(rest),
         Some((subcommand, rest)) if subcommand == "prntsnd" => dispatch_sndinfo_prntsnd(rest),
+        Some((subcommand, rest)) if subcommand == "findhole" => dispatch_sndinfo_findhole(rest),
         Some((subcommand, rest)) if subcommand == "len" => dispatch_sndinfo_len(rest),
         Some((subcommand, rest)) if subcommand == "smptime" => dispatch_sndinfo_smptime(rest),
         Some((subcommand, rest)) if subcommand == "timesmp" => dispatch_sndinfo_timesmp(rest),
@@ -290,6 +291,24 @@ fn run_sndinfo_prntsnd(args: &[String]) -> Result<(), CdpError> {
         flags: std::collections::BTreeMap::new(),
     };
     prntsnd::prntsnd(&parsed)
+}
+
+fn dispatch_sndinfo_findhole(args: &[String]) -> ! {
+    if args.len() < 2 {
+        print!("{}", findhole::GREETING);
+        report_and_exit(Err(CdpError::from(ParamsError::InsufficientParameters)));
+    }
+    report_and_exit(run_sndinfo_findhole(args));
+}
+
+fn run_sndinfo_findhole(args: &[String]) -> Result<(), CdpError> {
+    let parsed = cdp_params::ParsedCommand {
+        infiles: args.to_vec(),
+        outfile: None,
+        params: vec![],
+        flags: std::collections::BTreeMap::new(),
+    };
+    findhole::findhole(&parsed)
 }
 
 fn dispatch_sndinfo_len(args: &[String]) -> ! {
