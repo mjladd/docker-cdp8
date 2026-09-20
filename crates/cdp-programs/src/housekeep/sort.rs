@@ -76,7 +76,7 @@ fn sort_by_sample_rate(infile: &str, outfile: &str) -> Result<(), CdpError> {
             Ok(sf) => {
                 by_srate
                     .entry(sf.fmt.sample_rate)
-                    .or_insert_with(Vec::new)
+                    .or_default()
                     .push(filename);
             }
             Err(_) => {
@@ -111,10 +111,7 @@ fn sort_by_file_type(infile: &str, outfile: &str) -> Result<(), CdpError> {
         match SoundFile::open(&filename) {
             Ok(sf) => {
                 let type_name = file_type_name(&sf.file_kind);
-                by_type
-                    .entry(type_name)
-                    .or_insert_with(Vec::new)
-                    .push(filename);
+                by_type.entry(type_name).or_default().push(filename);
             }
             Err(_) => {
                 // Skip non-sound files
@@ -149,7 +146,7 @@ fn sort_by_channel_count(infile: &str, outfile: &str) -> Result<(), CdpError> {
             Ok(sf) => {
                 by_channels
                     .entry(sf.fmt.channels)
-                    .or_insert_with(Vec::new)
+                    .or_default()
                     .push(filename);
             }
             Err(_) => {
@@ -201,12 +198,10 @@ fn read_filenames(filename: &str) -> Result<Vec<String>, CdpError> {
     let reader = BufReader::new(file);
     let mut filenames = Vec::new();
 
-    for line in reader.lines() {
-        if let Ok(line) = line {
-            let trimmed = line.trim();
-            if !trimmed.is_empty() {
-                filenames.push(trimmed.to_string());
-            }
+    for line in reader.lines().map_while(Result::ok) {
+        let trimmed = line.trim();
+        if !trimmed.is_empty() {
+            filenames.push(trimmed.to_string());
         }
     }
 

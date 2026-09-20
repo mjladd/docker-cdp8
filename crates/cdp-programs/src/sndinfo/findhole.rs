@@ -84,11 +84,10 @@ pub fn findhole(parsed: &ParsedCommand) -> Result<(), CdpError> {
 
         // Check if all channels in this frame are below threshold
         for ch in 0..chans {
-            if frame_start + ch < samples.len() {
-                if samples[frame_start + ch].abs() >= threshold_f32 {
-                    frame_silent = false;
-                    break;
-                }
+            if frame_start + ch < samples.len() && samples[frame_start + ch].abs() >= threshold_f32
+            {
+                frame_silent = false;
+                break;
             }
         }
 
@@ -136,8 +135,6 @@ pub fn findhole(parsed: &ParsedCommand) -> Result<(), CdpError> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn threshold_range_validation_works() {
         // Verify that thresholds outside [0, 1] would be rejected

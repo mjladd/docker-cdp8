@@ -32,5 +32,6 @@
 
 pub mod housekeep;
 pub mod pvoc;
+pub mod registry;
 pub mod sndinfo;
 pub mod synth;
