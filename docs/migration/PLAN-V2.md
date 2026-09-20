@@ -10,6 +10,72 @@ It replaces that plan's porting method (section 3), phase sequencing
 Read this document together with [STATUS.md](STATUS.md) and
 [LEGACY-BUGS.md](LEGACY-BUGS.md).
 
+## Status at a glance
+
+Updated 2026-09-19. Every box in this document is filled in by hand, so
+treat the gate commands as the authority and this summary as the map.
+
+```sh
+cargo test --workspace                     # gates 1 and 2
+cargo run -p cdp-oracle -- verify          # gate 3
+cargo run -p cdp-oracle -- list            # every golden case and its state
+```
+
+### Phases
+
+- [x] Phase V. Verification infrastructure. Five of six items done, V5 open.
+- [ ] Phase R. Remediation. 0 of 9 sub-commands repaired.
+- [ ] Phase 2. Core programs. WP-2.1 and WP-2.2 both open.
+- [ ] Phase 3. Spectral programs. Blocked on WP-1.6 (`cdp-spectral`).
+- [ ] Phase 4. About 150 standalone programs.
+- [ ] Phase 5. Externals.
+- [ ] Phase 6. Documentation, packaging, legacy retirement.
+
+### Gates
+
+| Gate | What it checks | Needs Docker | Scope | Passing | Baselined |
+|---|---|---|---|---|---|
+| 1 | usage text, stderr, exit code | no | 21 sub-commands | 14 | 7 |
+| 2 | argument grammar against `parstruct.json` | no | 20 wired modes | 20 | 0 |
+| 3 | exit code, stdout, stderr of real runs | no (replay) | 19 golden cases | 8 | 11 |
+
+Gate 3 records against the legacy image but replays without it, so
+continuous integration runs all three gates on every pull request.
+
+### Sub-commands wired into `cdp-cli`
+
+A box is checked when the sub-command passes all three gates. A
+sub-command with no golden case cannot be called done, even when gates 1
+and 2 pass, so the third column is the honest measure.
+
+| Sub-command | Gate 1 | Gate 2 | Golden cases | Done |
+|---|---|---|---|---|
+| `sndinfo props` | pass | pass | 8 | [x] |
+| `sndinfo len` | pass | pass | 0 | [ ] |
+| `sndinfo lens` | pass | exempt | 0 | [ ] |
+| `sndinfo sumlen` | pass | exempt | 0 | [ ] |
+| `sndinfo timediff` | pass | exempt | 0 | [ ] |
+| `sndinfo smptime` | pass | pass | 0 | [ ] |
+| `sndinfo timesmp` | pass | pass | 0 | [ ] |
+| `sndinfo maxsamp` | pass | pass | 0 | [ ] |
+| `sndinfo units` | pass | pass (modes 1-2) | 0 | [ ] |
+| `sndinfo prntsnd` | FAIL | exempt | 1, deviation | [ ] |
+| `sndinfo findhole` | FAIL | exempt | 2, deviation | [ ] |
+| `housekeep copy` | pass | pass (mode 1) | 2, both deviation | [ ] |
+| `housekeep chans` | pass | pass (modes 1-5) | 0 | [ ] |
+| `housekeep respec` | pass | pass (modes 2-3) | 0 | [ ] |
+| `housekeep bakup` | FAIL | exempt | 1, deviation | [ ] |
+| `housekeep bundle` | FAIL | exempt | 1, deviation | [ ] |
+| `housekeep extract` | FAIL | exempt | 1, deviation | [ ] |
+| `housekeep remove` | FAIL | exempt | 2, deviation | [ ] |
+| `housekeep sort` | FAIL | exempt | 1, deviation | [ ] |
+| `synth wave` | pass | pass (4 modes) | 0 | [ ] |
+| `pvoc anal` | pass | pass (mode 1) | 0 | [ ] |
+
+One sub-command of 21 currently meets the section 7 definition of done.
+That number is the real measure of progress, and it is the number to
+watch.
+
 ## 1. Why this plan exists
 
 The project shipped 21 sub-commands. Seven of them do not run the command
@@ -22,23 +88,26 @@ step, and CI cannot see whether an agent performed a manual step.
 
 ## 2. Measured state of the project
 
-These numbers come from the repository on 2026-09-19.
+The "before" column is the state that motivated this plan. The "now"
+column is the state after Phase V.
 
-| Item | Count |
-|---|---|
-| Legacy C executables in scope | 220 |
-| Legacy sub-commands in scope | about 368 |
-| Captured usage-text files in `spec/usage/` | 588 |
-| Processes in `spec/commands/_raw/parstruct.json` | 299 |
-| Process and mode pairs in that file | 645 |
-| Rust crates | 7 |
-| Sub-commands wired into `cdp-cli` | 21 |
-| Of those, checked against legacy | 14 |
-| Of those, not checked against legacy | 7 |
-| Unit tests in `cdp-programs` | about 125 |
-| Golden test cases in `spec/golden/` | 0 |
-| Oracle harness in `tools/oracle/` | absent |
-| Per-command specs in `spec/commands/` | 0 |
+| Item | Before Phase V | Now |
+|---|---|---|
+| Legacy C executables in scope | 220 | 220 |
+| Legacy sub-commands in scope | about 368 | about 368 |
+| Captured usage-text files in `spec/usage/` | 588 | 588 |
+| Processes in `spec/commands/_raw/parstruct.json` | 299 | 299 |
+| Process and mode pairs in that file | 645 | 645 |
+| Rust crates | 7 | 7, plus `cdp-oracle` |
+| Sub-commands wired into `cdp-cli` | 21 | 21 |
+| Of those, passing gate 1 | unknown | 14 |
+| Of those, failing gate 1 | unknown | 7 |
+| Wired modes passing gate 2 | unknown | 20 of 20 |
+| Tests in the workspace | about 125 in `cdp-programs` | 350 across the workspace |
+| Golden cases in `spec/golden/` | 0 | 19 |
+| Oracle harness in `tools/oracle/` | absent | `cdp-oracle`, record and verify |
+| Sub-commands meeting the section 7 definition of done | 0 | 1 |
+| Per-command TOML specs in `spec/commands/` | 0 | 0, and deferred, see section 4 |
 
 Foundation crates `cdp-sf`, `cdp-data`, `cdp-params`, `cdp-dsp`, `cdp-core`
 and `cdp-cli` all work and carry real tests. `cdp-spectral` does not exist
@@ -200,33 +269,68 @@ data, printed reports, exit codes and error text.
 
 Goal: the main branch contains no unchecked command.
 
-R1. Add the two suspect commands to the defect list. Run `housekeep bundle`
-modes 1 to 5 and `housekeep copy` mode 2 against the legacy image. Record the
-result.
+Phase V is done enough to start, so R4's precondition is met. Every
+sub-command below has a recorded golden case, so the work is to turn
+`cargo run -p cdp-oracle -- verify` from KNOWN lines into passes, then
+delete the `known_deviation` marker and the `KNOWN_FAILURES` entry. Both
+markers fail the build if they outlive their defect, so nothing needs to
+be remembered.
 
-R2. Decide per command: repair now, or withdraw now. Withdrawing means
-removing the dispatch entry and the module, and leaving the sub-command
-unimplemented. Withdrawing is the correct choice for any command whose
-repair needs a mechanism the workspace lacks.
+- [x] **R1. Diagnose the two suspect commands.** Done. `housekeep bundle`
+  prints one trailing newline more than legacy. `housekeep copy` mode 2
+  produces the correct duplicate files but prints a progress tick that
+  legacy does not print for that mode.
+- [ ] **R2. Repair or withdraw each command**, per the table below.
+- [ ] **R3. Write the STATUS.md entries the autonomous run never wrote.**
+- [x] **R4. Wait for gates 1 and 2 before repairing.** Done, and gate 3
+  as well, which turned out to matter more: it found a defect in
+  `housekeep copy` mode 1 that the earlier prose-verified process had
+  missed.
 
-Recommended split, based on section 3:
+### R2 work list
 
-| Sub-command | Action | Reason |
-|---|---|---|
-| `sndinfo findhole` | repair | needs only an optional `-t` flag and the real output text |
-| `sndinfo prntsnd` | repair | needs a text output file instead of standard output |
-| `housekeep extract` mode 4 | repair | needs to honor the `shift` argument |
-| `housekeep remove` | repair | needs the `-a` flag, plus a LEGACY-BUGS.md entry |
-| `housekeep bakup` | withdraw, then re-port | the current code cannot run its own command line, and the sector-aligned gap logic is a real port |
-| `housekeep sort` | withdraw, then re-port | all six modes are wrong, and the real command writes derived filenames |
-| `housekeep bundle` | pending R1 | unknown |
-| `housekeep copy` mode 2 | pending R1 | unknown, and `SNDFILENAME` support is missing |
+| Sub-command | Action | Defect | Done |
+|---|---|---|---|
+| `sndinfo findhole` | repair | takes a required positional threshold. Legacy takes an optional `-t` flag and prints usage when bare | [ ] |
+| `sndinfo prntsnd` | repair | takes three arguments and prints to standard output. Legacy takes four and writes a text file | [ ] |
+| `housekeep extract` mode 4 | repair | ignores the required `shift` argument and computes its own mean | [ ] |
+| `housekeep remove` | repair | missing the `-a` flag. Also needs a LEGACY-BUGS.md entry, see section 3.3 | [ ] |
+| `housekeep bundle` | repair | prints one trailing newline more than legacy | [ ] |
+| `housekeep copy` mode 1 | repair | prints one trailing newline more than legacy, 19 bytes against 18 | [ ] |
+| `housekeep copy` mode 2 | repair | prints a progress tick legacy does not print for this mode | [ ] |
+| `housekeep bakup` | withdraw, then re-port | invents a `splicelen` argument. The real gap is `BAKUP_GAP` (1.0 second) rounded up to a whole disk sector | [ ] |
+| `housekeep sort` | withdraw, then re-port | wrong mode numbering, a mode that does not exist, and an outfile legacy has no argument for | [ ] |
 
-R3. Write the STATUS.md entries that the loop era never wrote. Record the
-repair or the withdrawal for each command.
+Withdrawing means removing the dispatch arm, the module and the registry
+entry, which leaves the sub-command unimplemented. Withdraw any command
+whose repair needs a mechanism the workspace lacks, rather than narrowing
+the command until it fits.
 
-R4. Do not start Phase R repairs before Phase V delivers Gate 1 and Gate 2.
-Repairing against the gates costs less than repairing twice.
+### The two trailing-newline defects
+
+`housekeep copy` mode 1 and `housekeep bundle` each print one newline too
+many. The `copy` defect matters beyond its own repair, because `copy` mode
+1 was verified by hand against legacy and recorded in STATUS.md as
+byte-for-byte correct. It was not.
+
+The likely cause is the shell. A check written as `out=$(cmd)` strips
+every trailing newline, so a difference that is only trailing newlines
+cannot be seen that way. Gate 3 compares captured bytes and found it
+immediately.
+
+This does not overturn section 6's finding that the two eras differ in
+kind. The disciplined era holds 20 of 20 on gate 2 and was wrong here by
+one byte, where the autonomous era rejects command lines that legacy
+accepts. It does mean the disciplined era is not beyond checking, and that
+every sub-command needs golden cases regardless of how it was verified
+before.
+
+Confirmed by direct comparison, with no harness involved:
+
+```sh
+docker run --rm -v $W:/w -w /w cdp8-postmerge housekeep copy 1 in.wav out.wav | wc -c   # 18
+./target/debug/housekeep copy 1 in.wav out.wav | wc -c                                  # 19
+```
 
 ## 6. Phase V: verification infrastructure (before any new port)
 
@@ -234,30 +338,31 @@ State on 2026-09-19: V1, V2, V3, V4 and V6 are built and merged. V5, the
 nightly full-file comparison, waits on output-file comparison, which
 section 6.1 describes.
 
-What the gates found on their first run:
+What the gates found. Counts move as cases are added, so re-run them
+rather than trusting this table:
 
 | Gate | Scope | Result |
 |---|---|---|
 | 1, usage text | 21 sub-commands | 7 fail, all from the autonomous run |
 | 2, argument grammar | 20 wired modes | all 20 agree with the record |
-| 3, golden cases | 17 cases | 8 pass, 9 known deviations |
+| 3, golden cases | 19 cases | 8 pass, 11 known deviations |
 
 Gate 2's clean result is worth stating plainly. Every mode it can check
 comes from the disciplined work before pull request 33. That work agrees
 with legacy's recorded grammar at every position. The two eras differ in
 kind, not in degree.
 
-V1. Gate 1, the usage-text conformance test. Put it in
+- [x] **V1. Gate 1, the usage-text conformance test.** Put it in
 `crates/cdp-cli/tests/usage_conformance.rs`. Drive it from the dispatch
 table. Effort: one agent-day.
 
-V2. Gate 2, the argument-grammar conformance test. Put it in
+- [x] **V2. Gate 2, the argument-grammar conformance test.** Put it in
 `crates/cdp-programs/tests/grammar_conformance.rs`, not in `cdp-params`:
 `cdp-programs` depends on `cdp-params`, so only the former can see both
 the specs and the registry. Name each mode's `parstruct.json` process
 symbol and mode key in the registry. Effort: two agent-days.
 
-V3. The oracle harness, `tools/oracle/`. Build it as a workspace crate named
+- [x] **V3. The oracle harness, `tools/oracle/`.** Build it as a workspace crate named
 `cdp-oracle` so that Cargo builds and lints it with everything else. Give it
 two modes:
 
@@ -268,7 +373,7 @@ two modes:
 Recording needs Docker. Verifying must not need Docker. Commit the
 expectations so that the fast CI job replays them.
 
-V4. The case format, `spec/golden/<program>/<subcommand>/<case>.toml`. Each
+- [x] **V4. The case format**, `spec/golden/<program>/<subcommand>/<case>.toml`. Each
 case records the argument vector, the input files, the expected exit code,
 the expected standard output and standard error, and one entry per output
 file.
@@ -285,7 +390,7 @@ does not need real material. A 2000-sample file keeps the expectation file
 small. Use the corpus in `docs/manual/sounds` only where real material
 matters, and record the corpus path rather than a copy.
 
-V4a. The `known_deviation` marker. A case whose output does not match
+- [x] **V4a. The `known_deviation` marker.** A case whose output does not match
 legacy yet carries one line saying why. `verify` reports the case and does
 not fail the run, so legacy's real behavior can be recorded for a
 defective command before anyone repairs it. This turns phase R from a
@@ -299,11 +404,11 @@ All 7 defective sub-commands now have recorded cases. An agent doing phase
 R runs `cargo run -p cdp-oracle -- verify` and sees exactly what legacy
 does for each one.
 
-V5. A nightly CI job that compares full output files inside Docker. The
+- [ ] **V5. A nightly CI job that compares full output files inside Docker.** The
 fingerprint catches almost every regression. The nightly job catches the
 rest. Effort for V3 to V5 together: five agent-days.
 
-V6. Wire the gates into `.github/workflows/ci.yml`. The placeholder
+- [x] **V6. Wire the gates into `.github/workflows/ci.yml`.** The placeholder
 `golden-tests` job is gone. Two jobs replace it:
 
 - The `rust` job now builds the binaries and replays every golden case.
@@ -341,25 +446,39 @@ read in a diff, which a whole sample array would not.
 ## 7. Definition of done for one sub-command
 
 This checklist replaces PLAN.md section 3. Every item is machine-checkable.
-An agent reports a sub-command as done only when every item passes.
+An agent reports a sub-command as done only when every box is ticked.
 
-1. `spec/usage/<program>/<subcommand>.txt` exists, and Gate 1 passes.
-2. The `CommandSpec` names its `parstruct.json` process symbol, and Gate 2
-   passes for every mode.
-3. `spec/golden/<program>/<subcommand>/` holds at least these cases, each
-   recorded from the legacy image:
-   - one success case per mode,
-   - one case with a stereo input, where the command accepts sound input,
-   - one case per optional flag,
-   - one case with a breakpoint file, where a parameter accepts one,
-   - three error cases: a missing argument, an out-of-range value, and an
-     unreadable input file.
-4. `cargo run -p cdp-oracle -- verify <program> <subcommand>` passes.
-5. At least one in-repository regression test reads a real file and asserts a
-   value that came from a legacy run, not from this crate's own output.
-6. `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D
-   warnings` and `cargo test --workspace` all pass.
-7. STATUS.md records the state, the scope limits, and every known deviation.
+Copy this block into the pull request description and tick it there. A
+pull request that does not carry it does not merge.
+
+```markdown
+### Definition of done: <program> <subcommand>
+
+- [ ] 1. `spec/usage/<program>/<subcommand>.txt` exists, and gate 1 passes.
+- [ ] 2. The registry names the `parstruct.json` process symbol and mode
+         key, and gate 2 passes for every mode.
+- [ ] 3. `spec/golden/<program>/<subcommand>/` holds, each recorded from
+         the legacy image, never written by hand:
+    - [ ] one success case per mode
+    - [ ] one case with a stereo input, where the command takes sound input
+    - [ ] one case per optional flag
+    - [ ] one case with a breakpoint file, where a parameter accepts one
+    - [ ] three error cases: a missing argument, an out-of-range value,
+          and an unreadable input file
+- [ ] 4. `cargo run -p cdp-oracle -- verify <program> <subcommand>` passes
+         with no `known_deviation` marker left.
+- [ ] 5. At least one in-repository regression test reads a real file and
+         asserts a value that came from a legacy run, not from this
+         crate's own output.
+- [ ] 6. `cargo fmt --all -- --check`, `cargo clippy --workspace
+         --all-targets -- -D warnings` and `cargo test --workspace` pass.
+- [ ] 7. STATUS.md records the state, the scope limits, and every known
+         deviation.
+```
+
+Item 3 is the one that the autonomous run skipped, and item 5 is the one
+it faked. A test that asserts `"-0.1".parse::<f64>().unwrap() < 0.0`
+satisfies neither.
 
 ## 8. Revised phase plan
 
@@ -374,46 +493,87 @@ hand-written `CommandSpec` code becomes the bottleneck.
 
 Remaining phase order:
 
-1. Phase V. Verification infrastructure. One agent, about eight agent-days.
-2. Phase R. Remediation. One agent, about four agent-days.
-3. Phase 2. Core time-domain and utility programs. Resume at WP-2.1 and
-   WP-2.2, which are both partly done. Then WP-2.3 to WP-2.14.
-4. Phase 3. Spectral programs. Needs `cdp-spectral`, which WP-1.6 must
-   deliver first.
-5. Phase 4. About 150 standalone programs. Highly parallel.
-6. Phase 5 and Phase 6. Externals, packaging and legacy retirement.
+- [x] 1. Phase V. Verification infrastructure. V5 remains, and it is not a
+      blocker for Phase R.
+- [ ] 2. Phase R. Remediation. About four agent-days.
+- [ ] 3. Phase 2. Core time-domain and utility programs. Resume at WP-2.1
+      and WP-2.2, which are both partly done. Then WP-2.3 to WP-2.14.
+- [ ] 4. Phase 3. Spectral programs. Needs `cdp-spectral`, which WP-1.6
+      must deliver first.
+- [ ] 5. Phase 4. About 150 standalone programs. Highly parallel.
+- [ ] 6. Phase 5 and Phase 6. Externals, packaging and legacy retirement.
 
 Finish WP-2.1 and WP-2.2 before opening new programs. Both are close to
 complete, and both hold the repaired commands from Phase R.
 
 Remaining sub-commands in the two open work packages:
 
-- WP-2.1 `sndinfo`: `loudchan`, `diff`, `chandiff`, `maxsamp2`, `maxi`,
-  `zcross`, and `units` modes 3 to 31. The process symbol for `maxi` is
-  `INFO_LOUDLIST`, which is not a sub-command name.
-- WP-2.2 `housekeep`: `respec` mode 1, `extract` modes 1, 2, 3, 5 and 6,
-  `gate`, `disk`, `batchexpand`, `endclicks` and `deglitch`.
+WP-2.1 `sndinfo`, 6 sub-commands and one mode range unstarted:
+
+- [ ] `loudchan`, needs root-mean-square reporting
+- [ ] `maxi`, needs root-mean-square reporting. Its process symbol is
+      `INFO_LOUDLIST`, which is not a sub-command name.
+- [ ] `diff`, needs two-file sample comparison
+- [ ] `chandiff`, needs two-file sample comparison, stereo only
+- [ ] `maxsamp2`
+- [ ] `zcross`
+- [ ] `units` modes 3 to 31, which need the note-name and interval-name
+      grammars
+
+WP-2.2 `housekeep`, 5 sub-commands and six modes unstarted:
+
+- [ ] `respec` mode 1, needs cubic-spline resampling
+- [ ] `extract` modes 1, 2, 3 and 6, need gate and envelope detection
+- [ ] `extract` mode 5, which legacy reports as no longer available
+- [ ] `gate`, needs gate and envelope detection
+- [ ] `disk`, whose free-space figures are environment-dependent, so gate 3
+      cannot compare them the way it compares everything else
+- [ ] `batchexpand`, needs word-list input files
+- [ ] `endclicks`
+- [ ] `deglitch`
 
 Order the remaining work by mechanism, not by apparent size. A sub-command
 whose mechanism already exists costs a day. A sub-command that needs a new
 mechanism costs a week. The missing mechanisms are:
 
-| Mechanism | Blocks |
-|---|---|
-| `SNDFILENAME` special data | `housekeep copy` mode 2, `housekeep remove` |
-| Word-list input files | `housekeep sort`, `housekeep batchexpand` |
-| Gate and envelope detection | `housekeep extract` modes 1, 2, 3, 6, `housekeep gate` |
-| Cubic-spline resampling | `housekeep respec` mode 1 |
-| Root-mean-square reporting | `sndinfo loudchan`, `maxi` |
-| Two-file sample comparison | `sndinfo diff`, `chandiff` |
+| Mechanism | Blocks | Built |
+|---|---|---|
+| Output-file comparison in gate 3 | every command that writes a file, so every item below | [ ] |
+| `SNDFILENAME` special data | `housekeep copy` mode 2, `housekeep remove` | [ ] |
+| Word-list input files | `housekeep sort`, `housekeep batchexpand` | [ ] |
+| Gate and envelope detection | `housekeep extract` modes 1, 2, 3, 6, `housekeep gate` | [ ] |
+| Cubic-spline resampling | `housekeep respec` mode 1 | [ ] |
+| Root-mean-square reporting | `sndinfo loudchan`, `maxi` | [ ] |
+| Two-file sample comparison | `sndinfo diff`, `chandiff` | [ ] |
+
+Output-file comparison comes first. Without it, gate 3 checks only the exit
+code, standard output and standard error, so a command that writes a sound
+file is not really checked. Section 6.1 specifies it. Do not start the
+`housekeep bakup` or `housekeep sort` re-ports before it exists, because
+both write files and both would otherwise be verified on their printed
+output alone.
 
 Build each mechanism once, in its own work package, before the sub-commands
 that need it. Name the mechanism in the work package title.
 
 ## 9. Conventions for agents
 
-These rules add to PLAN.md section 6. They exist because the loop era broke
-each one.
+These rules add to PLAN.md section 6. They exist because the autonomous run
+broke each one. Read them as a checklist before opening a pull request.
+
+- [ ] I copied the usage text from `spec/usage/` and did not write any.
+- [ ] I read the `parstruct.json` entry and did not infer the grammar from
+      the usage text.
+- [ ] Every test I added compares against a value that came from a legacy
+      run.
+- [ ] I ran the legacy image and compared, rather than judging by my own
+      output.
+- [ ] I opened a pull request and did not commit to main.
+- [ ] I updated STATUS.md in the same pull request as the code.
+- [ ] If a mechanism was missing, I stopped and reported it rather than
+      narrowing the command to fit.
+
+The same rules in full:
 
 Never write usage text. Copy it from `spec/usage/`. If the file is missing,
 capture it from the legacy image first.
@@ -457,16 +617,16 @@ request that does not list the checklist items does not merge.
 
 ## 11. Effort
 
-| Phase | Work packages | Agent-days |
-|---|---|---|
-| V. Verification infrastructure | 6 | 8 (V1-V4, V6 done) |
-| R. Remediation | 4 | 4 |
-| 2. Core programs, remaining | 14 | 55 |
-| 3. Spectral programs | 15 | 45 |
-| 4. Standalone programs | about 150 | 300 |
-| 5. Externals | 3 | 15 |
-| 6. Release | 4 | 15 |
-| Total | | about 442 |
+| Phase | Work packages | Agent-days | State |
+|---|---|---|---|
+| V. Verification infrastructure | 6 | 8 | 5 of 6 done, V5 open |
+| R. Remediation | 4 | 4 | R1 and R4 done, 0 of 9 commands repaired |
+| 2. Core programs, remaining | 14 | 55 | WP-2.1 and WP-2.2 open |
+| 3. Spectral programs | 15 | 45 | not started, blocked on WP-1.6 |
+| 4. Standalone programs | about 150 | 300 | not started |
+| 5. Externals | 3 | 15 | not started |
+| 6. Release | 4 | 15 | not started |
+| Total | | about 442 | |
 
 Phase V and Phase R together cost 12 agent-days. They run before everything
 else, and they run sequentially. That cost buys the ability to run Phase 4
@@ -482,6 +642,22 @@ with many parallel agents and trust the result.
 | `parstruct.json` is wrong for some process | Gate 1 and Gate 3 are independent of it, so a disagreement between gates exposes the error |
 | Usage text and grammar disagree | Record the disagreement in STATUS.md and follow the grammar, because the grammar is what the parser runs |
 | Gate 2 cannot describe hand-written argument handling | Four commands already bypass `cdp_params::parse` for real reasons. Mark them exempt in one list, and require an extra golden case for each |
+
+## 13. Quick start for an agent picking this up
+
+1. Read section 5 (Phase R) and the dashboard at the top.
+2. Run the three gate commands. Their output is the current state, and this
+   document is only a map of it.
+3. Pick one item from the R2 work list, or one unstarted sub-command from
+   section 8.
+4. Copy the section 7 checklist into your pull request and work through it.
+5. Before you finish, make sure that no `known_deviation` marker and no
+   `KNOWN_FAILURES` entry remains for what you repaired. Both fail the
+   build if they outlive the defect, so the build will tell you.
+
+What to read for one sub-command, in this order: its captured usage text,
+its `parstruct.json` entry, its program's `ap_*.c` dispatch, then the
+algorithm. Appendix B lists the paths.
 
 ## Appendix A: how to reproduce section 3
 

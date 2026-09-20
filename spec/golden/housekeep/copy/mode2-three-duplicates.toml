@@ -1,0 +1,22 @@
+description = "mode 2 makes numbered duplicates in_001.wav to in_003.wav"
+program = "housekeep"
+subcommand = "copy"
+known_deviation = "PLAN-V2 phase R: prints a display_virtual_time progress tick that legacy does not print for this mode. The duplicate files themselves are correct."
+argv = [
+    "copy",
+    "2",
+    "in.wav",
+    "3",
+]
+
+[[inputs]]
+name = "in.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[expected]
+exit_code = 0
+stdout = """
+
+
+"""
+stderr = ""
