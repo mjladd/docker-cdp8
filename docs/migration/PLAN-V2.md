@@ -116,7 +116,23 @@ The same two files contradict every other defect in the table:
 No defect required new research to find. Each one contradicts a file that was
 already committed.
 
-### 3.2 A legacy bug found during this analysis
+### 3.2 Why continuous integration did not stop this
+
+Two separate failures let the defects merge.
+
+First, the gates did not exist. The `golden-tests` job in
+`.github/workflows/ci.yml` passes when `tools/oracle/run.sh` is absent,
+and it is absent, so the job has never checked anything.
+
+Second, the merge step misread the checks it waited for. The wait loop
+tested the pull request's check output with `grep -q
+'"conclusion":"SUCCESS"'`, which matches when any single check succeeds.
+The `Rust` job was failing on `cargo clippy -D warnings` for every one of
+the loop-era pull requests, and the loop merged them anyway. Phase V
+repairs the first failure. Any autonomous runner must require that every
+check succeeds, not that one does.
+
+### 3.3 A legacy bug found during this analysis
 
 The command `housekeep remove a.wav -a` fails inside legacy itself:
 
@@ -219,9 +235,10 @@ V1. Gate 1, the usage-text conformance test. Put it in
 table. Effort: one agent-day.
 
 V2. Gate 2, the argument-grammar conformance test. Put it in
-`crates/cdp-params/tests/grammar_conformance.rs`. Add a `legacy_process`
-field to `CommandSpec` that names the `parstruct.json` key. Effort: two
-agent-days.
+`crates/cdp-programs/tests/grammar_conformance.rs`, not in `cdp-params`:
+`cdp-programs` depends on `cdp-params`, so only the former can see both
+the specs and the registry. Name each mode's `parstruct.json` process
+symbol and mode key in the registry. Effort: two agent-days.
 
 V3. The oracle harness, `tools/oracle/`. Build it as a workspace crate named
 `cdp-oracle` so that Cargo builds and lints it with everything else. Give it
@@ -309,8 +326,9 @@ complete, and both hold the repaired commands from Phase R.
 
 Remaining sub-commands in the two open work packages:
 
-- WP-2.1 `sndinfo`: `loudchan`, `loudlist`, `diff`, `chandiff`, `maxsamp2`,
-  `maxi`, `zcross`, and `units` modes 3 to 31.
+- WP-2.1 `sndinfo`: `loudchan`, `diff`, `chandiff`, `maxsamp2`, `maxi`,
+  `zcross`, and `units` modes 3 to 31. The process symbol for `maxi` is
+  `INFO_LOUDLIST`, which is not a sub-command name.
 - WP-2.2 `housekeep`: `respec` mode 1, `extract` modes 1, 2, 3, 5 and 6,
   `gate`, `disk`, `batchexpand`, `endclicks` and `deglitch`.
 
@@ -324,7 +342,7 @@ mechanism costs a week. The missing mechanisms are:
 | Word-list input files | `housekeep sort`, `housekeep batchexpand` |
 | Gate and envelope detection | `housekeep extract` modes 1, 2, 3, 6, `housekeep gate` |
 | Cubic-spline resampling | `housekeep respec` mode 1 |
-| Root-mean-square reporting | `sndinfo loudchan`, `loudlist` |
+| Root-mean-square reporting | `sndinfo loudchan`, `maxi` |
 | Two-file sample comparison | `sndinfo diff`, `chandiff` |
 
 Build each mechanism once, in its own work package, before the sub-commands
