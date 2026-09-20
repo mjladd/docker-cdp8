@@ -41,6 +41,22 @@ Prefer a small input. A case that needs real material can name a corpus
 file by path, which costs nothing, because the case stores the path
 rather than a copy.
 
+## Progress output is normalised
+
+A recorded stream holds what a terminal would show: for each line, only
+the text after the last carriage return.
+
+legacy reports progress with `display_virtual_time`, which prints
+`"\r%d min %5.2lf sec"` once per internal write buffer and no newline, so
+each tick overwrites the one before it. The number of ticks is not
+reproducible, because the buffer size comes from a request for the largest
+free block of memory at allocation time, which depends on the machine.
+
+This was found the hard way. Two `housekeep copy` cases recorded on a
+workstation drifted when the `golden-drift` job re-recorded them on a
+continuous-integration runner. Recording the last tick only is both
+portable and faithful to what a user sees.
+
 ## Known deviations
 
 A case whose Rust output does not match legacy yet carries a

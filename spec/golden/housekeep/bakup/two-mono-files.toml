@@ -20,7 +20,7 @@ from = "docs/manual/sounds/marimba.wav"
 [expected]
 exit_code = 0
 stdout = """
-\r0 min  2.01 sec\r0 min  2.01 sec\r0 min  4.02 sec\r0 min  4.02 sec
+0 min  4.02 sec
 
 """
 stderr = ""
