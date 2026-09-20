@@ -1,0 +1,28 @@
+description = "a real mono corpus file with a DATE property and no PEAK chunk"
+program = "sndinfo"
+subcommand = "props"
+argv = [
+    "props",
+    "in.wav",
+]
+
+[[inputs]]
+name = "in.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[expected]
+exit_code = 0
+stdout = """
+CDP Release 7.1 2016
+A SOUND file.
+samples: ............ 44174
+file type: ........... SOUND
+sample rate: ........ 44100
+channels: ........... 1
+sample type:  16bit
+No PEAK chunk in this fileDate: Wed Jul 19 08:50:04 2000
+
+
+
+"""
+stderr = ""

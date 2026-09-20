@@ -1,0 +1,21 @@
+description = "error case: one word too many after the infile"
+program = "sndinfo"
+subcommand = "props"
+argv = [
+    "props",
+    "in.wav",
+    "extra",
+]
+
+[[inputs]]
+name = "in.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[expected]
+exit_code = 255
+stdout = """
+Too many parameters on command line.
+
+
+"""
+stderr = ""

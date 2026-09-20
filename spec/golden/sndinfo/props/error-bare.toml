@@ -1,0 +1,17 @@
+description = "error case: no arguments at all, which prints the usage text"
+program = "sndinfo"
+subcommand = "props"
+argv = ["props"]
+inputs = []
+
+[expected]
+exit_code = 255
+stdout = """
+CDP Release 7.1 2016
+DISPLAY PROPERTIES OF A SNDFILING-SYSTEM FILE
+
+USAGE: sndreport props infile
+
+
+"""
+stderr = ""

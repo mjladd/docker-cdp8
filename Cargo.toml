@@ -11,6 +11,7 @@ members = [
     "crates/cdp-params",
     "crates/cdp-programs",
     "crates/cdp-sf",
+    "tools/oracle",
 ]
 
 [workspace.package]

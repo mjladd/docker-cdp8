@@ -1,0 +1,32 @@
+description = "a real stereo corpus file, for the channel-count branch"
+program = "sndinfo"
+subcommand = "props"
+argv = [
+    "props",
+    "in.wav",
+]
+
+[[inputs]]
+name = "in.wav"
+from = "docs/manual/sounds/clashmixtest.wav"
+
+[expected]
+exit_code = 0
+stdout = """
+CDP Release 7.1 2016
+A SOUND file.
+samples: ............ 219840
+file type: ........... SOUND
+sample rate: ........ 44100
+channels: ........... 2
+sample type:  16bit
+PEAK data at: Mon Aug 16 17:44:02 2021
+
+CH 1:\tamp = 0.3304 (-9.62 dB)\tFrame 48021
+CH 2:\tamp = 0.5959 (-4.50 dB)\tFrame 70084
+Date: Mon Aug 16 17:44:02 2021
+
+
+
+"""
+stderr = ""

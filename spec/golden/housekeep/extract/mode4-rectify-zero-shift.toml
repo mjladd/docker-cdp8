@@ -1,0 +1,25 @@
+description = "mode 4 RECTIFY with a shift of 0, which legacy rejects as no change"
+program = "housekeep"
+subcommand = "extract"
+argv = [
+    "extract",
+    "4",
+    "in.wav",
+    "out.wav",
+    "0.0",
+]
+known_deviation = "PLAN-V2 phase R: the shipped mode 4 ignores the shift argument and computes its own mean, so it writes a file where legacy fails"
+
+[[inputs]]
+name = "in.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[expected]
+exit_code = 255
+stdout = """
+ERROR: CANNOT ACHIEVE TASK:
+ERROR: NO CHANGE to original sound file.
+
+
+"""
+stderr = ""
