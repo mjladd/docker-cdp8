@@ -86,8 +86,8 @@ pub fn prntsnd(parsed: &ParsedCommand) -> Result<(), CdpError> {
     let end_samp = end_samp.min(samples.len());
 
     // Print samples in range, one frame per line
-    let mut frame_count = start_samp / chans;
-    for samp_idx in (start_samp..end_samp).step_by(chans) {
+    let first_frame = start_samp / chans;
+    for (frame_count, samp_idx) in (first_frame..).zip((start_samp..end_samp).step_by(chans)) {
         print!("[{}]", frame_count);
         for ch in 0..chans {
             if samp_idx + ch < samples.len() {
@@ -95,7 +95,6 @@ pub fn prntsnd(parsed: &ParsedCommand) -> Result<(), CdpError> {
             }
         }
         println!();
-        frame_count += 1;
     }
 
     Ok(())
@@ -103,8 +102,6 @@ pub fn prntsnd(parsed: &ParsedCommand) -> Result<(), CdpError> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn time_conversion_works() {
         // Test that time to sample conversion is correct

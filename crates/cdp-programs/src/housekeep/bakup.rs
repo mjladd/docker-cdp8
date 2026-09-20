@@ -133,8 +133,6 @@ pub fn bakup(parsed: &ParsedCommand) -> Result<(), CdpError> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn splice_length_validation_works() {
         assert!("-0.1".parse::<f64>().is_ok()); // Parse succeeds; validation would fail
