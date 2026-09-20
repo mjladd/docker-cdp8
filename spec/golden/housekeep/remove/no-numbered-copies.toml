@@ -1,0 +1,23 @@
+description = "the plain form, with no X_001 copies present to delete"
+program = "housekeep"
+subcommand = "remove"
+argv = [
+    "remove",
+    "in.wav",
+]
+known_deviation = "PLAN-V2 phase R: output text not yet matched against legacy"
+
+[[inputs]]
+name = "in.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[expected]
+exit_code = 255
+stdout = """
+CDP Release 7.1 2016
+ERROR: INTERNAL ERROR: (Bug?)
+ERROR: Invalid process_type 20: create_sized_outfile()
+
+
+"""
+stderr = ""

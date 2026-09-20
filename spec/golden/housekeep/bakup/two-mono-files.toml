@@ -1,0 +1,26 @@
+description = "the documented command line: two infiles and an outfile, with no gap argument"
+program = "housekeep"
+subcommand = "bakup"
+argv = [
+    "bakup",
+    "a.wav",
+    "b.wav",
+    "out.wav",
+]
+known_deviation = "PLAN-V2 phase R: the shipped code demands a splicelen argument that legacy does not have, so it rejects this command line"
+
+[[inputs]]
+name = "a.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[[inputs]]
+name = "b.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[expected]
+exit_code = 0
+stdout = """
+\r0 min  2.01 sec\r0 min  2.01 sec\r0 min  4.02 sec\r0 min  4.02 sec
+
+"""
+stderr = ""

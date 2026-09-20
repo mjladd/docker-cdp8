@@ -1,0 +1,32 @@
+description = "a real analysis file, which takes the ANALYSIS branch rather than the SOUND branch"
+program = "sndinfo"
+subcommand = "props"
+argv = [
+    "props",
+    "in.ana",
+]
+
+[[inputs]]
+name = "in.ana"
+from = "docs/manual/data/capm.ana"
+
+[expected]
+exit_code = 0
+stdout = """
+CDP Release 7.1 2016
+An ANALYSIS file.
+samples: ............ 2901528
+file type: .......... ANALYSIS DATA
+sample rate: ........ 344
+channels: ........... 1026
+original sampsize: .. 0
+original sample rate: 44100
+analysis rate: ...... 344.531250
+analysis window len:  1024
+decimation factor: .. 128
+Date: Tue Jan  4 17:26:36 2022
+
+
+
+"""
+stderr = ""

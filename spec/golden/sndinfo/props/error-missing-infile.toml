@@ -1,0 +1,19 @@
+description = "error case: an infile that does not exist"
+program = "sndinfo"
+subcommand = "props"
+argv = [
+    "props",
+    "nosuchfile.wav",
+]
+inputs = []
+
+[expected]
+exit_code = 255
+stdout = """
+CDP Release 7.1 2016
+ERROR: INVALID DATA
+ERROR: Can't open file nosuchfile.wav to read data.
+
+
+"""
+stderr = ""

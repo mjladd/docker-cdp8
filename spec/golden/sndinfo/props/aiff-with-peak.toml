@@ -1,0 +1,31 @@
+description = "a real AIFF corpus file carrying both a PEAK chunk and a DATE property"
+program = "sndinfo"
+subcommand = "props"
+argv = [
+    "props",
+    "in.aiff",
+]
+
+[[inputs]]
+name = "in.aiff"
+from = "docs/manual/sounds/ws2/tsw1-2nd.aiff"
+
+[expected]
+exit_code = 0
+stdout = """
+CDP Release 7.1 2016
+A SOUND file.
+samples: ............ 241102
+file type: ........... SOUND
+sample rate: ........ 44100
+channels: ........... 1
+sample type:  16bit
+PEAK data at: Sun Jun 25 20:48:42 2006
+
+CH 1:\tamp = 0.2997 (-10.47 dB)\tFrame 29914
+Date: Sun Jun 25 20:48:42 2006
+
+
+
+"""
+stderr = ""

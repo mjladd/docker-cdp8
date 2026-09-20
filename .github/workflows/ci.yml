@@ -43,6 +43,15 @@ jobs:
       - name: Test
         if: steps.members.outputs.count != '0'
         run: cargo test --workspace
+      # Gate 3 of docs/migration/PLAN-V2.md. Replaying a recorded case
+      # needs the built binaries but no Docker, so it belongs in this
+      # fast job rather than in the image-based one below.
+      - name: Build the binaries for the golden replay
+        if: steps.members.outputs.count != '0'
+        run: cargo build --workspace
+      - name: Golden cases (gate 3, replay only, no Docker)
+        if: steps.members.outputs.count != '0'
+        run: cargo run -q -p cdp-oracle -- verify
 
   legacy-build:
     name: Legacy C reference build (Linux)
@@ -73,8 +82,8 @@ jobs:
           path: /tmp/cdp8-legacy.tar
           retention-days: 1
 
-  golden-tests:
-    name: Golden tests against the legacy oracle
+  golden-drift:
+    name: Golden expectations still match legacy
     needs: [rust, legacy-build]
     runs-on: ubuntu-latest
     steps:
@@ -87,14 +96,29 @@ jobs:
           path: /tmp
       - name: Load the legacy image
         run: docker load -i /tmp/cdp8-legacy.tar
-      - name: Run the golden suite
-        # tools/oracle and the cdp-programs golden test harness are
-        # added in WP-1.7 (see docs/migration/PLAN.md, Phase 1). Until
-        # then this step is a placeholder that always succeeds, so the
-        # workflow shape is in place before there is anything to run.
+      # The harness must exist. The previous version of this job passed
+      # when tools/oracle was absent, which is why seven defective
+      # sub-commands merged green (see PLAN-V2 section 3.2).
+      - name: Require the oracle harness
+        run: test -f tools/oracle/Cargo.toml
+      # Re-record every case against the real legacy image and fail if
+      # any committed expectation moved. This catches an expectation that
+      # was edited by hand rather than recorded, and it catches legacy
+      # itself changing under an upstream sync. Re-recording is
+      # deterministic: every timestamp in a recorded output comes from
+      # the input file, not from the run.
+      - name: Re-record every case and check for drift
         run: |
-          if [ -f tools/oracle/run.sh ]; then
-            bash tools/oracle/run.sh cdp8-legacy
-          else
-            echo "tools/oracle not yet added (WP-1.7) -- skipping golden tests"
+          cases=$(find spec/golden -name '*.toml' | sort)
+          if [ -z "$cases" ]; then
+            echo "no golden cases under spec/golden"
+            exit 1
           fi
+          CDP_ORACLE_IMAGE=cdp8-legacy cargo run -q -p cdp-oracle -- record $cases
+          if ! git diff --exit-code --stat spec/golden; then
+            echo
+            echo "A committed expectation does not match what legacy produces now."
+            echo "Either it was written by hand instead of recorded, or legacy changed."
+            exit 1
+          fi
+          echo "every expectation still matches the legacy image"

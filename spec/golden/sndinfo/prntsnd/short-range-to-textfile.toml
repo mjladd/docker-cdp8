@@ -1,0 +1,23 @@
+description = "the documented four-argument form, which writes samples to a text file rather than to standard output"
+program = "sndinfo"
+subcommand = "prntsnd"
+argv = [
+    "prntsnd",
+    "in.wav",
+    "out.txt",
+    "0.0",
+    "0.001",
+]
+known_deviation = "PLAN-V2 phase R: the shipped code takes three arguments and prints to standard output, so it reads the outtextfile name as a starttime"
+
+[[inputs]]
+name = "in.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[expected]
+exit_code = 0
+stdout = """
+\r0 min  0.00 sec\r0 min  0.00 sec
+
+"""
+stderr = ""

@@ -1,0 +1,29 @@
+description = "mode 1 bundles every entered file into an output text file"
+program = "housekeep"
+subcommand = "bundle"
+argv = [
+    "bundle",
+    "1",
+    "a.wav",
+    "b.wav",
+    "out.txt",
+]
+known_deviation = "PLAN-V2 phase R: the shipped code prints one trailing newline more than legacy"
+
+[[inputs]]
+name = "a.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[[inputs]]
+name = "b.wav"
+from = "docs/manual/sounds/clashmixtest.wav"
+
+[expected]
+exit_code = 0
+stdout = """
+BUNDLED a.wav
+BUNDLED b.wav
+
+
+"""
+stderr = ""

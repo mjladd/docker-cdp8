@@ -1,0 +1,26 @@
+description = "a real envelope file, which returns after the window-size line with no PEAK or DATE check"
+program = "sndinfo"
+subcommand = "props"
+argv = [
+    "props",
+    "in.evl",
+]
+
+[[inputs]]
+name = "in.evl"
+from = "docs/manual/data/crklenv.evl"
+
+[expected]
+exit_code = 0
+stdout = """
+CDP Release 7.1 2016
+A binary ENVELOPE file.
+samples: ............ 2845
+file type: .......... ENVELOPE DATA (binary)
+sample rate: ........ 344
+channels: ........... 1
+window size: ........ 2.902494 ms
+
+
+"""
+stderr = ""

@@ -230,6 +230,23 @@ Repairing against the gates costs less than repairing twice.
 
 ## 6. Phase V: verification infrastructure (before any new port)
 
+State on 2026-09-19: V1, V2, V3, V4 and V6 are built and merged. V5, the
+nightly full-file comparison, waits on output-file comparison, which
+section 6.1 describes.
+
+What the gates found on their first run:
+
+| Gate | Scope | Result |
+|---|---|---|
+| 1, usage text | 21 sub-commands | 7 fail, all from the autonomous run |
+| 2, argument grammar | 20 wired modes | all 20 agree with the record |
+| 3, golden cases | 17 cases | 8 pass, 9 known deviations |
+
+Gate 2's clean result is worth stating plainly. Every mode it can check
+comes from the disciplined work before pull request 33. That work agrees
+with legacy's recorded grammar at every position. The two eras differ in
+kind, not in degree.
+
 V1. Gate 1, the usage-text conformance test. Put it in
 `crates/cdp-cli/tests/usage_conformance.rs`. Drive it from the dispatch
 table. Effort: one agent-day.
@@ -268,13 +285,58 @@ does not need real material. A 2000-sample file keeps the expectation file
 small. Use the corpus in `docs/manual/sounds` only where real material
 matters, and record the corpus path rather than a copy.
 
+V4a. The `known_deviation` marker. A case whose output does not match
+legacy yet carries one line saying why. `verify` reports the case and does
+not fail the run, so legacy's real behavior can be recorded for a
+defective command before anyone repairs it. This turns phase R from a
+reading exercise into a list of failing cases to turn green.
+
+The marker is tight in both directions, like gate 1's baseline: a case
+that carries it and then starts matching fails the run. A marker cannot
+outlive its defect.
+
+All 7 defective sub-commands now have recorded cases. An agent doing phase
+R runs `cargo run -p cdp-oracle -- verify` and sees exactly what legacy
+does for each one.
+
 V5. A nightly CI job that compares full output files inside Docker. The
 fingerprint catches almost every regression. The nightly job catches the
 rest. Effort for V3 to V5 together: five agent-days.
 
-V6. Wire the gates into `.github/workflows/ci.yml`. Delete the placeholder
-branch in the `golden-tests` job that currently passes when
-`tools/oracle/run.sh` is absent. A missing harness must fail the build.
+V6. Wire the gates into `.github/workflows/ci.yml`. The placeholder
+`golden-tests` job is gone. Two jobs replace it:
+
+- The `rust` job now builds the binaries and replays every golden case.
+  This needs no Docker and runs in seconds, so it gates every pull
+  request.
+- A `golden-drift` job re-records every case against the real legacy image
+  and fails if a committed expectation moved. This catches an expectation
+  written by hand rather than recorded, and it catches legacy changing
+  under an upstream sync. It also fails outright when the harness is
+  absent, which the old job did not.
+
+Re-recording is deterministic, confirmed across all 17 cases: every
+timestamp in a recorded output comes from the input file, not from the
+run.
+
+### 6.1 Output-file comparison, still to build
+
+A case currently compares the exit code, standard output and standard
+error. That is enough to catch every defect found so far, because five of
+the seven reject their own command line. It is not enough for a command
+whose output is a sound file.
+
+The next increment adds one `[[outputs]]` entry per written file. For a
+sound output, record the format fields, the parsed `sfif` properties, the
+`PEAK` values, the SHA-256 of the data chunk, and a fixed-size
+fingerprint: total sample count, the first and last 8 samples, the
+minimum and maximum sample with their positions, and the
+root-mean-square value of each of 64 equal blocks.
+
+The hash answers whether the output is identical. The fingerprint supports
+the tolerance rules of PLAN.md decision D4 when it is not, which matters
+because the legacy build uses `-ffast-math`. Both stay small enough to
+read in a diff, which a whole sample array would not.
 
 ## 7. Definition of done for one sub-command
 
@@ -397,7 +459,7 @@ request that does not list the checklist items does not merge.
 
 | Phase | Work packages | Agent-days |
 |---|---|---|
-| V. Verification infrastructure | 6 | 8 |
+| V. Verification infrastructure | 6 | 8 (V1-V4, V6 done) |
 | R. Remediation | 4 | 4 |
 | 2. Core programs, remaining | 14 | 55 |
 | 3. Spectral programs | 15 | 45 |

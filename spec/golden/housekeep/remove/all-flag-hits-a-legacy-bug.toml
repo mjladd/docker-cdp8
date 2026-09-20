@@ -1,0 +1,23 @@
+description = "the -a flag, which legacy documents but which aborts inside legacy itself (see LEGACY-BUGS.md)"
+program = "housekeep"
+subcommand = "remove"
+argv = [
+    "remove",
+    "in.wav",
+    "-a",
+]
+known_deviation = "PLAN-V2 phase R: the shipped code has no -a flag and silently ignores it. Legacy aborts here, so the port must decide what the intended behavior is."
+
+[[inputs]]
+name = "in.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[expected]
+exit_code = 255
+stdout = """
+ERROR: INTERNAL ERROR: (Bug?)
+ERROR: Invalid process_type 20: create_sized_outfile()
+
+
+"""
+stderr = ""

@@ -1,0 +1,22 @@
+description = "the optional -t threshold flag, which the shipped code does not implement at all"
+program = "sndinfo"
+subcommand = "findhole"
+argv = [
+    "findhole",
+    "in.wav",
+    "-t0.1",
+]
+known_deviation = "PLAN-V2 phase R: the shipped code has no -t flag"
+
+[[inputs]]
+name = "in.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[expected]
+exit_code = 0
+stdout = """
+Maximum holesize is 0.001587 at time 0.266009
+
+
+"""
+stderr = ""

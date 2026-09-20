@@ -1,0 +1,22 @@
+description = "the documented command line: infile only, with -t left at its default of 0"
+program = "sndinfo"
+subcommand = "findhole"
+argv = [
+    "findhole",
+    "in.wav",
+]
+known_deviation = "PLAN-V2 phase R: the shipped code demands a positional threshold, so it rejects this command line outright"
+
+[[inputs]]
+name = "in.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[expected]
+exit_code = 0
+stdout = """
+CDP Release 7.1 2016
+Maximum holesize is 0.000000 at time 0.000000
+
+
+"""
+stderr = ""

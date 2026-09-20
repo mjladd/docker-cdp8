@@ -1,0 +1,28 @@
+description = "mode 1 is SORT BY FILETYPE and takes only a list file, writing derived names such as list.mot"
+program = "housekeep"
+subcommand = "sort"
+argv = [
+    "sort",
+    "1",
+    "list.txt",
+]
+known_deviation = "PLAN-V2 phase R: the shipped mode 1 sorts by sample rate and demands an outfile, so it rejects this command line"
+
+[[inputs]]
+name = "list.txt"
+from = "spec/golden/fixtures/one-sound-file.txt"
+
+[[inputs]]
+name = "in.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[expected]
+exit_code = 0
+stdout = """
+
+CREATED SORT FILES....
+list.mot
+
+
+"""
+stderr = ""
