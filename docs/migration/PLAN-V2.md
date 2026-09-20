@@ -424,6 +424,39 @@ Re-recording is deterministic, confirmed across all 17 cases: every
 timestamp in a recorded output comes from the input file, not from the
 run.
 
+### 6.2 Progress output is not reproducible, and is normalised
+
+A recorded stream holds what a terminal would show: for each line, only the
+text after the last carriage return.
+
+legacy reports progress with `display_virtual_time`
+(`legacy/dev/cdp2k/writedata.c`), which prints `"\r%d min %5.2lf sec"` once
+per internal write buffer and no newline, so each tick overwrites the one
+before it on screen. The tick count is not reproducible across machines,
+because `create_sndbufs` sizes that buffer with `Malloc(-1)`
+(`legacy/dev/cdp2k/tklib3.c`), a request for the largest free block of
+memory at allocation time.
+
+This was found by the `golden-drift` job rather than by reading. Two
+`housekeep copy` cases recorded on a workstation drifted when the job
+re-recorded them on a continuous-integration runner, while all 17 cases
+with no progress output stayed identical. One real run of `housekeep bakup`
+printed four ticks:
+
+```text
+\r0 min  2.01 sec\r0 min  2.01 sec\r0 min  4.02 sec\r0 min  4.02 sec
+```
+
+Keeping the last tick is portable, because the final tick reports the
+finished sample count. It also matches the porting decision already taken
+on the Rust side, which prints one tick with the final count rather than
+legacy's several. Recording is idempotent after the change, confirmed
+across all 19 cases.
+
+The lesson generalises. A golden harness must decide what counts as output
+before it can compare anything, and that decision is a porting decision,
+not a detail of the harness.
+
 ### 6.1 Output-file comparison, still to build
 
 A case currently compares the exit code, standard output and standard

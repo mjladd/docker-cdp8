@@ -87,9 +87,43 @@ fn capture(output: std::process::Output) -> Expected {
         // A process killed by a signal has no code. -1 marks that, and
         // no legacy run is expected to produce it.
         exit_code: output.status.code().unwrap_or(-1),
-        stdout: String::from_utf8_lossy(&output.stdout).into_owned(),
-        stderr: String::from_utf8_lossy(&output.stderr).into_owned(),
+        stdout: terminal_visible(&String::from_utf8_lossy(&output.stdout)),
+        stderr: terminal_visible(&String::from_utf8_lossy(&output.stderr)),
     }
+}
+
+/// Reduces a captured stream to what a terminal would show, by keeping
+/// only the text after the last carriage return on each line.
+///
+/// This is needed, not a convenience. legacy reports progress with
+/// `display_virtual_time` (`legacy/dev/cdp2k/writedata.c`), which prints
+/// `"\r%d min %5.2lf sec"` once per internal write buffer and no newline.
+/// Each tick overwrites the one before it on screen, so only the last one
+/// is ever visible.
+///
+/// The number of ticks is not reproducible. The buffer size comes from
+/// `create_sndbufs`' `Malloc(-1)` (`legacy/dev/cdp2k/tklib3.c`), which
+/// asks for the largest free block of memory at allocation time, so it
+/// depends on the machine. This was found the hard way: two `housekeep
+/// copy` cases recorded on a workstation drifted when the `golden-drift`
+/// job re-recorded them on a continuous-integration runner, while all 17
+/// cases with no progress output stayed identical.
+///
+/// Keeping the last tick also matches the porting decision already taken
+/// for the Rust side, which prints one tick with the final sample count
+/// rather than legacy's several (see `housekeep::print_virtual_time`).
+fn terminal_visible(text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    for (i, line) in text.split('\n').enumerate() {
+        if i > 0 {
+            out.push('\n');
+        }
+        match line.rfind('\r') {
+            Some(at) => out.push_str(&line[at + 1..]),
+            None => out.push_str(line),
+        }
+    }
+    out
 }
 
 /// Runs a case against the legacy image. Needs Docker.
@@ -154,4 +188,36 @@ pub fn run_rust(case: &Case, sandbox: &Sandbox, bin_dir: &Path) -> Result<Expect
         .output()
         .map_err(|e| format!("cannot run {}: {e}", binary.display()))?;
     Ok(capture(output))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::terminal_visible;
+
+    #[test]
+    fn keeps_text_with_no_carriage_return_unchanged() {
+        assert_eq!(terminal_visible("a\nb\n"), "a\nb\n");
+    }
+
+    #[test]
+    fn keeps_only_the_last_tick_of_a_progress_line() {
+        // What legacy prints for a file large enough for several buffers.
+        let raw = "\r0 min  0.50 sec\r0 min  1.00 sec\n\n";
+        assert_eq!(terminal_visible(raw), "0 min  1.00 sec\n\n");
+    }
+
+    #[test]
+    fn strips_the_leading_carriage_return_of_a_single_tick() {
+        assert_eq!(
+            terminal_visible("\r0 min  1.00 sec\n\n"),
+            "0 min  1.00 sec\n\n"
+        );
+    }
+
+    #[test]
+    fn treats_each_line_on_its_own_and_discards_overwritten_text() {
+        // "keep" sits before a carriage return on its line, so a terminal
+        // overwrites it. Only the text after the last return survives.
+        assert_eq!(terminal_visible("\ra\nkeep\r\rb\n"), "a\nb\n");
+    }
 }

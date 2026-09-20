@@ -1,13 +1,13 @@
 description = "mode 1 copies the infile once to a named outfile"
 program = "housekeep"
 subcommand = "copy"
-known_deviation = "PLAN-V2 phase R: prints one trailing newline more than legacy (19 bytes against 18), confirmed by direct comparison with no harness involved"
 argv = [
     "copy",
     "1",
     "in.wav",
     "out.wav",
 ]
+known_deviation = "PLAN-V2 phase R: prints one trailing newline more than legacy (19 bytes against 18), confirmed by direct comparison with no harness involved"
 
 [[inputs]]
 name = "in.wav"
@@ -16,7 +16,7 @@ from = "docs/manual/sounds/marimba.wav"
 [expected]
 exit_code = 0
 stdout = """
-\r0 min  1.00 sec
+0 min  1.00 sec
 
 """
 stderr = ""
