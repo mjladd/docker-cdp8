@@ -1,0 +1,21 @@
+description = "error case: no arguments at all, which prints the usage text"
+program = "sndinfo"
+subcommand = "prntsnd"
+argv = ["prntsnd"]
+inputs = []
+
+[expected]
+exit_code = 255
+stdout = """
+CDP Release 7.1 2016
+PRINT SOUND SAMPLE DATA TO A TEXTFILE
+
+USAGE: sndreport prntsnd infile outtextfile starttime endtime
+
+CARE!!! large quantities of data.
+
+
+"""
+stderr = ""
+
+[expected.outputs]

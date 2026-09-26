@@ -89,16 +89,8 @@ fn invocation(entry: &CommandEntry) -> (PathBuf, Vec<&str>) {
 /// entry cannot outlive the defect it records.
 const KNOWN_FAILURES: &[(&str, &str)] = &[
     (
-        "sndinfo/prntsnd",
-        "invented usage text; writes samples to standard output instead of the outtextfile argument",
-    ),
-    (
         "housekeep/bakup",
         "invented a splicelen argument; legacy takes none and uses the BAKUP_GAP constant",
-    ),
-    (
-        "housekeep/remove",
-        "prints an insufficient-parameters error when bare instead of the usage text; missing the -a flag",
     ),
     (
         "housekeep/sort",

@@ -1,0 +1,66 @@
+description = "a range that does not start at zero, so the frame numbers are absolute rather than counted from the range"
+program = "sndinfo"
+subcommand = "prntsnd"
+argv = [
+    "prntsnd",
+    "in.wav",
+    "out.txt",
+    "0.5",
+    "0.5008",
+]
+
+[[inputs]]
+name = "in.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[expected]
+exit_code = 0
+stdout = """
+0 min  0.00 sec
+
+"""
+stderr = ""
+
+[[expected.outputs.created]]
+name = "out.txt"
+kind = "text"
+byte_count = 630
+sha256 = "516a1cf6edc6551e3cf0f21fd7b5700de4c0b52159cffc195f85d3467751081a"
+content = """
+[22050]\t0.013611\t
+[22051]\t0.013916\t
+[22052]\t0.013184\t
+[22053]\t0.010956\t
+[22054]\t0.010590\t
+[22055]\t0.007904\t
+[22056]\t0.005951\t
+[22057]\t0.007233\t
+[22058]\t0.007202\t
+[22059]\t0.009400\t
+[22060]\t0.012116\t
+[22061]\t0.014252\t
+[22062]\t0.017762\t
+[22063]\t0.019837\t
+[22064]\t0.021638\t
+[22065]\t0.023835\t
+[22066]\t0.023988\t
+[22067]\t0.023499\t
+[22068]\t0.022065\t
+[22069]\t0.021363\t
+[22070]\t0.019471\t
+[22071]\t0.015320\t
+[22072]\t0.012818\t
+[22073]\t0.011383\t
+[22074]\t0.011658\t
+[22075]\t0.012665\t
+[22076]\t0.013337\t
+[22077]\t0.015564\t
+[22078]\t0.017762\t
+[22079]\t0.019990\t
+[22080]\t0.022248\t
+[22081]\t0.023377\t
+[22082]\t0.024934\t
+[22083]\t0.025941\t
+[22084]\t0.024293\t
+"""
+line_count = 35

@@ -200,11 +200,7 @@ pub const COMMANDS: &[CommandEntry] = &[
         "prntsnd",
         crate::sndinfo::prntsnd::USAGE,
         "INFO_PRNTSND",
-        &[exempt(
-            None,
-            "null",
-            "PLAN-V2 phase R: arguments are parsed by hand in cdp-cli and the grammar is wrong",
-        )],
+        &[unmoded(prntsnd_spec)],
     ),
     entry(
         "sndinfo",
@@ -334,7 +330,7 @@ pub const COMMANDS: &[CommandEntry] = &[
         &[exempt(
             None,
             "null",
-            "PLAN-V2 phase R: missing the -a variant flag and the SNDFILENAME mechanism",
+            "legacy reads the filename through the SNDFILENAME special-data mechanism, which cdp-params does not model, so this command parses its own arguments. Repaired in phase R, but it stays exempt until that mechanism exists.",
         )],
     ),
     entry(
@@ -388,6 +384,9 @@ pub const COMMANDS: &[CommandEntry] = &[
 // Wrappers for the spec builders that take a dynamic range bound. Gate
 // 2 compares parameter counts, types and flag letters, never ranges, so
 // the placeholder bound does not affect the comparison.
+fn prntsnd_spec() -> cdp_params::CommandSpec {
+    cdp_params::CommandSpec::sndinfo_prntsnd(PLACEHOLDER_BOUND)
+}
 fn smptime_spec() -> cdp_params::CommandSpec {
     cdp_params::CommandSpec::sndinfo_smptime(PLACEHOLDER_BOUND)
 }

@@ -276,20 +276,45 @@ fn run_sndinfo_props(args: &[&str]) -> Result<(), CdpError> {
 }
 
 fn dispatch_sndinfo_prntsnd(args: &[String]) -> ! {
-    if args.len() < 3 {
-        print!("{}", prntsnd::GREETING);
-        report_and_exit(Err(CdpError::from(ParamsError::InsufficientParameters)));
+    if args.is_empty() {
+        // legacy: same bare-subcommand usage-text shape as `sndinfo
+        // props` -- see `dispatch_sndinfo_props`'s own comment.
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, prntsnd::USAGE)));
     }
-    report_and_exit(run_sndinfo_prntsnd(args));
+    if args.len() == 1 {
+        // legacy: the same `argc<4` greeting rule every other `sndinfo`
+        // sub-command follows.
+        print!("{}", prntsnd::GREETING);
+    }
+    let args: Vec<&str> = args.iter().map(String::as_str).collect();
+    report_and_exit(run_sndinfo_prntsnd(&args));
 }
 
-fn run_sndinfo_prntsnd(args: &[String]) -> Result<(), CdpError> {
-    let parsed = cdp_params::ParsedCommand {
-        infiles: args.to_vec(),
-        outfile: None,
-        params: vec![],
-        flags: std::collections::BTreeMap::new(),
-    };
+fn run_sndinfo_prntsnd(args: &[&str]) -> Result<(), CdpError> {
+    // Both time parameters are bounded by the infile's own duration, so
+    // the file has to be open before the spec can be built. Same shape as
+    // `run_sndinfo_timesmp`.
+    let sf = cdp_programs::sndinfo::open_sound_infile(args[0])?;
+
+    // legacy opens the output text file during setup, before it reads the
+    // parameters (`handle_outfile` runs ahead of
+    // `read_parameters_and_flags` in `legacy/dev/cdp2k/mainfuncs.c`), so an
+    // empty file is left behind even by a run that then fails. Confirmed
+    // live for six different failures, including an unreadable time and a
+    // reversed range: legacy leaves `out.txt` in every one. Creating it
+    // here rather than inside `prntsnd::prntsnd` is what reproduces that,
+    // because the module only runs once parsing has succeeded.
+    if let Some(outfile) = args.get(1) {
+        std::fs::File::create(outfile).map_err(|e| {
+            CdpError::new(
+                cdp_core::ExitCategory::DataError,
+                format!("Cannot open output file {outfile}: {e}\n"),
+            )
+        })?;
+    }
+
+    let spec = CommandSpec::sndinfo_prntsnd(cdp_programs::sndinfo::len::wave_duration_secs(&sf));
+    let parsed = parse(&spec, args)?;
     prntsnd::prntsnd(&parsed)
 }
 
@@ -752,21 +777,51 @@ fn run_housekeep_extract(mode_token: &str, args: &[String]) -> Result<(), CdpErr
 
 fn dispatch_housekeep_remove(args: &[String]) -> ! {
     if args.is_empty() {
-        print!("{}", remove::GREETING);
-        report_and_exit(Err(CdpError::from(ParamsError::InsufficientParameters)));
+        // legacy prints the full usage text for a bare sub-command here,
+        // confirmed live, rather than the insufficient-parameters error the
+        // earlier version produced.
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, remove::USAGE)));
     }
     report_and_exit(run_housekeep_remove(args));
 }
 
 fn run_housekeep_remove(args: &[String]) -> Result<(), CdpError> {
+    // legacy reads this command's filename through the `SNDFILENAME`
+    // special-data mechanism, which `cdp-params` does not model, so the
+    // arguments are handled here instead of through `parse`. The registry
+    // records the same reason as this mode's gate 2 exemption.
+    let mut filename: Option<&str> = None;
+    let mut all_copies = false;
+    for arg in args {
+        match arg.as_str() {
+            "-a" => all_copies = true,
+            other if other.starts_with('-') => {
+                return Err(CdpError::from(ParamsError::UnknownVariantFlag(
+                    other.chars().nth(1).unwrap_or('?'),
+                )));
+            }
+            other => {
+                if filename.is_some() {
+                    return Err(CdpError::from(ParamsError::UnknownParameter(
+                        other.to_string(),
+                    )));
+                }
+                filename = Some(other);
+            }
+        }
+    }
+
+    let Some(filename) = filename else {
+        return Err(CdpError::from(ParamsError::InsufficientParameters));
+    };
+
     let parsed = cdp_params::ParsedCommand {
-        infiles: args.to_vec(),
+        infiles: vec![filename.to_string()],
         outfile: None,
         params: vec![],
         flags: std::collections::BTreeMap::new(),
     };
-
-    remove::remove(&parsed)
+    remove::remove(&parsed, all_copies)
 }
 
 fn dispatch_housekeep_sort(args: &[String]) -> ! {
