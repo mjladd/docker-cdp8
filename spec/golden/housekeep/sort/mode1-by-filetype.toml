@@ -26,3 +26,13 @@ list.mot
 
 """
 stderr = ""
+
+[[expected.outputs.created]]
+name = "list.mot"
+kind = "text"
+byte_count = 7
+sha256 = "89b06cfe28ffcdb6708b82883dab39543283bd8df6fbc89db32868ee9fe0dc26"
+content = """
+in.wav
+"""
+line_count = 1

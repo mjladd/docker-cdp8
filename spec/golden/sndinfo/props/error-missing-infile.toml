@@ -17,3 +17,5 @@ ERROR: Can't open file nosuchfile.wav to read data.
 
 """
 stderr = ""
+
+[expected.outputs]

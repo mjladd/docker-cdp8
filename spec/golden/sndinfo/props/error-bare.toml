@@ -15,3 +15,5 @@ USAGE: sndreport props infile
 
 """
 stderr = ""
+
+[expected.outputs]

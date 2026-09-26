@@ -67,9 +67,42 @@ The marker is tight in both directions. A case that carries it and then
 starts matching fails the run, so the marker cannot outlive the defect.
 Remove the marker in the same change that fixes the defect.
 
-## What a case does not yet compare
+## Output files
 
-Output files. A case records the exit code, standard output and standard
-error. A command that writes a sound file or a text file is compared only
-on those three. Comparing output files is the next increment of gate 3,
-and PLAN-V2 section 6 item V4 describes the fingerprint it will use.
+A case records the files a run left in the sandbox, so you never list them
+yourself. The harness snapshots the sandbox before and after the run and
+records what was created, changed or deleted. Auto-named outputs come for
+free, which matters because `housekeep chans` writes `marimba_c1.wav` and
+`housekeep copy` mode 2 writes `in_001.wav`. A command that writes a file it
+must not write fails the case.
+
+A sound output records its header fields, its property names, its `PEAK`
+values and positions, a SHA-256 of the decoded samples, and a fixed-size
+fingerprint: the first and last 8 samples, the extremes with their
+positions, and the root-mean-square value of each of 64 equal blocks.
+
+Two fields are never recorded, because both hold the time of the run: the
+`DATE` property and the `PEAK` chunk timestamp. Property names are recorded,
+because presence is deterministic and meaningful.
+
+## Samples must match exactly
+
+A case fails if an output's samples differ at all. To accept a difference,
+set both fields:
+
+```toml
+sample_tolerance = 1e-4
+tolerance_reason = "why this case cannot match exactly"
+```
+
+A tolerance with no reason is refused. This is PLAN.md section 5's rule, and
+there is a concrete reason for it: one bit of a 16-bit sample is about
+3.05e-5, so PLAN.md decision D4's 1e-4 permits roughly three bits of error
+and would hide a quantisation bug. One such bug was real, in
+`cdp_sf::writer::encode_pcm16`. See PLAN-V2 section 6.1.
+
+## After editing a case by hand
+
+Run `record` once. The harness writes fields in a fixed order, so a
+hand-edited file needs one pass to settle. Without it the `golden-drift`
+job reports a change that is only field order.

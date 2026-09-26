@@ -73,6 +73,19 @@ pub struct Case {
     /// Files copied into the sandbox before the run.
     #[serde(default)]
     pub inputs: Vec<Input>,
+    /// The largest absolute sample difference this case accepts in an
+    /// output sound file. Absent means the samples must match exactly,
+    /// which is the default.
+    ///
+    /// legacy: PLAN.md section 5, "Tolerance rules are per case and can be
+    /// tightened. A case that only passes at a wider tolerance must say why
+    /// in its notes." Setting this without [`Self::tolerance_reason`] is
+    /// refused, so a tolerance always carries its justification.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub sample_tolerance: Option<f64>,
+    /// Why this case needs a tolerance at all.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tolerance_reason: Option<String>,
     /// Why this case is known not to match yet, when it is. A case
     /// carrying this is expected to fail, so `verify` reports it without
     /// failing the run.
@@ -104,6 +117,11 @@ pub struct Expected {
     pub exit_code: i32,
     pub stdout: String,
     pub stderr: String,
+    /// The files the run left in the sandbox. See
+    /// [`crate::output`] for what is recorded and what is deliberately
+    /// left out.
+    #[serde(default)]
+    pub outputs: crate::output::Outputs,
 }
 
 impl Case {
@@ -126,6 +144,24 @@ impl Case {
     /// Checks the case against the registry, so that a typo in a program
     /// or sub-command name fails when the case is read rather than
     /// producing a confusing run failure later.
+    /// Refuses a tolerance with no stated reason, so that a loosened
+    /// comparison cannot enter the repository unexplained.
+    pub fn check_tolerance(&self) -> Result<(), String> {
+        match (self.sample_tolerance, &self.tolerance_reason) {
+            (Some(_), None) => Err(format!(
+                "{}/{}: sample_tolerance is set with no tolerance_reason. \
+                 PLAN.md section 5 requires a case that passes only at a wider \
+                 tolerance to say why.",
+                self.program, self.subcommand
+            )),
+            (None, Some(why)) => Err(format!(
+                "{}/{}: tolerance_reason is set ({why:?}) but sample_tolerance is not",
+                self.program, self.subcommand
+            )),
+            _ => Ok(()),
+        }
+    }
+
     pub fn registry_entry(&self) -> Result<&'static cdp_programs::registry::CommandEntry, String> {
         cdp_programs::registry::COMMANDS
             .iter()

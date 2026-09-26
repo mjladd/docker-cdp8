@@ -6,7 +6,7 @@ argv = [
     "in.wav",
     "-a",
 ]
-known_deviation = "PLAN-V2 phase R: the shipped code has no -a flag and silently ignores it. Legacy aborts here, so the port must decide what the intended behavior is."
+known_deviation = "Legacy aborts with the same internal error every other form hits (see LEGACY-BUGS.md), so the -a flag has no observable legacy behavior to match. The port is also still missing the flag, which is a separate phase R gap."
 
 [[inputs]]
 name = "in.wav"
@@ -21,3 +21,5 @@ ERROR: Invalid process_type 20: create_sized_outfile()
 
 """
 stderr = ""
+
+[expected.outputs]

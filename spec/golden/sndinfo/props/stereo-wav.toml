@@ -30,3 +30,5 @@ Date: Mon Aug 16 17:44:02 2021
 
 """
 stderr = ""
+
+[expected.outputs]

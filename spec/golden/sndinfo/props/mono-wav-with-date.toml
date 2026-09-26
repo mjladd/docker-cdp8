@@ -26,3 +26,5 @@ No PEAK chunk in this fileDate: Wed Jul 19 08:50:04 2000
 
 """
 stderr = ""
+
+[expected.outputs]

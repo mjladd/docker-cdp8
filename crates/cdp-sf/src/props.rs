@@ -629,6 +629,18 @@ impl PropertyBlock {
     pub fn is_empty(&self) -> bool {
         self.entries.is_empty()
     }
+
+    /// The name of every property present, in sorted order.
+    ///
+    /// Added for the golden harness (`tools/oracle`), which records which
+    /// properties an output file carries. Presence is deterministic and
+    /// worth checking: `housekeep copy` is confirmed to drop `marimba.wav`'s
+    /// own `maxamp`/`maxloc`/`maxrep` properties and to add a fresh `DATE`.
+    /// The *value* of `DATE` is the wall-clock time of the run, so the
+    /// harness records names without values.
+    pub fn names(&self) -> Vec<&str> {
+        self.entries.keys().map(String::as_str).collect()
+    }
 }
 
 fn hex_digit(b: u8) -> u8 {

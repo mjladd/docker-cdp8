@@ -29,3 +29,5 @@ Date: Sun Jun 25 20:48:42 2006
 
 """
 stderr = ""
+
+[expected.outputs]

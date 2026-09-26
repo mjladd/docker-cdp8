@@ -1,0 +1,37 @@
+description = "the real purpose of the command: three numbered copies are present, so all three are deleted. This is the only case that exercises deletion recording."
+program = "housekeep"
+subcommand = "remove"
+argv = [
+    "remove",
+    "in.wav",
+]
+known_deviation = "Legacy cannot do this at all: every invocation aborts with an internal error, 'Invalid process_type 20: create_sized_outfile()', and deletes nothing (see LEGACY-BUGS.md). This port implements the documented intent per PLAN.md section 6, so it deletes the three copies where legacy deletes none."
+
+[[inputs]]
+name = "in.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[[inputs]]
+name = "in_001.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[[inputs]]
+name = "in_002.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[[inputs]]
+name = "in_003.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[expected]
+exit_code = 255
+stdout = """
+CDP Release 7.1 2016
+ERROR: INTERNAL ERROR: (Bug?)
+ERROR: Invalid process_type 20: create_sized_outfile()
+
+
+"""
+stderr = ""
+
+[expected.outputs]
