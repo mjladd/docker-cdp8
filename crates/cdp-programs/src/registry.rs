@@ -272,7 +272,7 @@ pub const COMMANDS: &[CommandEntry] = &[
         &[exempt(
             None,
             "null",
-            "PLAN-V2 phase R: withdraw and re-port, the shipped code invents a splicelen argument",
+            "ONE_OR_MANY_SNDFILES: the infile count comes from the command line, so the arguments are consumed by hand rather than through a fixed infile_count, the same shape sndinfo lens and sumlen use",
         )],
     ),
     entry(
