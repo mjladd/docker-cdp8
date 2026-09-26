@@ -689,6 +689,46 @@ impl CommandSpec {
         }
     }
 
+    /// `sndinfo prntsnd` (`INFO_PRNTSND`): `sndinfo prntsnd infile
+    /// outtextfile starttime endtime`, which writes the sample values in a
+    /// time range to a text file.
+    ///
+    /// legacy: `parstruct.json`'s `INFO_PRNTSND` entry records
+    /// `param_cnt: 2` with `param_list: "dd"`, so the two times are plain
+    /// `Double` positionals with no breakpoint-file fallback. The text
+    /// file is an output file rather than a parameter.
+    ///
+    /// Both parameters are bounded by the infile's own duration
+    /// (`tklib1.c`: `ap->lo[PRNT_START] = 0.0`, `ap->hi[PRNT_START] =
+    /// duration`, and the same for `PRNT_END`), so `duration_secs` must be
+    /// read from the open infile before this spec can be built. That is
+    /// the same shape [`Self::sndinfo_timesmp`] already uses.
+    ///
+    /// Parameter numbers match their positions, 1 and 2 for both the
+    /// range error and the unreadable-token error, confirmed live against
+    /// `cdp8-postmerge` rather than assumed.
+    pub fn sndinfo_prntsnd(duration_secs: f64) -> Self {
+        CommandSpec {
+            infile_count: 1,
+            has_outfile: true,
+            params: vec![
+                ParamType::Double {
+                    lo: 0.0,
+                    hi: duration_secs,
+                    legacy_index: 1,
+                },
+                ParamType::Double {
+                    lo: 0.0,
+                    hi: duration_secs,
+                    legacy_index: 2,
+                },
+            ],
+            flags: vec![],
+            variants: vec![],
+            unequal_sndfile: false,
+        }
+    }
+
     pub fn sndinfo_maxsamp() -> Self {
         CommandSpec {
             infile_count: 1,

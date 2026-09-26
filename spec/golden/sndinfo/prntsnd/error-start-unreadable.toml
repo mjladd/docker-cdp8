@@ -1,0 +1,32 @@
+description = "error case: a start time that is not a number, reported as parameter 1"
+program = "sndinfo"
+subcommand = "prntsnd"
+argv = [
+    "prntsnd",
+    "in.wav",
+    "out.txt",
+    "abc",
+    "1",
+]
+
+[[inputs]]
+name = "in.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[expected]
+exit_code = 255
+stdout = """
+ERROR: INCORRECT USE
+ERROR: Cannot read parameter 1 [abc]: brkpnt_files not permitted.
+
+
+"""
+stderr = ""
+
+[[expected.outputs.created]]
+name = "out.txt"
+kind = "text"
+byte_count = 0
+sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+content = ""
+line_count = 0

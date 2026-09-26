@@ -276,20 +276,45 @@ fn run_sndinfo_props(args: &[&str]) -> Result<(), CdpError> {
 }
 
 fn dispatch_sndinfo_prntsnd(args: &[String]) -> ! {
-    if args.len() < 3 {
-        print!("{}", prntsnd::GREETING);
-        report_and_exit(Err(CdpError::from(ParamsError::InsufficientParameters)));
+    if args.is_empty() {
+        // legacy: same bare-subcommand usage-text shape as `sndinfo
+        // props` -- see `dispatch_sndinfo_props`'s own comment.
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, prntsnd::USAGE)));
     }
-    report_and_exit(run_sndinfo_prntsnd(args));
+    if args.len() == 1 {
+        // legacy: the same `argc<4` greeting rule every other `sndinfo`
+        // sub-command follows.
+        print!("{}", prntsnd::GREETING);
+    }
+    let args: Vec<&str> = args.iter().map(String::as_str).collect();
+    report_and_exit(run_sndinfo_prntsnd(&args));
 }
 
-fn run_sndinfo_prntsnd(args: &[String]) -> Result<(), CdpError> {
-    let parsed = cdp_params::ParsedCommand {
-        infiles: args.to_vec(),
-        outfile: None,
-        params: vec![],
-        flags: std::collections::BTreeMap::new(),
-    };
+fn run_sndinfo_prntsnd(args: &[&str]) -> Result<(), CdpError> {
+    // Both time parameters are bounded by the infile's own duration, so
+    // the file has to be open before the spec can be built. Same shape as
+    // `run_sndinfo_timesmp`.
+    let sf = cdp_programs::sndinfo::open_sound_infile(args[0])?;
+
+    // legacy opens the output text file during setup, before it reads the
+    // parameters (`handle_outfile` runs ahead of
+    // `read_parameters_and_flags` in `legacy/dev/cdp2k/mainfuncs.c`), so an
+    // empty file is left behind even by a run that then fails. Confirmed
+    // live for six different failures, including an unreadable time and a
+    // reversed range: legacy leaves `out.txt` in every one. Creating it
+    // here rather than inside `prntsnd::prntsnd` is what reproduces that,
+    // because the module only runs once parsing has succeeded.
+    if let Some(outfile) = args.get(1) {
+        std::fs::File::create(outfile).map_err(|e| {
+            CdpError::new(
+                cdp_core::ExitCategory::DataError,
+                format!("Cannot open output file {outfile}: {e}\n"),
+            )
+        })?;
+    }
+
+    let spec = CommandSpec::sndinfo_prntsnd(cdp_programs::sndinfo::len::wave_duration_secs(&sf));
+    let parsed = parse(&spec, args)?;
     prntsnd::prntsnd(&parsed)
 }
 
