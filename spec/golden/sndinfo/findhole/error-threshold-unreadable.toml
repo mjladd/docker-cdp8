@@ -1,0 +1,24 @@
+description = "error case: a threshold that is not a number. The message numbers this parameter 1, the same as the range error does, which is not true of every command."
+program = "sndinfo"
+subcommand = "findhole"
+argv = [
+    "findhole",
+    "in.wav",
+    "-tabc",
+]
+
+[[inputs]]
+name = "in.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[expected]
+exit_code = 255
+stdout = """
+ERROR: INCORRECT USE
+ERROR: Cannot read parameter 1 [abc]: brkpnt_files not permitted.
+
+
+"""
+stderr = ""
+
+[expected.outputs]

@@ -1,0 +1,23 @@
+description = "a stereo infile, where legacy counts both channels' samples in one run and divides by the channel count only at the end"
+program = "sndinfo"
+subcommand = "findhole"
+argv = [
+    "findhole",
+    "in.wav",
+    "-t0.5",
+]
+
+[[inputs]]
+name = "in.wav"
+from = "docs/manual/sounds/clashmixtest.wav"
+
+[expected]
+exit_code = 0
+stdout = """
+Maximum holesize is 1.578367 at time 0.000000
+
+
+"""
+stderr = ""
+
+[expected.outputs]

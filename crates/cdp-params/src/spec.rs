@@ -647,6 +647,48 @@ impl CommandSpec {
     /// `sndinfo_smptime`/`sndinfo_timesmp`'s `-g` already established),
     /// and a trailing non-flag token reports `"Unknown parameter
     /// 'extra'"`.
+    /// `sndinfo findhole` (`INFO_FINDHOLE`): `sndinfo findhole infile
+    /// [-tthreshold]`, the largest run of consecutive samples whose
+    /// magnitude stays below a threshold.
+    ///
+    /// legacy: `parstruct.c`'s `INFO_FINDHOLE` entry records
+    /// `param_cnt: 0` with one option flag `t` of type `d`, so the
+    /// threshold is an optional flag and not a positional parameter.
+    /// Range and default come from `tklib1.c`: `ap->lo[HOLE_THRESH] =
+    /// 0.0`, `ap->hi[HOLE_THRESH] = 1.0`, `default_val[HOLE_THRESH] =
+    /// 0.0`.
+    ///
+    /// Both parameter numbers are 1, confirmed live against
+    /// `cdp8-postmerge` rather than assumed, because the two are not
+    /// always equal (see [`Self::modify_loudness_normalise`], where the
+    /// same flag reports `Parameter[1]` for a range error and
+    /// `parameter 2` for an unreadable token):
+    ///
+    /// ```text
+    /// sndinfo findhole in.wav -tabc
+    ///   Cannot read parameter 1 [abc]: brkpnt_files not permitted.
+    /// sndinfo findhole in.wav -t5
+    ///   Parameter[1] Value (5.000000) out of range (0.000000 to 1.000000)
+    /// ```
+    pub fn sndinfo_findhole() -> Self {
+        CommandSpec {
+            infile_count: 1,
+            has_outfile: false,
+            params: vec![],
+            flags: vec![OptionFlag {
+                letter: 't',
+                value_type: ParamType::Double {
+                    lo: 0.0,
+                    hi: 1.0,
+                    legacy_index: 1,
+                },
+                range_check_paramno: 1,
+            }],
+            variants: vec![],
+            unequal_sndfile: false,
+        }
+    }
+
     pub fn sndinfo_maxsamp() -> Self {
         CommandSpec {
             infile_count: 1,

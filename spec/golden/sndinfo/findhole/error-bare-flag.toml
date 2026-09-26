@@ -1,9 +1,10 @@
-description = "the documented command line: infile only, with -t left at its default of 0"
+description = "error case: the -t flag with no value attached"
 program = "sndinfo"
 subcommand = "findhole"
 argv = [
     "findhole",
     "in.wav",
+    "-t",
 ]
 
 [[inputs]]
@@ -11,10 +12,9 @@ name = "in.wav"
 from = "docs/manual/sounds/marimba.wav"
 
 [expected]
-exit_code = 0
+exit_code = 255
 stdout = """
-CDP Release 7.1 2016
-Maximum holesize is 0.000000 at time 0.000000
+option parameter missing with flag -t
 
 
 """
