@@ -1,0 +1,20 @@
+description = "error case: no arguments at all, which prints the usage text"
+program = "housekeep"
+subcommand = "bakup"
+argv = ["bakup"]
+inputs = []
+
+[expected]
+exit_code = 255
+stdout = """
+CDP Release 7.1 2016
+CONCATENATE SOUNDFILES IN ONE BAKUP FILE, WITH SILENCES BETWEEN
+
+USAGE: housekeep bakup infile1 [infile2 ...] outfile
+
+
+
+"""
+stderr = ""
+
+[expected.outputs]
