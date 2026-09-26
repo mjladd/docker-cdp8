@@ -97,10 +97,6 @@ const KNOWN_FAILURES: &[(&str, &str)] = &[
         "invented a splicelen argument; legacy takes none and uses the BAKUP_GAP constant",
     ),
     (
-        "housekeep/extract",
-        "usage text drops the trailing space legacy prints after the sub-command name",
-    ),
-    (
         "housekeep/remove",
         "prints an insufficient-parameters error when bare instead of the usage text; missing the -a flag",
     ),

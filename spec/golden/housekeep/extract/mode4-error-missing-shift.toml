@@ -1,4 +1,4 @@
-description = "mode 4 RECTIFY with a shift of 0, which legacy rejects as no change"
+description = "error case: the required shift argument is absent"
 program = "housekeep"
 subcommand = "extract"
 argv = [
@@ -6,7 +6,6 @@ argv = [
     "4",
     "in.wav",
     "out.wav",
-    "0.0",
 ]
 
 [[inputs]]
@@ -16,8 +15,7 @@ from = "docs/manual/sounds/marimba.wav"
 [expected]
 exit_code = 255
 stdout = """
-ERROR: CANNOT ACHIEVE TASK:
-ERROR: NO CHANGE to original sound file.
+Insufficient parameters on command line.
 
 
 """

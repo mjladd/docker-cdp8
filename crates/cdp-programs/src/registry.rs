@@ -320,10 +320,10 @@ pub const COMMANDS: &[CommandEntry] = &[
         "extract",
         crate::housekeep::extract::USAGE,
         "HOUSE_EXTRACT",
-        &[exempt(
-            Some(4),
+        &[mode(
+            4,
             "HOUSE_RECTIFY",
-            "PLAN-V2 phase R: the shipped mode ignores the required shift argument",
+            cdp_params::CommandSpec::housekeep_extract_rectify,
         )],
     ),
     entry(
