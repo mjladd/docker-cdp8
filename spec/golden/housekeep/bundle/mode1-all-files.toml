@@ -8,7 +8,6 @@ argv = [
     "b.wav",
     "out.txt",
 ]
-known_deviation = "PLAN-V2 phase R: the shipped code prints one trailing newline more than legacy"
 
 [[inputs]]
 name = "a.wav"

@@ -15,7 +15,7 @@ use std::io::Write;
 
 pub const GREETING: &str = "CDP Release 7.1 2016\n";
 
-pub const USAGE: &str = "CDP Release 7.1 2016
+pub const USAGE: &str = r"CDP Release 7.1 2016
 LIST FILENAMES IN TEXTFILE FOR SORTING, OR MIXDUMMY.
 
 USAGE: housekeep bundle mode infile [infile2....] outtextfile
@@ -27,7 +27,6 @@ MODES ARE
            e.g. all sndfiles, or all analysis files....
 4) AS (3), BUT ONLY FILES WITH SAME PROPERTIES
 5) AS (4), BUT IF FILE1 IS SNDFILE, FILES WITH SAME CHAN COUNT ONLY
-
 ";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -108,7 +107,7 @@ pub fn bundle(parsed: &ParsedCommand, mode: Mode) -> Result<(), CdpError> {
                     "Failed to write to output file\n".to_string(),
                 )
             })?;
-            eprintln!("BUNDLED {}", infile_path);
+            println!("BUNDLED {infile_path}");
             continue;
         }
 
@@ -129,7 +128,7 @@ pub fn bundle(parsed: &ParsedCommand, mode: Mode) -> Result<(), CdpError> {
                     "Failed to write to output file\n".to_string(),
                 )
             })?;
-            eprintln!("BUNDLED {}", infile_path);
+            println!("BUNDLED {infile_path}");
             continue;
         }
 
@@ -144,7 +143,7 @@ pub fn bundle(parsed: &ParsedCommand, mode: Mode) -> Result<(), CdpError> {
                     "Failed to write to output file\n".to_string(),
                 )
             })?;
-            eprintln!("BUNDLED {}", infile_path);
+            println!("BUNDLED {infile_path}");
             continue;
         }
 
@@ -175,7 +174,7 @@ pub fn bundle(parsed: &ParsedCommand, mode: Mode) -> Result<(), CdpError> {
                     "Failed to write to output file\n".to_string(),
                 )
             })?;
-            eprintln!("BUNDLED {}", infile_path);
+            println!("BUNDLED {infile_path}");
         }
     }
 
