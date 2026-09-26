@@ -7,7 +7,6 @@ argv = [
     "in.wav",
     "3",
 ]
-known_deviation = "PLAN-V2 phase R: prints a display_virtual_time progress tick that legacy does not print for this mode. The duplicate files themselves are correct."
 
 [[inputs]]
 name = "in.wav"

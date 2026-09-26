@@ -161,7 +161,6 @@ pub fn copy_once(sf: &SoundFile, outfile_path: &str) -> Result<(), CdpError> {
     super::print_virtual_time(
         samples.len() as f64 / (sf.fmt.sample_rate as f64 * sf.fmt.channels as f64),
     );
-    println!();
     Ok(())
 }
 
@@ -199,8 +198,6 @@ pub fn copy_many(
     }
 
     let samples = sf.samples_f32().map_err(CdpError::from)?;
-    let sample_duration =
-        samples.len() as f64 / (sf.fmt.sample_rate as f64 * sf.fmt.channels as f64);
 
     for n in 1..=count {
         let outfile = numbered_filename(infile_path, n);
@@ -226,8 +223,11 @@ pub fn copy_many(
         )?;
     }
 
-    super::print_virtual_time(sample_duration * count as f64);
-    println!();
+    // legacy: `DUPL` prints no progress text at all, unlike `COPYSF`.
+    // Confirmed live against `cdp8-postmerge`: `housekeep copy 2 in.wav 3`
+    // writes the three numbered files and prints only the blank line that
+    // `report_and_exit` adds, where `housekeep copy 1` prints a tick first.
+    // Recorded as `spec/golden/housekeep/copy/mode2-three-duplicates.toml`.
     Ok(())
 }
 
