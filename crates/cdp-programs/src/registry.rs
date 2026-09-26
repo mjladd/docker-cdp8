@@ -211,11 +211,7 @@ pub const COMMANDS: &[CommandEntry] = &[
         "findhole",
         crate::sndinfo::findhole::USAGE,
         "INFO_FINDHOLE",
-        &[exempt(
-            None,
-            "null",
-            "PLAN-V2 phase R: arguments are parsed by hand in cdp-cli and the grammar is wrong",
-        )],
+        &[unmoded(cdp_params::CommandSpec::sndinfo_findhole)],
     ),
     // housekeep (legacy: docs/legacy/dev/houskeep/ap_house.c).
     entry(

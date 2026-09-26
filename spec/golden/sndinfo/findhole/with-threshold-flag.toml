@@ -6,7 +6,6 @@ argv = [
     "in.wav",
     "-t0.1",
 ]
-known_deviation = "PLAN-V2 phase R: the shipped code has no -t flag"
 
 [[inputs]]
 name = "in.wav"

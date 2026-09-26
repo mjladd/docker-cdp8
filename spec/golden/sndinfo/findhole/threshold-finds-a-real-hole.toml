@@ -1,9 +1,10 @@
-description = "the documented command line: infile only, with -t left at its default of 0"
+description = "a threshold high enough to find a real hole, so the algorithm itself is exercised rather than only the zero-threshold shortcut"
 program = "sndinfo"
 subcommand = "findhole"
 argv = [
     "findhole",
     "in.wav",
+    "-t0.5",
 ]
 
 [[inputs]]
@@ -13,8 +14,7 @@ from = "docs/manual/sounds/marimba.wav"
 [expected]
 exit_code = 0
 stdout = """
-CDP Release 7.1 2016
-Maximum holesize is 0.000000 at time 0.000000
+Maximum holesize is 0.003696 at time 0.020476
 
 
 """

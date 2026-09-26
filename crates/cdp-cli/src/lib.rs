@@ -294,20 +294,24 @@ fn run_sndinfo_prntsnd(args: &[String]) -> Result<(), CdpError> {
 }
 
 fn dispatch_sndinfo_findhole(args: &[String]) -> ! {
-    if args.len() < 2 {
-        print!("{}", findhole::GREETING);
-        report_and_exit(Err(CdpError::from(ParamsError::InsufficientParameters)));
+    if args.is_empty() {
+        // legacy: same bare-subcommand usage-text shape as `sndinfo
+        // props` -- see `dispatch_sndinfo_props`'s own comment.
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, findhole::USAGE)));
     }
-    report_and_exit(run_sndinfo_findhole(args));
+    if args.len() == 1 {
+        // legacy: the same `argc<4` greeting rule every other `sndinfo`
+        // sub-command follows. Confirmed live: `sndinfo findhole
+        // infile` (argc 3) prints the greeting, `sndinfo findhole
+        // infile -t0.5` (argc 4) does not.
+        print!("{}", findhole::GREETING);
+    }
+    let args: Vec<&str> = args.iter().map(String::as_str).collect();
+    report_and_exit(run_sndinfo_findhole(&args));
 }
 
-fn run_sndinfo_findhole(args: &[String]) -> Result<(), CdpError> {
-    let parsed = cdp_params::ParsedCommand {
-        infiles: args.to_vec(),
-        outfile: None,
-        params: vec![],
-        flags: std::collections::BTreeMap::new(),
-    };
+fn run_sndinfo_findhole(args: &[&str]) -> Result<(), CdpError> {
+    let parsed = parse(&CommandSpec::sndinfo_findhole(), args)?;
     findhole::findhole(&parsed)
 }
 

@@ -93,10 +93,6 @@ const KNOWN_FAILURES: &[(&str, &str)] = &[
         "invented usage text; writes samples to standard output instead of the outtextfile argument",
     ),
     (
-        "sndinfo/findhole",
-        "invented a required positional threshold; legacy takes an optional -t flag and prints usage when bare",
-    ),
-    (
         "housekeep/bakup",
         "invented a splicelen argument; legacy takes none and uses the BAKUP_GAP constant",
     ),

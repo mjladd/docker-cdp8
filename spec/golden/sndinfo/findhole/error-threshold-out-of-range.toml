@@ -1,9 +1,10 @@
-description = "the documented command line: infile only, with -t left at its default of 0"
+description = "error case: a threshold above the 0.0 to 1.0 range"
 program = "sndinfo"
 subcommand = "findhole"
 argv = [
     "findhole",
     "in.wav",
+    "-t5",
 ]
 
 [[inputs]]
@@ -11,10 +12,10 @@ name = "in.wav"
 from = "docs/manual/sounds/marimba.wav"
 
 [expected]
-exit_code = 0
+exit_code = 255
 stdout = """
-CDP Release 7.1 2016
-Maximum holesize is 0.000000 at time 0.000000
+ERROR: INCORRECT USE
+ERROR: Parameter[1] Value (5.000000) out of range (0.000000 to 1.000000)
 
 
 """
