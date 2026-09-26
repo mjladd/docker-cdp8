@@ -27,3 +27,14 @@ BUNDLED b.wav
 
 """
 stderr = ""
+
+[[expected.outputs.created]]
+name = "out.txt"
+kind = "text"
+byte_count = 12
+sha256 = "618efaa868225ba39784b537c8d396db5fc6c38068676c1ef0eed2b1261b8244"
+content = """
+a.wav
+b.wav
+"""
+line_count = 2

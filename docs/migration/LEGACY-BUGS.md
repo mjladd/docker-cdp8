@@ -190,3 +190,53 @@ branch, since the corruption's positions for a file spanning more
 than one buffer are not reproducible in general (see this crate's own
 `print_virtual_time` doc for the same non-determinism affecting a
 different piece of legacy output).
+
+## `housekeep remove` never deletes anything: every invocation aborts
+
+**Found:** 2026-09-25, by the golden harness (`tools/oracle`) while
+building output-file comparison. A case that supplied three numbered
+copies and asked legacy to remove them recorded zero deletions.
+
+**Symptom:** every form of the command fails with the same internal
+error and leaves every file in place:
+
+```
+CDP Release 7.1 2016
+ERROR: INTERNAL ERROR: (Bug?)
+ERROR: Invalid process_type 20: create_sized_outfile()
+```
+
+Exit code is 255. Confirmed for all three forms: with numbered copies
+present, with none present, and with the documented `-a` flag.
+
+**Reproducer:**
+
+```sh
+W=$(mktemp -d); cp docs/manual/sounds/marimba.wav "$W/in.wav"
+cp "$W/in.wav" "$W/in_001.wav"
+docker run --rm -v "$W:/w" -w /w cdp8-postmerge housekeep remove in.wav
+ls "$W"    # in.wav and in_001.wav both still there
+```
+
+**Cause:** `HOUSE_DEL` is `process_type` 20, and the run reaches
+`create_sized_outfile` (`legacy/dev/cdp2k/mainfuncs.c`), which has no
+case for it. That is correct in one sense, because the command writes no
+output file at all, but nothing should be calling
+`create_sized_outfile` for it in the first place. The guard fires before
+any deletion happens, so the command is unreachable in this build.
+
+**Consequence for the port:** there is no legacy behavior to match. The
+command's usage text documents what it must do ("Deletes any copies of
+filename X, having names X_001,X_002..."), so the port follows
+`docs/migration/PLAN.md` section 6 and implements the documented intent
+rather than the abort.
+
+**Ported behavior:** `crates/cdp-programs/src/housekeep/remove.rs`
+deletes the numbered copies, which is what the usage text describes. The
+golden cases are therefore all `known_deviation`: the port deliberately
+does something legacy cannot do. The `-a` flag is still missing from the
+port, which is a separate gap on PLAN-V2's phase R list.
+
+**Check performed:** three golden cases under
+`spec/golden/housekeep/remove/`, each recorded from the legacy image, plus
+the direct reproducer above.

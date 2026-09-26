@@ -38,6 +38,7 @@
 //! checks what the command actually does. This gate does.
 
 mod case;
+mod output;
 mod run;
 
 use case::Case;
@@ -144,6 +145,7 @@ fn record(paths: &[String]) -> Result<(), String> {
         let path = PathBuf::from(raw);
         let mut case = Case::load(&path)?;
         case.registry_entry()?;
+        case.check_tolerance()?;
 
         let sandbox = Sandbox::new(&format!("{}-{}", case.program, case.subcommand))?;
         sandbox.populate(&case, &root)?;
@@ -188,10 +190,13 @@ fn verify(filter: &[String]) -> Result<(), String> {
     let mut unrecorded = Vec::new();
     let mut known = Vec::new();
     let mut stale_markers = Vec::new();
+    let mut notes = Vec::new();
 
     for path in &cases {
         let case = Case::load(path)?;
         let name = format!("{}/{} [{}]", case.program, case.subcommand, stem(path));
+
+        case.check_tolerance()?;
 
         let Some(expected) = case.expected.clone() else {
             unrecorded.push(format!(
@@ -224,6 +229,14 @@ fn verify(filter: &[String]) -> Result<(), String> {
                 indent(&diff_lines(&observed.stderr, &expected.stderr))
             ));
         }
+        let comparison =
+            output::compare(&expected.outputs, &observed.outputs, case.sample_tolerance);
+        for failure in &comparison.failures {
+            differences.push(format!("  output files: {failure}"));
+        }
+        for note in &comparison.notes {
+            notes.push(format!("{name}: {note}"));
+        }
 
         match (differences.is_empty(), case.known_deviation.as_deref()) {
             (true, None) => passed += 1,
@@ -239,6 +252,9 @@ fn verify(filter: &[String]) -> Result<(), String> {
 
     for note in &unrecorded {
         println!("SKIP  {note}");
+    }
+    for note in &notes {
+        println!("NOTE  {note}");
     }
     for note in &known {
         println!("KNOWN {note}");

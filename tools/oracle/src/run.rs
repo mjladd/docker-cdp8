@@ -30,6 +30,7 @@
 //! corpus.
 
 use crate::case::{Case, Expected};
+use crate::output;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
@@ -82,13 +83,14 @@ impl Drop for Sandbox {
     }
 }
 
-fn capture(output: std::process::Output) -> Expected {
+fn capture(result: std::process::Output) -> Expected {
     Expected {
         // A process killed by a signal has no code. -1 marks that, and
         // no legacy run is expected to produce it.
-        exit_code: output.status.code().unwrap_or(-1),
-        stdout: terminal_visible(&String::from_utf8_lossy(&output.stdout)),
-        stderr: terminal_visible(&String::from_utf8_lossy(&output.stderr)),
+        exit_code: result.status.code().unwrap_or(-1),
+        stdout: terminal_visible(&String::from_utf8_lossy(&result.stdout)),
+        stderr: terminal_visible(&String::from_utf8_lossy(&result.stderr)),
+        outputs: output::Outputs::default(),
     }
 }
 
@@ -146,10 +148,15 @@ pub fn run_legacy(case: &Case, sandbox: &Sandbox, image: &str) -> Result<Expecte
         .arg(&case.program)
         .args(&case.argv);
 
-    let output = command
+    let before = output::snapshot(sandbox.path())?;
+    let result = command
         .output()
         .map_err(|e| format!("cannot run docker: {e}. Is Docker installed and running?"))?;
-    Ok(capture(output))
+    let after = output::snapshot(sandbox.path())?;
+
+    let mut expected = capture(result);
+    expected.outputs = output::collect(sandbox.path(), &before, &after)?;
+    Ok(expected)
 }
 
 fn user_and_group() -> Result<String, String> {
@@ -181,13 +188,18 @@ pub fn run_rust(case: &Case, sandbox: &Sandbox, bin_dir: &Path) -> Result<Expect
         ));
     }
 
-    let output = Command::new(&binary)
+    let before = output::snapshot(sandbox.path())?;
+    let result = Command::new(&binary)
         .args(&leading)
         .args(&case.argv)
         .current_dir(sandbox.path())
         .output()
         .map_err(|e| format!("cannot run {}: {e}", binary.display()))?;
-    Ok(capture(output))
+    let after = output::snapshot(sandbox.path())?;
+
+    let mut expected = capture(result);
+    expected.outputs = output::collect(sandbox.path(), &before, &after)?;
+    Ok(expected)
 }
 
 #[cfg(test)]

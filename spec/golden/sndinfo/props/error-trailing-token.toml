@@ -19,3 +19,5 @@ Too many parameters on command line.
 
 """
 stderr = ""
+
+[expected.outputs]

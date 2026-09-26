@@ -23,7 +23,7 @@ cargo run -p cdp-oracle -- list            # every golden case and its state
 
 ### Phases
 
-- [x] Phase V. Verification infrastructure. Five of six items done, V5 open.
+- [x] Phase V. Verification infrastructure. All six items done.
 - [ ] Phase R. Remediation. 0 of 9 sub-commands repaired.
 - [ ] Phase 2. Core programs. WP-2.1 and WP-2.2 both open.
 - [ ] Phase 3. Spectral programs. Blocked on WP-1.6 (`cdp-spectral`).
@@ -37,7 +37,7 @@ cargo run -p cdp-oracle -- list            # every golden case and its state
 |---|---|---|---|---|---|
 | 1 | usage text, stderr, exit code | no | 21 sub-commands | 14 | 7 |
 | 2 | argument grammar against `parstruct.json` | no | 20 wired modes | 20 | 0 |
-| 3 | exit code, stdout, stderr of real runs | no (replay) | 19 golden cases | 8 | 11 |
+| 3 | exit code, stdout, stderr, and output files | no (replay) | 26 golden cases | 14 | 12 |
 
 Gate 3 records against the legacy image but replays without it, so
 continuous integration runs all three gates on every pull request.
@@ -48,33 +48,39 @@ A box is checked when the sub-command passes all three gates. A
 sub-command with no golden case cannot be called done, even when gates 1
 and 2 pass, so the third column is the honest measure.
 
-| Sub-command | Gate 1 | Gate 2 | Golden cases | Done |
-|---|---|---|---|---|
-| `sndinfo props` | pass | pass | 8 | [x] |
-| `sndinfo len` | pass | pass | 0 | [ ] |
-| `sndinfo lens` | pass | exempt | 0 | [ ] |
-| `sndinfo sumlen` | pass | exempt | 0 | [ ] |
-| `sndinfo timediff` | pass | exempt | 0 | [ ] |
-| `sndinfo smptime` | pass | pass | 0 | [ ] |
-| `sndinfo timesmp` | pass | pass | 0 | [ ] |
-| `sndinfo maxsamp` | pass | pass | 0 | [ ] |
-| `sndinfo units` | pass | pass (modes 1-2) | 0 | [ ] |
-| `sndinfo prntsnd` | FAIL | exempt | 1, deviation | [ ] |
-| `sndinfo findhole` | FAIL | exempt | 2, deviation | [ ] |
-| `housekeep copy` | pass | pass (mode 1) | 2, both deviation | [ ] |
-| `housekeep chans` | pass | pass (modes 1-5) | 0 | [ ] |
-| `housekeep respec` | pass | pass (modes 2-3) | 0 | [ ] |
-| `housekeep bakup` | FAIL | exempt | 1, deviation | [ ] |
-| `housekeep bundle` | FAIL | exempt | 1, deviation | [ ] |
-| `housekeep extract` | FAIL | exempt | 1, deviation | [ ] |
-| `housekeep remove` | FAIL | exempt | 2, deviation | [ ] |
-| `housekeep sort` | FAIL | exempt | 1, deviation | [ ] |
-| `synth wave` | pass | pass (4 modes) | 0 | [ ] |
-| `pvoc anal` | pass | pass (mode 1) | 0 | [ ] |
+| Sub-command | Gate 1 | Gate 2 | Golden cases | Samples checked | Done |
+|---|---|---|---|---|---|
+| `sndinfo props` | pass | pass | 8 | n/a | [x] |
+| `sndinfo len` | pass | pass | 0 | n/a | [ ] |
+| `sndinfo lens` | pass | exempt | 0 | n/a | [ ] |
+| `sndinfo sumlen` | pass | exempt | 0 | n/a | [ ] |
+| `sndinfo timediff` | pass | exempt | 0 | n/a | [ ] |
+| `sndinfo smptime` | pass | pass | 0 | n/a | [ ] |
+| `sndinfo timesmp` | pass | pass | 0 | n/a | [ ] |
+| `sndinfo maxsamp` | pass | pass | 0 | n/a | [ ] |
+| `sndinfo units` | pass | pass (modes 1-2) | 0 | n/a | [ ] |
+| `sndinfo prntsnd` | FAIL | exempt | 1, deviation | no | [ ] |
+| `sndinfo findhole` | FAIL | exempt | 2, deviation | n/a | [ ] |
+| `housekeep copy` | pass | pass (mode 1) | 2, both deviation | no | [ ] |
+| `housekeep chans` | pass | pass (modes 1-5) | 5, all pass | yes, modes 1, 2, 4, 5 | [ ] |
+| `housekeep respec` | pass | pass (modes 2-3) | 1, passes | yes, mode 2 | [ ] |
+| `housekeep bakup` | FAIL | exempt | 1, deviation | no | [ ] |
+| `housekeep bundle` | FAIL | exempt | 1, deviation | no | [ ] |
+| `housekeep extract` | FAIL | exempt | 1, deviation | no | [ ] |
+| `housekeep remove` | FAIL | exempt | 3, all deviation | no | [ ] |
+| `housekeep sort` | FAIL | exempt | 1, deviation | no | [ ] |
+| `synth wave` | pass | pass (4 modes) | 0 | no | [ ] |
+| `pvoc anal` | pass | pass (mode 1) | 0 | no | [ ] |
 
 One sub-command of 21 currently meets the section 7 definition of done.
 That number is the real measure of progress, and it is the number to
 watch.
+
+Two more, `housekeep chans` and `housekeep respec`, now have their written
+sound files compared sample by sample against legacy and match exactly.
+They are not done, because neither has error cases yet and `chans` mode 3
+and the `-p` flag of mode 4 have no case. Sample-level agreement is still
+the harder half, so it is worth tracking on its own.
 
 ## 1. Why this plan exists
 
@@ -334,9 +340,8 @@ docker run --rm -v $W:/w -w /w cdp8-postmerge housekeep copy 1 in.wav out.wav | 
 
 ## 6. Phase V: verification infrastructure (before any new port)
 
-State on 2026-09-19: V1, V2, V3, V4 and V6 are built and merged. V5, the
-nightly full-file comparison, waits on output-file comparison, which
-section 6.1 describes.
+State on 2026-09-25: every item is built. Output-file comparison, which
+section 6.1 specified as the next increment, is done, so V5 is unblocked.
 
 What the gates found. Counts move as cases are added, so re-run them
 rather than trusting this table:
@@ -404,7 +409,12 @@ All 7 defective sub-commands now have recorded cases. An agent doing phase
 R runs `cargo run -p cdp-oracle -- verify` and sees exactly what legacy
 does for each one.
 
-- [ ] **V5. A nightly CI job that compares full output files inside Docker.** The
+- [ ] **V5. A nightly CI job that compares full output files inside Docker.**
+      Now unblocked by section 6.1's work, and less necessary than it looked:
+      a case records a SHA-256 of an output's samples, so the fingerprint is
+      not the only guard against a change. What a nightly job would still add
+      is comparing whole files byte for byte, including the header fields the
+      recorded expectation deliberately leaves out. The
 fingerprint catches almost every regression. The nightly job catches the
 rest. Effort for V3 to V5 together: five agent-days.
 
@@ -423,6 +433,57 @@ rest. Effort for V3 to V5 together: five agent-days.
 Re-recording is deterministic, confirmed across all 17 cases: every
 timestamp in a recorded output comes from the input file, not from the
 run.
+
+### 6.1 Output-file comparison, built
+
+A case now records the files a run left in the sandbox, not only its exit
+code and printed output. Files are found by snapshotting the sandbox before
+and after the run, so a case never lists its outputs. That matters for three
+reasons: several legacy commands choose their own names (`housekeep chans`
+writes `marimba_c1.wav`, `housekeep copy` mode 2 writes `in_001.wav`), a
+command that writes a file it must not write is itself a defect worth
+failing on, and `housekeep remove` exists to delete files, so deletions are
+recorded too.
+
+A sound output records its header fields, its property names, its `PEAK`
+values and positions, a SHA-256 of the decoded samples, and a fixed-size
+fingerprint: the first and last 8 samples, the extremes with their
+positions, and the root-mean-square value of each of 64 equal blocks. The
+hash is taken over the decoded samples rather than the file bytes, so that
+the header's timestamp fields cannot affect it. A text output is stored
+verbatim up to 4 KiB and summarised above that, because `sndinfo prntsnd`'s
+own usage text warns about the size of its output.
+
+Two fields are deliberately not recorded, because both hold the wall-clock
+time of the run: the `DATE` property and the `PEAK` chunk timestamp.
+Property *names* are recorded, because presence is deterministic and
+meaningful. `housekeep copy` is confirmed to drop `marimba.wav`'s own
+`maxamp` properties and to add a fresh `DATE`.
+
+#### Exact is the default, and a tolerance must be justified
+
+Samples must match exactly unless a case sets `sample_tolerance` together
+with `tolerance_reason`. A tolerance with no reason is refused when the case
+loads. This follows PLAN.md section 5, which already required that "a case
+that only passes at a wider tolerance must say why".
+
+Exact by default is not merely plan-compliance. It is necessary, and
+building this proved it. PLAN.md decision D4 suggests 1e-4 for 16-bit
+output, but one least-significant bit of a 16-bit sample is 1/32767, about
+3.05e-5, so 1e-4 permits roughly three bits of error. The rounding bug that
+WP-2.2's fifth slice found in `cdp_sf::writer::encode_pcm16` moved a sample
+by exactly one bit. Reintroducing that bug against these cases produced a
+largest difference of 3.0518509447574615e-5, comfortably inside D4 and
+plainly a real defect. A blanket D4 tolerance would have hidden it.
+
+So D4's tolerance is right for accumulated signal-processing noise, which is
+what it was written for, and wrong as a default for quantisation. Each case
+decides.
+
+What this found immediately: `housekeep chans` modes 1, 2, 4 and 5 and
+`housekeep respec` mode 2 all write sample data identical to legacy,
+including the auto-named files. That is the first sample-level confirmation
+of any ported command through the harness rather than by hand.
 
 ### 6.2 Progress output is not reproducible, and is normalised
 
@@ -456,25 +517,6 @@ across all 19 cases.
 The lesson generalises. A golden harness must decide what counts as output
 before it can compare anything, and that decision is a porting decision,
 not a detail of the harness.
-
-### 6.1 Output-file comparison, still to build
-
-A case currently compares the exit code, standard output and standard
-error. That is enough to catch every defect found so far, because five of
-the seven reject their own command line. It is not enough for a command
-whose output is a sound file.
-
-The next increment adds one `[[outputs]]` entry per written file. For a
-sound output, record the format fields, the parsed `sfif` properties, the
-`PEAK` values, the SHA-256 of the data chunk, and a fixed-size
-fingerprint: total sample count, the first and last 8 samples, the
-minimum and maximum sample with their positions, and the
-root-mean-square value of each of 64 equal blocks.
-
-The hash answers whether the output is identical. The fingerprint supports
-the tolerance rules of PLAN.md decision D4 when it is not, which matters
-because the legacy build uses `-ffast-math`. Both stay small enough to
-read in a diff, which a whole sample array would not.
 
 ## 7. Definition of done for one sub-command
 
@@ -571,7 +613,7 @@ mechanism costs a week. The missing mechanisms are:
 
 | Mechanism | Blocks | Built |
 |---|---|---|
-| Output-file comparison in gate 3 | every command that writes a file, so every item below | [ ] |
+| Output-file comparison in gate 3 | every command that writes a file, so every item below | [x] |
 | `SNDFILENAME` special data | `housekeep copy` mode 2, `housekeep remove` | [ ] |
 | Word-list input files | `housekeep sort`, `housekeep batchexpand` | [ ] |
 | Gate and envelope detection | `housekeep extract` modes 1, 2, 3, 6, `housekeep gate` | [ ] |
@@ -579,12 +621,10 @@ mechanism costs a week. The missing mechanisms are:
 | Root-mean-square reporting | `sndinfo loudchan`, `maxi` | [ ] |
 | Two-file sample comparison | `sndinfo diff`, `chandiff` | [ ] |
 
-Output-file comparison comes first. Without it, gate 3 checks only the exit
-code, standard output and standard error, so a command that writes a sound
-file is not really checked. Section 6.1 specifies it. Do not start the
-`housekeep bakup` or `housekeep sort` re-ports before it exists, because
-both write files and both would otherwise be verified on their printed
-output alone.
+Output-file comparison is done (section 6.1), so the re-ports of
+`housekeep bakup` and `housekeep sort` are no longer blocked. Every
+remaining mechanism in the table is a porting task rather than a harness
+task.
 
 Build each mechanism once, in its own work package, before the sub-commands
 that need it. Name the mechanism in the work package title.

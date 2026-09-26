@@ -24,3 +24,5 @@ window size: ........ 2.902494 ms
 
 """
 stderr = ""
+
+[expected.outputs]

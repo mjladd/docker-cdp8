@@ -23,3 +23,5 @@ ERROR: NO CHANGE to original sound file.
 
 """
 stderr = ""
+
+[expected.outputs]

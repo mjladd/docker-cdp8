@@ -20,3 +20,5 @@ Maximum holesize is 0.001587 at time 0.266009
 
 """
 stderr = ""
+
+[expected.outputs]

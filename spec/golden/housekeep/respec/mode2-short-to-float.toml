@@ -1,13 +1,12 @@
-description = "mode 1 copies the infile once to a named outfile"
+description = "mode 2 toggles the sample type, so a 16-bit infile becomes a 32-bit float outfile"
 program = "housekeep"
-subcommand = "copy"
+subcommand = "respec"
 argv = [
-    "copy",
-    "1",
+    "respec",
+    "2",
     "in.wav",
     "out.wav",
 ]
-known_deviation = "PLAN-V2 phase R: prints one trailing newline more than legacy (19 bytes against 18), confirmed by direct comparison with no harness involved"
 
 [[inputs]]
 name = "in.wav"
@@ -24,11 +23,11 @@ stderr = ""
 [[expected.outputs.created]]
 name = "out.wav"
 kind = "sound"
-byte_count = 90476
+byte_count = 178826
 sha256 = "25866280cfd7d21ad392eb2dfb18c2bc7e8a8a4968e88d2fae2c3d88cf51d45b"
 channels = 1
 sample_rate = 44100
-sample_type = "Short16"
+sample_type = "Float32"
 file_kind = "Wave"
 sample_count = 44174
 property_names = ["DATE"]

@@ -5,7 +5,7 @@ argv = [
     "remove",
     "in.wav",
 ]
-known_deviation = "PLAN-V2 phase R: output text not yet matched against legacy"
+known_deviation = "Legacy aborts with the same internal error rather than reporting that there is nothing to remove (see LEGACY-BUGS.md). This port reports it instead."
 
 [[inputs]]
 name = "in.wav"
@@ -21,3 +21,5 @@ ERROR: Invalid process_type 20: create_sized_outfile()
 
 """
 stderr = ""
+
+[expected.outputs]
