@@ -93,10 +93,6 @@ const KNOWN_FAILURES: &[(&str, &str)] = &[
         "invented a splicelen argument; legacy takes none and uses the BAKUP_GAP constant",
     ),
     (
-        "housekeep/remove",
-        "prints an insufficient-parameters error when bare instead of the usage text; missing the -a flag",
-    ),
-    (
         "housekeep/sort",
         "invented usage text, mode numbering and an outfile argument; legacy has six modes and derives its output names",
     ),

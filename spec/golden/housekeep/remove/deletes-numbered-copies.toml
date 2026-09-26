@@ -5,7 +5,7 @@ argv = [
     "remove",
     "in.wav",
 ]
-known_deviation = "Legacy cannot do this at all: every invocation aborts with an internal error, 'Invalid process_type 20: create_sized_outfile()', and deletes nothing (see LEGACY-BUGS.md). This port implements the documented intent per PLAN.md section 6, so it deletes the three copies where legacy deletes none."
+known_deviation = "Legacy cannot run this command at all (see LEGACY-BUGS.md), so it deletes nothing where this port deletes the three copies, which is the documented intent per PLAN.md section 6."
 
 [[inputs]]
 name = "in.wav"

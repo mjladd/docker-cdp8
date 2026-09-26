@@ -1,0 +1,25 @@
+description = "error case: a flag letter the command does not have"
+program = "housekeep"
+subcommand = "remove"
+argv = [
+    "remove",
+    "in.wav",
+    "-z",
+]
+known_deviation = "Legacy cannot run this command at all (see LEGACY-BUGS.md), so it aborts before reaching any flag check."
+
+[[inputs]]
+name = "in.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[expected]
+exit_code = 255
+stdout = """
+ERROR: INTERNAL ERROR: (Bug?)
+ERROR: Invalid process_type 20: create_sized_outfile()
+
+
+"""
+stderr = ""
+
+[expected.outputs]

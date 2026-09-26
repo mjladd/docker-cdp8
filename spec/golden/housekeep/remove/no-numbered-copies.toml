@@ -5,7 +5,7 @@ argv = [
     "remove",
     "in.wav",
 ]
-known_deviation = "Legacy aborts with the same internal error rather than reporting that there is nothing to remove (see LEGACY-BUGS.md). This port reports it instead."
+known_deviation = "Legacy cannot run this command at all: every form aborts with an internal error (see LEGACY-BUGS.md). This port implements the documented intent per PLAN.md section 6, so it reports zero removals where legacy aborts."
 
 [[inputs]]
 name = "in.wav"

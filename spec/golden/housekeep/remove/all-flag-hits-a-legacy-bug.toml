@@ -6,7 +6,7 @@ argv = [
     "in.wav",
     "-a",
 ]
-known_deviation = "Legacy aborts with the same internal error every other form hits (see LEGACY-BUGS.md), so the -a flag has no observable legacy behavior to match. The port is also still missing the flag, which is a separate phase R gap."
+known_deviation = "Legacy cannot run this command at all (see LEGACY-BUGS.md), so the -a flag has no legacy behavior to match. The port now implements it: without -a the scan stops after ten missing names in total, with -a it scans all 999."
 
 [[inputs]]
 name = "in.wav"

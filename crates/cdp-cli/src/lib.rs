@@ -777,21 +777,51 @@ fn run_housekeep_extract(mode_token: &str, args: &[String]) -> Result<(), CdpErr
 
 fn dispatch_housekeep_remove(args: &[String]) -> ! {
     if args.is_empty() {
-        print!("{}", remove::GREETING);
-        report_and_exit(Err(CdpError::from(ParamsError::InsufficientParameters)));
+        // legacy prints the full usage text for a bare sub-command here,
+        // confirmed live, rather than the insufficient-parameters error the
+        // earlier version produced.
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, remove::USAGE)));
     }
     report_and_exit(run_housekeep_remove(args));
 }
 
 fn run_housekeep_remove(args: &[String]) -> Result<(), CdpError> {
+    // legacy reads this command's filename through the `SNDFILENAME`
+    // special-data mechanism, which `cdp-params` does not model, so the
+    // arguments are handled here instead of through `parse`. The registry
+    // records the same reason as this mode's gate 2 exemption.
+    let mut filename: Option<&str> = None;
+    let mut all_copies = false;
+    for arg in args {
+        match arg.as_str() {
+            "-a" => all_copies = true,
+            other if other.starts_with('-') => {
+                return Err(CdpError::from(ParamsError::UnknownVariantFlag(
+                    other.chars().nth(1).unwrap_or('?'),
+                )));
+            }
+            other => {
+                if filename.is_some() {
+                    return Err(CdpError::from(ParamsError::UnknownParameter(
+                        other.to_string(),
+                    )));
+                }
+                filename = Some(other);
+            }
+        }
+    }
+
+    let Some(filename) = filename else {
+        return Err(CdpError::from(ParamsError::InsufficientParameters));
+    };
+
     let parsed = cdp_params::ParsedCommand {
-        infiles: args.to_vec(),
+        infiles: vec![filename.to_string()],
         outfile: None,
         params: vec![],
         flags: std::collections::BTreeMap::new(),
     };
-
-    remove::remove(&parsed)
+    remove::remove(&parsed, all_copies)
 }
 
 fn dispatch_housekeep_sort(args: &[String]) -> ! {

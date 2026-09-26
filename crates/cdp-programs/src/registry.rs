@@ -330,7 +330,7 @@ pub const COMMANDS: &[CommandEntry] = &[
         &[exempt(
             None,
             "null",
-            "PLAN-V2 phase R: missing the -a variant flag and the SNDFILENAME mechanism",
+            "legacy reads the filename through the SNDFILENAME special-data mechanism, which cdp-params does not model, so this command parses its own arguments. Repaired in phase R, but it stays exempt until that mechanism exists.",
         )],
     ),
     entry(
