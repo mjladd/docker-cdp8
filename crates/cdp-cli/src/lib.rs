@@ -745,14 +745,8 @@ fn run_housekeep_extract(mode_token: &str, args: &[String]) -> Result<(), CdpErr
             format!("housekeep extract: mode {mode_number} is not implemented yet"),
         ));
     };
-
-    let parsed = cdp_params::ParsedCommand {
-        infiles: args.to_vec(),
-        outfile: None,
-        params: vec![],
-        flags: std::collections::BTreeMap::new(),
-    };
-
+    let args: Vec<&str> = args.iter().map(String::as_str).collect();
+    let parsed = parse(&CommandSpec::housekeep_extract_rectify(), &args)?;
     extract::extract(&parsed, mode)
 }
 

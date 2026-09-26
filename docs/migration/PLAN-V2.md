@@ -12,7 +12,7 @@ Read this document together with [STATUS.md](STATUS.md) and
 
 ## Status at a glance
 
-Updated 2026-09-19. Every box in this document is filled in by hand, so
+Updated 2026-09-26. Every box in this document is filled in by hand, so
 treat the gate commands as the authority and this summary as the map.
 
 ```sh
@@ -24,7 +24,7 @@ cargo run -p cdp-oracle -- list            # every golden case and its state
 ### Phases
 
 - [x] Phase V. Verification infrastructure. All six items done.
-- [ ] Phase R. Remediation. 0 of 9 sub-commands repaired.
+- [ ] Phase R. Remediation. 5 of 9 sub-commands repaired.
 - [ ] Phase 2. Core programs. WP-2.1 and WP-2.2 both open.
 - [ ] Phase 3. Spectral programs. Blocked on WP-1.6 (`cdp-spectral`).
 - [ ] Phase 4. About 150 standalone programs.
@@ -35,9 +35,9 @@ cargo run -p cdp-oracle -- list            # every golden case and its state
 
 | Gate | What it checks | Needs Docker | Scope | Passing | Baselined |
 |---|---|---|---|---|---|
-| 1 | usage text, stderr, exit code | no | 21 sub-commands | 14 | 7 |
-| 2 | argument grammar against `parstruct.json` | no | 20 wired modes | 20 | 0 |
-| 3 | exit code, stdout, stderr, and output files | no (replay) | 26 golden cases | 14 | 12 |
+| 1 | usage text, stderr, exit code | no | 21 sub-commands | 17 | 4 |
+| 2 | argument grammar against `parstruct.json` | no | 22 wired modes | 22 | 0 |
+| 3 | exit code, stdout, stderr, and output files | no (replay) | 41 golden cases | 35 | 6 |
 
 Gate 3 records against the legacy image but replays without it, so
 continuous integration runs all three gates on every pull request.
@@ -51,6 +51,7 @@ and 2 pass, so the third column is the honest measure.
 | Sub-command | Gate 1 | Gate 2 | Golden cases | Samples checked | Done |
 |---|---|---|---|---|---|
 | `sndinfo props` | pass | pass | 8 | n/a | [x] |
+| `sndinfo findhole` | pass | pass | 10 | n/a | [x] |
 | `sndinfo len` | pass | pass | 0 | n/a | [ ] |
 | `sndinfo lens` | pass | exempt | 0 | n/a | [ ] |
 | `sndinfo sumlen` | pass | exempt | 0 | n/a | [ ] |
@@ -60,27 +61,31 @@ and 2 pass, so the third column is the honest measure.
 | `sndinfo maxsamp` | pass | pass | 0 | n/a | [ ] |
 | `sndinfo units` | pass | pass (modes 1-2) | 0 | n/a | [ ] |
 | `sndinfo prntsnd` | FAIL | exempt | 1, deviation | no | [ ] |
-| `sndinfo findhole` | FAIL | exempt | 2, deviation | n/a | [ ] |
-| `housekeep copy` | pass | pass (mode 1) | 2, both deviation | no | [ ] |
+| `housekeep copy` | pass | pass (mode 1) | 2, both pass | yes, modes 1 and 2 | [ ] |
 | `housekeep chans` | pass | pass (modes 1-5) | 5, all pass | yes, modes 1, 2, 4, 5 | [ ] |
 | `housekeep respec` | pass | pass (modes 2-3) | 1, passes | yes, mode 2 | [ ] |
+| `housekeep bundle` | pass | exempt | 1, passes | n/a, writes text | [ ] |
+| `housekeep extract` | pass | pass (mode 4) | 8, all pass | yes, mode 4 | [ ] |
+| `housekeep remove` | FAIL | exempt | 3, all deviation | n/a, deletes files | [ ] |
 | `housekeep bakup` | FAIL | exempt | 1, deviation | no | [ ] |
-| `housekeep bundle` | FAIL | exempt | 1, deviation | no | [ ] |
-| `housekeep extract` | FAIL | exempt | 1, deviation | no | [ ] |
-| `housekeep remove` | FAIL | exempt | 3, all deviation | no | [ ] |
 | `housekeep sort` | FAIL | exempt | 1, deviation | no | [ ] |
 | `synth wave` | pass | pass (4 modes) | 0 | no | [ ] |
 | `pvoc anal` | pass | pass (mode 1) | 0 | no | [ ] |
 
-One sub-command of 21 currently meets the section 7 definition of done.
-That number is the real measure of progress, and it is the number to
-watch.
+Two sub-commands of 21 meet the section 7 definition of done: `sndinfo
+props` and `sndinfo findhole`. That number is the real measure of progress,
+and it is the number to watch.
 
-Two more, `housekeep chans` and `housekeep respec`, now have their written
-sound files compared sample by sample against legacy and match exactly.
-They are not done, because neither has error cases yet and `chans` mode 3
-and the `-p` flag of mode 4 have no case. Sample-level agreement is still
-the harder half, so it is worth tracking on its own.
+Five more have their written sound files compared sample by sample against
+legacy and match exactly: `housekeep copy`, `chans`, `respec` and `extract`
+mode 4. They are not done, because each is missing cases rather than
+correctness. `copy` and `chans` have no error cases, `chans` mode 3 and the
+`-p` flag of mode 4 have none, `respec` mode 3 has none, and `extract` has
+five unported modes. Sample-level agreement is the harder half, so it is
+worth tracking on its own.
+
+What is left is mostly case coverage for commands that already work, plus
+the four sub-commands still in Phase R.
 
 ## 1. Why this plan exists
 
@@ -275,12 +280,13 @@ data, printed reports, exit codes and error text.
 
 Goal: the main branch contains no unchecked command.
 
-Phase V is done enough to start, so R4's precondition is met. Every
-sub-command below has a recorded golden case, so the work is to turn
-`cargo run -p cdp-oracle -- verify` from KNOWN lines into passes, then
-delete the `known_deviation` marker and the `KNOWN_FAILURES` entry. Both
-markers fail the build if they outlive their defect, so nothing needs to
-be remembered.
+Phase V is complete, including output-file comparison, so a repair to a
+command that writes audio is checked on its samples and not only on its
+printed text. Every sub-command below has a recorded golden case, so the
+work is to turn `cargo run -p cdp-oracle -- verify` from KNOWN lines into
+passes, then delete the `known_deviation` marker and the `KNOWN_FAILURES`
+entry. Both markers fail the build if they outlive their defect, so nothing
+needs to be remembered.
 
 - [x] **R1. Diagnose the two suspect commands.** Done. `housekeep bundle`
   prints one trailing newline more than legacy. `housekeep copy` mode 2
@@ -295,17 +301,46 @@ be remembered.
 
 ### R2 work list
 
+Five of nine done, in pull requests 45, 46 and 47.
+
 | Sub-command | Action | Defect | Done |
 |---|---|---|---|
-| `sndinfo findhole` | repair | takes a required positional threshold. Legacy takes an optional `-t` flag and prints usage when bare | [ ] |
+| `housekeep copy` mode 1 | repair | printed a newline after the progress tick, 19 bytes against 18 | [x] |
+| `housekeep copy` mode 2 | repair | printed a progress tick, which legacy does not for `DUPL` | [x] |
+| `housekeep bundle` | repair | `USAGE` had one newline too many, and `BUNDLED <name>` went to standard error | [x] |
+| `sndinfo findhole` | repair | took a required positional threshold. Legacy takes an optional `-t` flag | [x] |
+| `housekeep extract` mode 4 | repair | ignored the required `shift` argument and computed its own mean | [x] |
 | `sndinfo prntsnd` | repair | takes three arguments and prints to standard output. Legacy takes four and writes a text file | [ ] |
-| `housekeep extract` mode 4 | repair | ignores the required `shift` argument and computes its own mean | [ ] |
-| `housekeep remove` | repair | missing the `-a` flag. Also needs a LEGACY-BUGS.md entry, see section 3.3 | [ ] |
-| `housekeep bundle` | repair | prints one trailing newline more than legacy | [ ] |
-| `housekeep copy` mode 1 | repair | prints one trailing newline more than legacy, 19 bytes against 18 | [ ] |
-| `housekeep copy` mode 2 | repair | prints a progress tick legacy does not print for this mode | [ ] |
+| `housekeep remove` | repair | missing the `-a` flag. Legacy itself cannot run at all, see section 3.3 | [ ] |
 | `housekeep bakup` | withdraw, then re-port | invents a `splicelen` argument. The real gap is `BAKUP_GAP` (1.0 second) rounded up to a whole disk sector | [ ] |
 | `housekeep sort` | withdraw, then re-port | wrong mode numbering, a mode that does not exist, and an outfile legacy has no argument for | [ ] |
+
+### What the first five repairs turned up
+
+Three findings worth keeping, because each one changes how the remaining
+work must be checked.
+
+**A manual diff hid a real defect, and the harness caught it.** `bundle`
+sent its per-file `BUNDLED <name>` line to standard error where legacy sends
+it to standard output. Diffing the two builds with `2>&1` merges the streams
+and shows no difference at all: both produced 30 bytes of output and a
+12-byte outfile. Gate 3 compares the two streams separately and reported the
+line as missing from one and unexpected in the other. This is the second
+time shell-level checking has concealed a defect here, after `out=$(cmd)`
+hid `copy` mode 1's trailing newline. Never check a stream by merging it.
+
+**A repair can mean restoring a quirk, not removing one.** The merged
+`findhole` counted a hole that runs to the end of the file. Legacy does not:
+it updates its maximum only when a hole closes, and its loop has no check
+afterwards. So a file that fades to silence and stops reports the largest
+hole before that silence. The merged version had quietly improved on legacy,
+which is still a defect under decision D2. Read the loop, not the intent.
+
+**The two parameter numbers must be confirmed, every time.** Both `findhole`
+and `extract` mode 4 turned out to use 1 for the range error and 1 for the
+unreadable-token error, but `modify loudness` uses 1 and 2 for the same
+flag. There is no rule to derive them from, so each command needs its own
+live check.
 
 Withdrawing means removing the dispatch arm, the module and the registry
 entry, which leaves the sub-command unimplemented. Withdraw any command
@@ -692,8 +727,8 @@ request that does not list the checklist items does not merge.
 
 | Phase | Work packages | Agent-days | State |
 |---|---|---|---|
-| V. Verification infrastructure | 6 | 8 | 5 of 6 done, V5 open |
-| R. Remediation | 4 | 4 | R1 and R4 done, 0 of 9 commands repaired |
+| V. Verification infrastructure | 6 | 8 | done, V5 open and unblocked |
+| R. Remediation | 4 | 4 | R1 and R4 done, 5 of 9 commands repaired |
 | 2. Core programs, remaining | 14 | 55 | WP-2.1 and WP-2.2 open |
 | 3. Spectral programs | 15 | 45 | not started, blocked on WP-1.6 |
 | 4. Standalone programs | about 150 | 300 | not started |
@@ -724,7 +759,10 @@ with many parallel agents and trust the result.
 3. Pick one item from the R2 work list, or one unstarted sub-command from
    section 8.
 4. Copy the section 7 checklist into your pull request and work through it.
-5. Before you finish, make sure that no `known_deviation` marker and no
+5. Confirm the command's two parameter numbers with a live run, one for a
+   range error and one for an unreadable token. They are often equal and
+   sometimes not, and there is no rule to derive them from.
+6. Before you finish, make sure that no `known_deviation` marker and no
    `KNOWN_FAILURES` entry remains for what you repaired. Both fail the
    build if they outlive the defect, so the build will tell you.
 

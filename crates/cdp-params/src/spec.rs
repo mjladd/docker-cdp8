@@ -882,6 +882,40 @@ impl CommandSpec {
     /// `unequal_sndfile` flag and legacy's real classification that
     /// [`Self::housekeep_chans_mtos`]'s own doc already established
     /// for a different mode.
+    /// `housekeep extract 4` (`HOUSE_EXTRACT` mode `HOUSE_RECTIFY`):
+    /// `housekeep extract 4 infile outfile shift`, which adds a constant
+    /// offset to every sample to remove DC drift.
+    ///
+    /// legacy: `parstruct.json`'s `HOUSE_RECTIFY` entry records
+    /// `param_cnt: 1` with `param_list: "d"`, so `shift` is one required
+    /// positional of the plain `Double` kind with no breakpoint-file
+    /// fallback. Range comes from `tklib1.c`: `ap->lo[RECTIFY_SHIFT] =
+    /// -1.0`, `ap->hi[RECTIFY_SHIFT] = 1.0`.
+    ///
+    /// Both parameter numbers are 1, confirmed live against
+    /// `cdp8-postmerge`:
+    ///
+    /// ```text
+    /// housekeep extract 4 in.wav out.wav 5
+    ///   Parameter[1] Value (5.000000) out of range (-1.000000 to 1.000000)
+    /// housekeep extract 4 in.wav out.wav abc
+    ///   Cannot read parameter 1 [abc]: brkpnt_files not permitted.
+    /// ```
+    pub fn housekeep_extract_rectify() -> Self {
+        CommandSpec {
+            infile_count: 1,
+            has_outfile: true,
+            params: vec![ParamType::Double {
+                lo: -1.0,
+                hi: 1.0,
+                legacy_index: 1,
+            }],
+            flags: vec![],
+            variants: vec![],
+            unequal_sndfile: false,
+        }
+    }
+
     pub fn housekeep_respec_convert() -> Self {
         CommandSpec {
             infile_count: 1,
