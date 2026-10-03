@@ -1,0 +1,21 @@
+description = "error case: an infile that does not exist"
+program = "housekeep"
+subcommand = "bakup"
+argv = [
+    "bakup",
+    "nosuch.wav",
+    "out.wav",
+]
+inputs = []
+
+[expected]
+exit_code = 255
+stdout = """
+ERROR: INVALID DATA
+ERROR: Can't open file nosuch.wav to read data.
+
+
+"""
+stderr = ""
+
+[expected.outputs]

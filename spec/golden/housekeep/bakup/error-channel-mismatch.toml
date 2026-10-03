@@ -1,0 +1,29 @@
+description = "error case: a later infile with a different channel count from the first"
+program = "housekeep"
+subcommand = "bakup"
+argv = [
+    "bakup",
+    "a.wav",
+    "st.wav",
+    "out.wav",
+]
+
+[[inputs]]
+name = "a.wav"
+from = "docs/manual/sounds/marimba.wav"
+
+[[inputs]]
+name = "st.wav"
+from = "docs/manual/sounds/clashmixtest.wav"
+
+[expected]
+exit_code = 255
+stdout = """
+ERROR: INVALID DATA
+ERROR: Incompatible channel-count in input file st.wav.
+
+
+"""
+stderr = ""
+
+[expected.outputs]

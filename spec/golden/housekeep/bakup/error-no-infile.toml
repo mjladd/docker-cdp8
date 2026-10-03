@@ -1,0 +1,20 @@
+description = "error case: only an outfile, so no infile remains"
+program = "housekeep"
+subcommand = "bakup"
+argv = [
+    "bakup",
+    "out.wav",
+]
+inputs = []
+
+[expected]
+exit_code = 255
+stdout = """
+CDP Release 7.1 2016
+Insufficient parameters on command line.
+
+
+"""
+stderr = ""
+
+[expected.outputs]

@@ -686,29 +686,33 @@ fn run_housekeep_copy(mode_token: &str, args: &[String]) -> Result<(), CdpError>
 }
 
 fn dispatch_housekeep_bakup(args: &[String]) -> ! {
-    // legacy: `bakup`'s own module doc explains why this command's
-    // argument handling is written by hand instead of going through
-    // `cdp_params::parse`: it takes an arbitrary number of infiles.
-    if args.len() < 2 {
+    if args.is_empty() {
+        report_and_exit(Err(CdpError::new(ExitCategory::UsageOnly, bakup::USAGE)));
+    }
+    if args.len() == 1 {
+        // legacy: `housekeep bakup out.wav` is argc 3, so the greeting
+        // prints, and there is no infile left once the outfile is taken.
+        // Confirmed live.
         print!("{}", bakup::GREETING);
-        report_and_exit(Err(CdpError::from(
-            cdp_params::ParamsError::InsufficientParameters,
-        )));
+        report_and_exit(Err(CdpError::from(ParamsError::InsufficientParameters)));
     }
     report_and_exit(run_housekeep_bakup(args));
 }
 
 fn run_housekeep_bakup(args: &[String]) -> Result<(), CdpError> {
-    let infiles = args[..args.len() - 1].to_vec();
-    let outfile = args[args.len() - 1].clone();
+    // legacy: `ONE_OR_MANY_SNDFILES`, so the infile count comes from the
+    // command line and the last token is the outfile. That is the same
+    // unbounded-list shape `sndinfo lens` and `sumlen` have, and like them
+    // this command parses its own arguments rather than going through
+    // `cdp_params::parse`, which needs a fixed `infile_count`.
+    let (infiles, outfile) = args.split_at(args.len() - 1);
 
     let parsed = cdp_params::ParsedCommand {
-        infiles,
-        outfile: Some(outfile),
+        infiles: infiles.to_vec(),
+        outfile: Some(outfile[0].clone()),
         params: vec![],
         flags: std::collections::BTreeMap::new(),
     };
-
     bakup::bakup(&parsed)
 }
 

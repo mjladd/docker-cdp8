@@ -87,16 +87,10 @@ fn invocation(entry: &CommandEntry) -> (PathBuf, Vec<&str>) {
 /// listed and fails is a new regression and fails the test. A listed
 /// sub-command that starts passing also fails the test, so that the
 /// entry cannot outlive the defect it records.
-const KNOWN_FAILURES: &[(&str, &str)] = &[
-    (
-        "housekeep/bakup",
-        "invented a splicelen argument; legacy takes none and uses the BAKUP_GAP constant",
-    ),
-    (
-        "housekeep/sort",
-        "invented usage text, mode numbering and an outfile argument; legacy has six modes and derives its output names",
-    ),
-];
+const KNOWN_FAILURES: &[(&str, &str)] = &[(
+    "housekeep/sort",
+    "invented usage text, mode numbering and an outfile argument; legacy has six modes and derives its output names",
+)];
 
 fn known_failure(name: &str) -> Option<&'static str> {
     KNOWN_FAILURES
